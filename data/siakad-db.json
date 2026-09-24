@@ -1,0 +1,2279 @@
+{
+  "school": {
+    "id": "sch-alhikam-001",
+    "npsn": "20260901",
+    "name": "SMP AL-HIKAM TERPADU",
+    "address": "Jl. Pendidikan No. 45, Kompleks Terpadu",
+    "phone": "021-88992211",
+    "email": "admin@smpalhikam.sch.id",
+    "principal": "Dr. H. Ahmad Dahlan, M.Pd.",
+    "logoUrl": "/icon.svg",
+    "createdAt": "2026-09-22T02:42:28.724Z",
+    "updatedAt": "2026-09-22T02:42:28.725Z",
+    "version": 1
+  },
+  "schoolSetting": {
+    "id": "063aa29b-d501-4718-89f8-c3b832c3c771",
+    "schoolId": "sch-alhikam-001",
+    "teacherAttendanceMode": "AUTO_HADIR",
+    "lateToleranceMinutes": 10,
+    "autoSyncIntervalSec": 30,
+    "allowOfflineAttendance": true,
+    "updatedAt": "2026-09-22T02:42:28.725Z"
+  },
+  "academicYear": {
+    "id": "ay-2026-2027",
+    "schoolId": "sch-alhikam-001",
+    "name": "2026/2027",
+    "startDate": "2026-07-15T00:00:00.000Z",
+    "endDate": "2027-06-25T00:00:00.000Z",
+    "active": true,
+    "createdAt": "2026-09-22T02:42:28.725Z",
+    "updatedAt": "2026-09-22T02:42:28.725Z",
+    "version": 1
+  },
+  "semester": {
+    "id": "sem-2026-1",
+    "academicYearId": "ay-2026-2027",
+    "semesterNumber": 1,
+    "name": "Semester Ganjil",
+    "active": true,
+    "startDate": "2026-07-15T00:00:00.000Z",
+    "endDate": "2026-12-20T00:00:00.000Z",
+    "createdAt": "2026-09-22T02:42:28.725Z",
+    "updatedAt": "2026-09-22T02:42:28.725Z",
+    "version": 1
+  },
+  "roles": [
+    {
+      "id": "role-superadmin",
+      "code": "SUPER_ADMIN",
+      "name": "Super Administrator",
+      "description": "Akses penuh ke seluruh sistem",
+      "isSystem": true
+    },
+    {
+      "id": "role-kepsek",
+      "code": "KEPALA_SEKOLAH",
+      "name": "Kepala Sekolah",
+      "description": "Monitoring dan pelaporan seluruh unit",
+      "isSystem": true
+    },
+    {
+      "id": "role-wakasek",
+      "code": "WAKASEK",
+      "name": "Wakil Kepala Sekolah",
+      "description": "Manajemen kurikulum dan kesiswaan",
+      "isSystem": true
+    },
+    {
+      "id": "role-admin",
+      "code": "ADMIN_SEKOLAH",
+      "name": "Admin Sekolah",
+      "description": "Pengelolaan data operasional",
+      "isSystem": true
+    },
+    {
+      "id": "role-operator",
+      "code": "OPERATOR",
+      "name": "Operator Dapodik / SI",
+      "description": "Entri dan sinkronisasi data",
+      "isSystem": true
+    },
+    {
+      "id": "role-tu",
+      "code": "TATA_USAHA",
+      "name": "Tata Usaha",
+      "description": "Administrasi dan persuratan",
+      "isSystem": true
+    },
+    {
+      "id": "role-bendahara",
+      "code": "BENDAHARA",
+      "name": "Bendahara Sekolah",
+      "description": "Administrasi keuangan",
+      "isSystem": true
+    },
+    {
+      "id": "role-guru",
+      "code": "GURU",
+      "name": "Guru Pengajar",
+      "description": "Jadwal, absensi mengajar, dan nilai",
+      "isSystem": true
+    },
+    {
+      "id": "role-piket",
+      "code": "GURU_PIKET",
+      "name": "Guru Piket",
+      "description": "Absensi harian, kontrol gerbang, dan rekap piket",
+      "isSystem": true
+    },
+    {
+      "id": "role-walikelas",
+      "code": "WALI_KELAS",
+      "name": "Wali Kelas",
+      "description": "Monitoring absensi dan kesiswaan kelas binaan",
+      "isSystem": true
+    },
+    {
+      "id": "role-perpus",
+      "code": "PETUGAS_PERPUSTAKAAN",
+      "name": "Petugas Perpustakaan",
+      "description": "Layanan perpustakaan",
+      "isSystem": true
+    },
+    {
+      "id": "role-sarpras",
+      "code": "PETUGAS_SARPRAS",
+      "name": "Petugas Sarpras",
+      "description": "Inventaris dan ruangan",
+      "isSystem": true
+    },
+    {
+      "id": "role-siswa",
+      "code": "SISWA",
+      "name": "Siswa",
+      "description": "Melihat absensi dan jadwal pribadi",
+      "isSystem": true
+    },
+    {
+      "id": "role-ortu",
+      "code": "ORANG_TUA",
+      "name": "Orang Tua / Wali",
+      "description": "Monitoring absensi dan nilai anak",
+      "isSystem": true
+    }
+  ],
+  "permissions": [
+    {
+      "id": "perm-stu-view",
+      "code": "student.view",
+      "name": "Lihat Siswa",
+      "module": "CORE"
+    },
+    {
+      "id": "perm-stu-create",
+      "code": "student.create",
+      "name": "Tambah Siswa",
+      "module": "CORE"
+    },
+    {
+      "id": "perm-stu-update",
+      "code": "student.update",
+      "name": "Ubah Siswa",
+      "module": "CORE"
+    },
+    {
+      "id": "perm-stu-delete",
+      "code": "student.delete",
+      "name": "Hapus Siswa",
+      "module": "CORE"
+    },
+    {
+      "id": "perm-tch-view",
+      "code": "teacher.view",
+      "name": "Lihat Guru",
+      "module": "CORE"
+    },
+    {
+      "id": "perm-tch-create",
+      "code": "teacher.create",
+      "name": "Tambah Guru",
+      "module": "CORE"
+    },
+    {
+      "id": "perm-tch-update",
+      "code": "teacher.update",
+      "name": "Ubah Guru",
+      "module": "CORE"
+    },
+    {
+      "id": "perm-tch-delete",
+      "code": "teacher.delete",
+      "name": "Hapus Guru",
+      "module": "CORE"
+    },
+    {
+      "id": "perm-att-view",
+      "code": "attendance.view",
+      "name": "Lihat Absensi",
+      "module": "ATTENDANCE"
+    },
+    {
+      "id": "perm-att-create",
+      "code": "attendance.create",
+      "name": "Input Absensi",
+      "module": "ATTENDANCE"
+    },
+    {
+      "id": "perm-att-update",
+      "code": "attendance.update",
+      "name": "Ubah Absensi",
+      "module": "ATTENDANCE"
+    },
+    {
+      "id": "perm-att-delete",
+      "code": "attendance.delete",
+      "name": "Hapus Absensi",
+      "module": "ATTENDANCE"
+    },
+    {
+      "id": "perm-att-correct",
+      "code": "attendance.correct",
+      "name": "Koreksi Absensi",
+      "module": "ATTENDANCE"
+    },
+    {
+      "id": "perm-att-export",
+      "code": "attendance.export",
+      "name": "Ekspor Absensi",
+      "module": "ATTENDANCE"
+    },
+    {
+      "id": "perm-sch-view",
+      "code": "schedule.view",
+      "name": "Lihat Jadwal",
+      "module": "ATTENDANCE"
+    },
+    {
+      "id": "perm-sch-create",
+      "code": "schedule.create",
+      "name": "Tambah Jadwal",
+      "module": "ATTENDANCE"
+    },
+    {
+      "id": "perm-sch-update",
+      "code": "schedule.update",
+      "name": "Ubah Jadwal",
+      "module": "ATTENDANCE"
+    },
+    {
+      "id": "perm-sch-delete",
+      "code": "schedule.delete",
+      "name": "Hapus Jadwal",
+      "module": "ATTENDANCE"
+    },
+    {
+      "id": "perm-rep-view",
+      "code": "report.view",
+      "name": "Lihat Laporan",
+      "module": "ATTENDANCE"
+    },
+    {
+      "id": "perm-rep-export",
+      "code": "report.export",
+      "name": "Ekspor Laporan",
+      "module": "ATTENDANCE"
+    },
+    {
+      "id": "perm-sys-manage",
+      "code": "system.manage",
+      "name": "Kelola Sistem & Sinkronisasi",
+      "module": "CORE"
+    }
+  ],
+  "rolePermissions": [
+    {
+      "id": "164b640f-2745-441c-98f6-3f7d3fcc1e0f",
+      "roleId": "role-superadmin",
+      "permissionId": "perm-stu-view"
+    },
+    {
+      "id": "85e13135-f8bf-41fd-a364-b0cf90aa4f4a",
+      "roleId": "role-admin",
+      "permissionId": "perm-stu-view"
+    },
+    {
+      "id": "41778742-f834-4b71-adfa-f3ac8ac080b9",
+      "roleId": "role-superadmin",
+      "permissionId": "perm-stu-create"
+    },
+    {
+      "id": "e0896928-11c0-4e05-920e-2b19aeed7338",
+      "roleId": "role-admin",
+      "permissionId": "perm-stu-create"
+    },
+    {
+      "id": "b11e234c-3221-4a73-8f7d-5d4c68a97277",
+      "roleId": "role-superadmin",
+      "permissionId": "perm-stu-update"
+    },
+    {
+      "id": "68ebb52c-bbc3-4358-91e0-fa45239bd5e0",
+      "roleId": "role-admin",
+      "permissionId": "perm-stu-update"
+    },
+    {
+      "id": "34d31c96-3ff4-4a7a-a526-2a24290beda3",
+      "roleId": "role-superadmin",
+      "permissionId": "perm-stu-delete"
+    },
+    {
+      "id": "9989b0d7-4b39-44fc-9e2f-b137917560b6",
+      "roleId": "role-admin",
+      "permissionId": "perm-stu-delete"
+    },
+    {
+      "id": "1da25381-d2e3-4ff0-b484-0f740b2bf3c0",
+      "roleId": "role-superadmin",
+      "permissionId": "perm-tch-view"
+    },
+    {
+      "id": "12b98ae8-fea7-42db-8e7e-ec60a4d32c88",
+      "roleId": "role-admin",
+      "permissionId": "perm-tch-view"
+    },
+    {
+      "id": "9a456435-683c-4822-bda7-16a5977225e3",
+      "roleId": "role-superadmin",
+      "permissionId": "perm-tch-create"
+    },
+    {
+      "id": "05034682-7c98-4832-a797-10fa08f7a80a",
+      "roleId": "role-admin",
+      "permissionId": "perm-tch-create"
+    },
+    {
+      "id": "28cfed40-ff7b-49e4-840a-1e2a8bce12b3",
+      "roleId": "role-superadmin",
+      "permissionId": "perm-tch-update"
+    },
+    {
+      "id": "94ffb95c-68b6-401d-9e90-3d321cf84fc9",
+      "roleId": "role-admin",
+      "permissionId": "perm-tch-update"
+    },
+    {
+      "id": "8605f3ad-f4cb-4b4c-96b7-91f9ce0411a9",
+      "roleId": "role-superadmin",
+      "permissionId": "perm-tch-delete"
+    },
+    {
+      "id": "b506708f-0063-4e63-9c70-289699316f17",
+      "roleId": "role-admin",
+      "permissionId": "perm-tch-delete"
+    },
+    {
+      "id": "67ab6db5-d33d-4b57-a583-06cd47f58614",
+      "roleId": "role-superadmin",
+      "permissionId": "perm-att-view"
+    },
+    {
+      "id": "17c82331-5023-4b9c-b1dd-5503cb18a15a",
+      "roleId": "role-admin",
+      "permissionId": "perm-att-view"
+    },
+    {
+      "id": "3076fb3a-4345-4638-a84e-fea836c42a8a",
+      "roleId": "role-superadmin",
+      "permissionId": "perm-att-create"
+    },
+    {
+      "id": "6c152613-d968-4e65-bd98-30c99239fb37",
+      "roleId": "role-admin",
+      "permissionId": "perm-att-create"
+    },
+    {
+      "id": "0dc376d1-86d3-431e-b007-96155c8d7fdb",
+      "roleId": "role-superadmin",
+      "permissionId": "perm-att-update"
+    },
+    {
+      "id": "1a76bac2-5bee-479a-90f3-d9a608549928",
+      "roleId": "role-admin",
+      "permissionId": "perm-att-update"
+    },
+    {
+      "id": "f558e12d-902d-4004-b6f6-b829163372dc",
+      "roleId": "role-superadmin",
+      "permissionId": "perm-att-delete"
+    },
+    {
+      "id": "539e3e95-4a71-4294-9b1a-399ed5c730df",
+      "roleId": "role-admin",
+      "permissionId": "perm-att-delete"
+    },
+    {
+      "id": "3448ea98-0b21-4045-a5f3-830c85505a02",
+      "roleId": "role-superadmin",
+      "permissionId": "perm-att-correct"
+    },
+    {
+      "id": "dc60c4b3-38c9-4dd9-8e3d-2d97138ffcad",
+      "roleId": "role-admin",
+      "permissionId": "perm-att-correct"
+    },
+    {
+      "id": "39f358a8-549f-4972-8217-ccb8aaeece03",
+      "roleId": "role-superadmin",
+      "permissionId": "perm-att-export"
+    },
+    {
+      "id": "5270609d-9167-4b4e-8c90-7f16a2d31b29",
+      "roleId": "role-admin",
+      "permissionId": "perm-att-export"
+    },
+    {
+      "id": "501540d7-84a6-4fdb-99eb-da478567883e",
+      "roleId": "role-superadmin",
+      "permissionId": "perm-sch-view"
+    },
+    {
+      "id": "dd2c11cd-d276-4cd2-ab1b-15d3ab512ab0",
+      "roleId": "role-admin",
+      "permissionId": "perm-sch-view"
+    },
+    {
+      "id": "ce61c21b-d534-4fd1-b995-938a0f427005",
+      "roleId": "role-superadmin",
+      "permissionId": "perm-sch-create"
+    },
+    {
+      "id": "aeb8b173-114e-43c6-96a0-92f6cfd4f94d",
+      "roleId": "role-admin",
+      "permissionId": "perm-sch-create"
+    },
+    {
+      "id": "5a5bf3ca-96bc-4577-a0ac-4ca05050b2eb",
+      "roleId": "role-superadmin",
+      "permissionId": "perm-sch-update"
+    },
+    {
+      "id": "2acadbf0-f047-42ec-b3b3-3ff571a8b894",
+      "roleId": "role-admin",
+      "permissionId": "perm-sch-update"
+    },
+    {
+      "id": "e335ca93-caa3-4985-b443-50aec399dcf9",
+      "roleId": "role-superadmin",
+      "permissionId": "perm-sch-delete"
+    },
+    {
+      "id": "1daa491e-1ab5-44bc-801b-f485789993ff",
+      "roleId": "role-admin",
+      "permissionId": "perm-sch-delete"
+    },
+    {
+      "id": "b1ef352a-f12d-4c5b-be7c-e84ed92c9577",
+      "roleId": "role-superadmin",
+      "permissionId": "perm-rep-view"
+    },
+    {
+      "id": "b31b8589-a488-43ea-9799-84bb7624022f",
+      "roleId": "role-admin",
+      "permissionId": "perm-rep-view"
+    },
+    {
+      "id": "bec712a7-76fc-4010-ab5c-418246c17128",
+      "roleId": "role-superadmin",
+      "permissionId": "perm-rep-export"
+    },
+    {
+      "id": "6a7c5f02-0d49-41af-bc34-a1894e43c97c",
+      "roleId": "role-admin",
+      "permissionId": "perm-rep-export"
+    },
+    {
+      "id": "b1b72f3e-7494-4ee7-9c5b-ce1c663d5785",
+      "roleId": "role-superadmin",
+      "permissionId": "perm-sys-manage"
+    },
+    {
+      "id": "26632f2d-720d-4e5e-acb6-aca657fe34ff",
+      "roleId": "role-admin",
+      "permissionId": "perm-sys-manage"
+    },
+    {
+      "id": "2bc310f6-0ca6-4d91-9d7b-d734ea225a53",
+      "roleId": "role-guru",
+      "permissionId": "perm-stu-view"
+    },
+    {
+      "id": "e8cfd877-66d3-41af-a527-9c12488aac2a",
+      "roleId": "role-guru",
+      "permissionId": "perm-att-view"
+    },
+    {
+      "id": "b4f25297-19ad-4500-83f8-5ce3157c5dd3",
+      "roleId": "role-guru",
+      "permissionId": "perm-att-create"
+    },
+    {
+      "id": "f10d028e-6481-4e32-91a3-30b4d1755249",
+      "roleId": "role-guru",
+      "permissionId": "perm-att-update"
+    },
+    {
+      "id": "5b95628c-6a4b-49be-8518-adc4da35336a",
+      "roleId": "role-guru",
+      "permissionId": "perm-sch-view"
+    },
+    {
+      "id": "d9ec573a-498c-4cad-8f6a-2953beaef3ce",
+      "roleId": "role-guru",
+      "permissionId": "perm-rep-view"
+    },
+    {
+      "id": "8e1fc71e-dbe3-4689-811e-a1df6096d5ae",
+      "roleId": "role-piket",
+      "permissionId": "perm-stu-view"
+    },
+    {
+      "id": "5061b346-0de2-409c-8fbb-1bf45d0b0e93",
+      "roleId": "role-piket",
+      "permissionId": "perm-tch-view"
+    },
+    {
+      "id": "816338a6-5851-4150-b581-7a23fb556e96",
+      "roleId": "role-piket",
+      "permissionId": "perm-att-view"
+    },
+    {
+      "id": "3637f731-8c80-4b15-ba47-effb9a48e881",
+      "roleId": "role-piket",
+      "permissionId": "perm-att-create"
+    },
+    {
+      "id": "130c2f48-d0b1-4a37-863b-f0c6f05e2b90",
+      "roleId": "role-piket",
+      "permissionId": "perm-att-update"
+    },
+    {
+      "id": "51187c36-94df-46f4-885b-45fba8b4dc33",
+      "roleId": "role-piket",
+      "permissionId": "perm-sch-view"
+    },
+    {
+      "id": "111c6e6e-18a0-4e46-82dc-9eb4a41544cc",
+      "roleId": "role-piket",
+      "permissionId": "perm-rep-view"
+    }
+  ],
+  "users": [
+    {
+      "id": "usr-admin-01",
+      "schoolId": "sch-alhikam-001",
+      "username": "admin",
+      "passwordHash": "$2b$10$iZXzIhpWKkO7Pq59Owsjpu0hq9KEb9nNOJSa.ui8PSnhF84VpIDT.",
+      "fullName": "Administrator Sekolah Terpadu",
+      "email": "admin@sekolah.sch.id",
+      "phone": "081234567890",
+      "active": true,
+      "createdAt": "2026-09-22T02:42:28.726Z",
+      "updatedAt": "2026-09-22T02:42:28.726Z",
+      "version": 1,
+      "lastLoginAt": "2026-09-22T02:42:28.826Z"
+    },
+    {
+      "id": "usr-guru-budi",
+      "schoolId": "sch-alhikam-001",
+      "username": "budi",
+      "passwordHash": "$2b$10$Yhi4W4s4rb2j9HJ5GSPEJO14qDLHze09aPvPfz4YRCpXWFN.u02o.",
+      "fullName": "Budi Santoso, S.Pd.",
+      "email": "budi.santoso@sekolah.sch.id",
+      "phone": "081398765432",
+      "active": true,
+      "createdAt": "2026-09-22T02:42:28.726Z",
+      "updatedAt": "2026-09-22T02:42:28.726Z",
+      "version": 1,
+      "lastLoginAt": "2026-09-22T02:42:28.933Z"
+    }
+  ],
+  "userRoles": [
+    {
+      "id": "9e0c39f7-2c65-4c4d-a41e-6301a66b7bdf",
+      "userId": "usr-admin-01",
+      "roleId": "role-superadmin"
+    },
+    {
+      "id": "09b7a7be-18a3-4784-affa-b8919b9b137f",
+      "userId": "usr-admin-01",
+      "roleId": "role-admin"
+    },
+    {
+      "id": "0d0859d3-e40f-4359-949b-b6c6800a90b4",
+      "userId": "usr-guru-budi",
+      "roleId": "role-guru"
+    },
+    {
+      "id": "a941bd98-4b8f-4a77-9609-a8963457d3f5",
+      "userId": "usr-guru-budi",
+      "roleId": "role-piket"
+    },
+    {
+      "id": "02ae5141-ba7f-4cbf-98e2-d1ab27c7a9f1",
+      "userId": "usr-guru-budi",
+      "roleId": "role-walikelas"
+    }
+  ],
+  "teachers": [
+    {
+      "id": "tch-budi-01",
+      "userId": "usr-guru-budi",
+      "nip": "198503152010011002",
+      "name": "Budi Santoso, S.Pd.",
+      "email": "budi.santoso@sekolah.sch.id",
+      "phone": "081398765432",
+      "gender": "L",
+      "address": "Jl. Merpati No. 12, Kota",
+      "active": true,
+      "version": 1,
+      "createdAt": "2026-09-22T02:42:28.726Z",
+      "updatedAt": "2026-09-22T02:42:28.726Z"
+    },
+    {
+      "id": "tch-siti-02",
+      "nip": "198807202012022001",
+      "name": "Siti Rahmawati, M.Pd.",
+      "email": "siti.rahmawati@sekolah.sch.id",
+      "phone": "081211223344",
+      "gender": "P",
+      "address": "Jl. Melati No. 5, Kota",
+      "active": true,
+      "version": 1,
+      "createdAt": "2026-09-22T02:42:28.726Z",
+      "updatedAt": "2026-09-22T02:42:28.726Z"
+    },
+    {
+      "id": "tch-agus-03",
+      "nip": "197902102005011003",
+      "name": "Drs. Agus Supriyadi",
+      "email": "agus.supriyadi@sekolah.sch.id",
+      "phone": "081255667788",
+      "gender": "L",
+      "address": "Jl. Mawar No. 18, Kota",
+      "active": true,
+      "version": 1,
+      "createdAt": "2026-09-22T02:42:28.726Z",
+      "updatedAt": "2026-09-22T02:42:28.726Z"
+    },
+    {
+      "id": "tch-dewi-04",
+      "nip": "199004122015022004",
+      "name": "Dewi Lestari, S.Si.",
+      "email": "dewi.lestari@sekolah.sch.id",
+      "phone": "081333445566",
+      "gender": "P",
+      "address": "Jl. Kenanga No. 8, Kota",
+      "active": true,
+      "version": 1,
+      "createdAt": "2026-09-22T02:42:28.726Z",
+      "updatedAt": "2026-09-22T02:42:28.726Z"
+    },
+    {
+      "id": "tch-hendra-05",
+      "nip": "198211052008011005",
+      "name": "Hendra Gunawan, S.Kom.",
+      "email": "hendra.gunawan@sekolah.sch.id",
+      "phone": "081377889900",
+      "gender": "L",
+      "address": "Jl. Anggrek No. 22, Kota",
+      "active": true,
+      "version": 1,
+      "createdAt": "2026-09-22T02:42:28.726Z",
+      "updatedAt": "2026-09-22T02:42:28.726Z"
+    },
+    {
+      "id": "tch-ratna-06",
+      "nip": "199201182018022006",
+      "name": "Ratna Sari, S.Pd.",
+      "email": "ratna.sari@sekolah.sch.id",
+      "phone": "081299001122",
+      "gender": "P",
+      "address": "Jl. Dahlia No. 14, Kota",
+      "active": true,
+      "version": 1,
+      "createdAt": "2026-09-22T02:42:28.726Z",
+      "updatedAt": "2026-09-22T02:42:28.726Z"
+    },
+    {
+      "id": "tch-fauzi-07",
+      "nip": "198606142011011007",
+      "name": "Ahmad Fauzi, S.Ag.",
+      "email": "ahmad.fauzi@sekolah.sch.id",
+      "phone": "081244556677",
+      "gender": "L",
+      "address": "Jl. Cempaka No. 30, Kota",
+      "active": true,
+      "version": 1,
+      "createdAt": "2026-09-22T02:42:28.726Z",
+      "updatedAt": "2026-09-22T02:42:28.726Z"
+    },
+    {
+      "id": "tch-rina-08",
+      "nip": "199109252016022008",
+      "name": "Rina Handayani, S.Sn.",
+      "email": "rina.handayani@sekolah.sch.id",
+      "phone": "081388990011",
+      "gender": "P",
+      "address": "Jl. Flamboyan No. 7, Kota",
+      "active": true,
+      "version": 1,
+      "createdAt": "2026-09-22T02:42:28.726Z",
+      "updatedAt": "2026-09-22T02:42:28.726Z"
+    },
+    {
+      "id": "tch-joko-09",
+      "nip": "198408102009011009",
+      "name": "Joko Purnomo, S.Pd.Jas.",
+      "email": "joko.purnomo@sekolah.sch.id",
+      "phone": "081233221100",
+      "gender": "L",
+      "address": "Jl. Kamboja No. 9, Kota",
+      "active": true,
+      "version": 1,
+      "createdAt": "2026-09-22T02:42:28.726Z",
+      "updatedAt": "2026-09-22T02:42:28.726Z"
+    },
+    {
+      "id": "tch-maya-10",
+      "nip": "199303302019022010",
+      "name": "Maya Nurhaliza, S.Hum.",
+      "email": "maya.nurhaliza@sekolah.sch.id",
+      "phone": "081277665544",
+      "gender": "P",
+      "address": "Jl. Teratai No. 11, Kota",
+      "active": true,
+      "version": 1,
+      "createdAt": "2026-09-22T02:42:28.726Z",
+      "updatedAt": "2026-09-22T02:42:28.726Z"
+    }
+  ],
+  "subjects": [
+    {
+      "id": "sbj-mtk",
+      "code": "MTK",
+      "name": "Matematika",
+      "description": "Matematika Terpadu Kurikulum Merdeka",
+      "active": true,
+      "version": 1
+    },
+    {
+      "id": "sbj-bin",
+      "code": "BIN",
+      "name": "Bahasa Indonesia",
+      "description": "Literasi dan Bahasa Indonesia",
+      "active": true,
+      "version": 1
+    },
+    {
+      "id": "sbj-big",
+      "code": "BIG",
+      "name": "Bahasa Inggris",
+      "description": "Bahasa Inggris Komunikatif",
+      "active": true,
+      "version": 1
+    },
+    {
+      "id": "sbj-ipa",
+      "code": "IPA",
+      "name": "Ilmu Pengetahuan Alam",
+      "description": "Fisika, Biologi, Kimia Dasar",
+      "active": true,
+      "version": 1
+    },
+    {
+      "id": "sbj-ips",
+      "code": "IPS",
+      "name": "Ilmu Pengetahuan Sosial",
+      "description": "Geografi, Sejarah, Ekonomi Terpadu",
+      "active": true,
+      "version": 1
+    },
+    {
+      "id": "sbj-pai",
+      "code": "PAI",
+      "name": "Pendidikan Agama Islam",
+      "description": "Pendidikan Agama & Budi Pekerti",
+      "active": true,
+      "version": 1
+    },
+    {
+      "id": "sbj-pkn",
+      "code": "PPKN",
+      "name": "Pendidikan Pancasila & Kewarganegaraan",
+      "description": "Kewarganegaraan dan Konstitusi",
+      "active": true,
+      "version": 1
+    },
+    {
+      "id": "sbj-pjk",
+      "code": "PJOK",
+      "name": "Pendidikan Jasmani & Olahraga",
+      "description": "Olahraga dan Kesehatan",
+      "active": true,
+      "version": 1
+    },
+    {
+      "id": "sbj-inf",
+      "code": "INF",
+      "name": "Informatika",
+      "description": "Algoritma, Pemrograman, Literasi Digital",
+      "active": true,
+      "version": 1
+    },
+    {
+      "id": "sbj-snk",
+      "code": "SNB",
+      "name": "Seni Budaya",
+      "description": "Seni Rupa dan Seni Musik",
+      "active": true,
+      "version": 1
+    }
+  ],
+  "classes": [
+    {
+      "id": "cls-7a",
+      "name": "7A",
+      "grade": 7,
+      "major": "Umum",
+      "homeroomTeacherId": "tch-siti-02",
+      "academicYearId": "ay-2026-2027",
+      "active": true,
+      "version": 1
+    },
+    {
+      "id": "cls-7b",
+      "name": "7B",
+      "grade": 7,
+      "major": "Umum",
+      "homeroomTeacherId": "tch-dewi-04",
+      "academicYearId": "ay-2026-2027",
+      "active": true,
+      "version": 1
+    },
+    {
+      "id": "cls-8a",
+      "name": "8A",
+      "grade": 8,
+      "major": "Umum",
+      "homeroomTeacherId": "tch-budi-01",
+      "academicYearId": "ay-2026-2027",
+      "active": true,
+      "version": 1
+    },
+    {
+      "id": "cls-8b",
+      "name": "8B",
+      "grade": 8,
+      "major": "Umum",
+      "homeroomTeacherId": "tch-agus-03",
+      "academicYearId": "ay-2026-2027",
+      "active": true,
+      "version": 1
+    },
+    {
+      "id": "cls-9a",
+      "name": "9A",
+      "grade": 9,
+      "major": "Umum",
+      "homeroomTeacherId": "tch-hendra-05",
+      "academicYearId": "ay-2026-2027",
+      "active": true,
+      "version": 1
+    }
+  ],
+  "students": [
+    {
+      "id": "std-1",
+      "nis": "2026001",
+      "nisn": "002026001892",
+      "name": "Aditya Pratama",
+      "gender": "L",
+      "birthDate": "2012-05-15",
+      "classId": "cls-7a",
+      "parentName": "Bpk/Ibu Aditya",
+      "parentPhone": "08129000100",
+      "active": true,
+      "version": 1,
+      "createdAt": "2026-09-22T02:42:28.726Z",
+      "updatedAt": "2026-09-22T02:42:28.726Z"
+    },
+    {
+      "id": "std-2",
+      "nis": "2026002",
+      "nisn": "002026002892",
+      "name": "Anisa Putri",
+      "gender": "P",
+      "birthDate": "2012-05-15",
+      "classId": "cls-7a",
+      "parentName": "Bpk/Ibu Anisa",
+      "parentPhone": "08129000101",
+      "active": true,
+      "version": 1,
+      "createdAt": "2026-09-22T02:42:28.726Z",
+      "updatedAt": "2026-09-22T02:42:28.726Z"
+    },
+    {
+      "id": "std-3",
+      "nis": "2026003",
+      "nisn": "002026003892",
+      "name": "Bagas Kurniawan",
+      "gender": "L",
+      "birthDate": "2012-05-15",
+      "classId": "cls-7a",
+      "parentName": "Bpk/Ibu Bagas",
+      "parentPhone": "08129000102",
+      "active": true,
+      "version": 1,
+      "createdAt": "2026-09-22T02:42:28.726Z",
+      "updatedAt": "2026-09-22T02:42:28.726Z"
+    },
+    {
+      "id": "std-4",
+      "nis": "2026004",
+      "nisn": "002026004892",
+      "name": "Citra Ayu",
+      "gender": "P",
+      "birthDate": "2012-05-15",
+      "classId": "cls-7a",
+      "parentName": "Bpk/Ibu Citra",
+      "parentPhone": "08129000103",
+      "active": true,
+      "version": 1,
+      "createdAt": "2026-09-22T02:42:28.726Z",
+      "updatedAt": "2026-09-22T02:42:28.726Z"
+    },
+    {
+      "id": "std-5",
+      "nis": "2026005",
+      "nisn": "002026005892",
+      "name": "Dimas Saputra",
+      "gender": "L",
+      "birthDate": "2012-05-15",
+      "classId": "cls-7a",
+      "parentName": "Bpk/Ibu Dimas",
+      "parentPhone": "08129000104",
+      "active": true,
+      "version": 1,
+      "createdAt": "2026-09-22T02:42:28.726Z",
+      "updatedAt": "2026-09-22T02:42:28.726Z"
+    },
+    {
+      "id": "std-6",
+      "nis": "2026006",
+      "nisn": "002026006892",
+      "name": "Eka Rahayu",
+      "gender": "P",
+      "birthDate": "2012-05-15",
+      "classId": "cls-7a",
+      "parentName": "Bpk/Ibu Eka",
+      "parentPhone": "08129000105",
+      "active": true,
+      "version": 1,
+      "createdAt": "2026-09-22T02:42:28.726Z",
+      "updatedAt": "2026-09-22T02:42:28.726Z"
+    },
+    {
+      "id": "std-7",
+      "nis": "2026007",
+      "nisn": "002026007892",
+      "name": "Fadli Rahman",
+      "gender": "L",
+      "birthDate": "2012-05-15",
+      "classId": "cls-7a",
+      "parentName": "Bpk/Ibu Fadli",
+      "parentPhone": "08129000106",
+      "active": true,
+      "version": 1,
+      "createdAt": "2026-09-22T02:42:28.726Z",
+      "updatedAt": "2026-09-22T02:42:28.726Z"
+    },
+    {
+      "id": "std-8",
+      "nis": "2026008",
+      "nisn": "002026008892",
+      "name": "Gita Savitri",
+      "gender": "P",
+      "birthDate": "2012-05-15",
+      "classId": "cls-7a",
+      "parentName": "Bpk/Ibu Gita",
+      "parentPhone": "08129000107",
+      "active": true,
+      "version": 1,
+      "createdAt": "2026-09-22T02:42:28.726Z",
+      "updatedAt": "2026-09-22T02:42:28.726Z"
+    },
+    {
+      "id": "std-9",
+      "nis": "2026009",
+      "nisn": "002026009892",
+      "name": "Hafiz Ramadhan",
+      "gender": "L",
+      "birthDate": "2012-05-15",
+      "classId": "cls-7a",
+      "parentName": "Bpk/Ibu Hafiz",
+      "parentPhone": "08129000108",
+      "active": true,
+      "version": 1,
+      "createdAt": "2026-09-22T02:42:28.726Z",
+      "updatedAt": "2026-09-22T02:42:28.726Z"
+    },
+    {
+      "id": "std-10",
+      "nis": "2026010",
+      "nisn": "002026010892",
+      "name": "Indah Permata",
+      "gender": "P",
+      "birthDate": "2012-05-15",
+      "classId": "cls-7a",
+      "parentName": "Bpk/Ibu Indah",
+      "parentPhone": "08129000109",
+      "active": true,
+      "version": 1,
+      "createdAt": "2026-09-22T02:42:28.726Z",
+      "updatedAt": "2026-09-22T02:42:28.726Z"
+    },
+    {
+      "id": "std-11",
+      "nis": "2026011",
+      "nisn": "002026011892",
+      "name": "Jihan Aulia",
+      "gender": "P",
+      "birthDate": "2012-05-15",
+      "classId": "cls-7b",
+      "parentName": "Bpk/Ibu Jihan",
+      "parentPhone": "08129000110",
+      "active": true,
+      "version": 1,
+      "createdAt": "2026-09-22T02:42:28.727Z",
+      "updatedAt": "2026-09-22T02:42:28.727Z"
+    },
+    {
+      "id": "std-12",
+      "nis": "2026012",
+      "nisn": "002026012892",
+      "name": "Kurnia Sandy",
+      "gender": "L",
+      "birthDate": "2012-05-15",
+      "classId": "cls-7b",
+      "parentName": "Bpk/Ibu Kurnia",
+      "parentPhone": "08129000111",
+      "active": true,
+      "version": 1,
+      "createdAt": "2026-09-22T02:42:28.727Z",
+      "updatedAt": "2026-09-22T02:42:28.727Z"
+    },
+    {
+      "id": "std-13",
+      "nis": "2026013",
+      "nisn": "002026013892",
+      "name": "Laras Wati",
+      "gender": "P",
+      "birthDate": "2012-05-15",
+      "classId": "cls-7b",
+      "parentName": "Bpk/Ibu Laras",
+      "parentPhone": "08129000112",
+      "active": true,
+      "version": 1,
+      "createdAt": "2026-09-22T02:42:28.727Z",
+      "updatedAt": "2026-09-22T02:42:28.727Z"
+    },
+    {
+      "id": "std-14",
+      "nis": "2026014",
+      "nisn": "002026014892",
+      "name": "Muhammad Rizki",
+      "gender": "L",
+      "birthDate": "2012-05-15",
+      "classId": "cls-7b",
+      "parentName": "Bpk/Ibu Muhammad",
+      "parentPhone": "08129000113",
+      "active": true,
+      "version": 1,
+      "createdAt": "2026-09-22T02:42:28.727Z",
+      "updatedAt": "2026-09-22T02:42:28.727Z"
+    },
+    {
+      "id": "std-15",
+      "nis": "2026015",
+      "nisn": "002026015892",
+      "name": "Nabila Zahra",
+      "gender": "P",
+      "birthDate": "2012-05-15",
+      "classId": "cls-7b",
+      "parentName": "Bpk/Ibu Nabila",
+      "parentPhone": "08129000114",
+      "active": true,
+      "version": 1,
+      "createdAt": "2026-09-22T02:42:28.727Z",
+      "updatedAt": "2026-09-22T02:42:28.727Z"
+    },
+    {
+      "id": "std-16",
+      "nis": "2026016",
+      "nisn": "002026016892",
+      "name": "Oki Setiawan",
+      "gender": "L",
+      "birthDate": "2012-05-15",
+      "classId": "cls-7b",
+      "parentName": "Bpk/Ibu Oki",
+      "parentPhone": "08129000115",
+      "active": true,
+      "version": 1,
+      "createdAt": "2026-09-22T02:42:28.727Z",
+      "updatedAt": "2026-09-22T02:42:28.727Z"
+    },
+    {
+      "id": "std-17",
+      "nis": "2026017",
+      "nisn": "002026017892",
+      "name": "Putri Amelia",
+      "gender": "P",
+      "birthDate": "2012-05-15",
+      "classId": "cls-7b",
+      "parentName": "Bpk/Ibu Putri",
+      "parentPhone": "08129000116",
+      "active": true,
+      "version": 1,
+      "createdAt": "2026-09-22T02:42:28.727Z",
+      "updatedAt": "2026-09-22T02:42:28.727Z"
+    },
+    {
+      "id": "std-18",
+      "nis": "2026018",
+      "nisn": "002026018892",
+      "name": "Qori Syahputra",
+      "gender": "L",
+      "birthDate": "2012-05-15",
+      "classId": "cls-7b",
+      "parentName": "Bpk/Ibu Qori",
+      "parentPhone": "08129000117",
+      "active": true,
+      "version": 1,
+      "createdAt": "2026-09-22T02:42:28.727Z",
+      "updatedAt": "2026-09-22T02:42:28.727Z"
+    },
+    {
+      "id": "std-19",
+      "nis": "2026019",
+      "nisn": "002026019892",
+      "name": "Rian Hidayat",
+      "gender": "L",
+      "birthDate": "2012-05-15",
+      "classId": "cls-7b",
+      "parentName": "Bpk/Ibu Rian",
+      "parentPhone": "08129000118",
+      "active": true,
+      "version": 1,
+      "createdAt": "2026-09-22T02:42:28.727Z",
+      "updatedAt": "2026-09-22T02:42:28.727Z"
+    },
+    {
+      "id": "std-20",
+      "nis": "2026020",
+      "nisn": "002026020892",
+      "name": "Salma Khoirun",
+      "gender": "P",
+      "birthDate": "2012-05-15",
+      "classId": "cls-7b",
+      "parentName": "Bpk/Ibu Salma",
+      "parentPhone": "08129000119",
+      "active": true,
+      "version": 1,
+      "createdAt": "2026-09-22T02:42:28.727Z",
+      "updatedAt": "2026-09-22T02:42:28.727Z"
+    },
+    {
+      "id": "std-21",
+      "nis": "2026021",
+      "nisn": "002026021892",
+      "name": "Taufiq Ismail",
+      "gender": "L",
+      "birthDate": "2012-05-15",
+      "classId": "cls-8a",
+      "parentName": "Bpk/Ibu Taufiq",
+      "parentPhone": "08129000120",
+      "active": true,
+      "version": 1,
+      "createdAt": "2026-09-22T02:42:28.727Z",
+      "updatedAt": "2026-09-22T02:42:28.727Z"
+    },
+    {
+      "id": "std-22",
+      "nis": "2026022",
+      "nisn": "002026022892",
+      "name": "Umar Faruq",
+      "gender": "L",
+      "birthDate": "2012-05-15",
+      "classId": "cls-8a",
+      "parentName": "Bpk/Ibu Umar",
+      "parentPhone": "08129000121",
+      "active": true,
+      "version": 1,
+      "createdAt": "2026-09-22T02:42:28.727Z",
+      "updatedAt": "2026-09-22T02:42:28.727Z"
+    },
+    {
+      "id": "std-23",
+      "nis": "2026023",
+      "nisn": "002026023892",
+      "name": "Vina Melati",
+      "gender": "P",
+      "birthDate": "2012-05-15",
+      "classId": "cls-8a",
+      "parentName": "Bpk/Ibu Vina",
+      "parentPhone": "08129000122",
+      "active": true,
+      "version": 1,
+      "createdAt": "2026-09-22T02:42:28.727Z",
+      "updatedAt": "2026-09-22T02:42:28.727Z"
+    },
+    {
+      "id": "std-24",
+      "nis": "2026024",
+      "nisn": "002026024892",
+      "name": "Wahyu Nugroho",
+      "gender": "L",
+      "birthDate": "2012-05-15",
+      "classId": "cls-8a",
+      "parentName": "Bpk/Ibu Wahyu",
+      "parentPhone": "08129000123",
+      "active": true,
+      "version": 1,
+      "createdAt": "2026-09-22T02:42:28.727Z",
+      "updatedAt": "2026-09-22T02:42:28.727Z"
+    },
+    {
+      "id": "std-25",
+      "nis": "2026025",
+      "nisn": "002026025892",
+      "name": "Xenia Maharani",
+      "gender": "P",
+      "birthDate": "2012-05-15",
+      "classId": "cls-8a",
+      "parentName": "Bpk/Ibu Xenia",
+      "parentPhone": "08129000124",
+      "active": true,
+      "version": 1,
+      "createdAt": "2026-09-22T02:42:28.727Z",
+      "updatedAt": "2026-09-22T02:42:28.727Z"
+    },
+    {
+      "id": "std-26",
+      "nis": "2026026",
+      "nisn": "002026026892",
+      "name": "Yusuf Bachtiar",
+      "gender": "L",
+      "birthDate": "2012-05-15",
+      "classId": "cls-8a",
+      "parentName": "Bpk/Ibu Yusuf",
+      "parentPhone": "08129000125",
+      "active": true,
+      "version": 1,
+      "createdAt": "2026-09-22T02:42:28.727Z",
+      "updatedAt": "2026-09-22T02:42:28.727Z"
+    },
+    {
+      "id": "std-27",
+      "nis": "2026027",
+      "nisn": "002026027892",
+      "name": "Zahra Salsabila",
+      "gender": "P",
+      "birthDate": "2012-05-15",
+      "classId": "cls-8a",
+      "parentName": "Bpk/Ibu Zahra",
+      "parentPhone": "08129000126",
+      "active": true,
+      "version": 1,
+      "createdAt": "2026-09-22T02:42:28.727Z",
+      "updatedAt": "2026-09-22T02:42:28.727Z"
+    },
+    {
+      "id": "std-28",
+      "nis": "2026028",
+      "nisn": "002026028892",
+      "name": "Alif Ramadhan",
+      "gender": "L",
+      "birthDate": "2012-05-15",
+      "classId": "cls-8a",
+      "parentName": "Bpk/Ibu Alif",
+      "parentPhone": "08129000127",
+      "active": true,
+      "version": 1,
+      "createdAt": "2026-09-22T02:42:28.727Z",
+      "updatedAt": "2026-09-22T02:42:28.727Z"
+    },
+    {
+      "id": "std-29",
+      "nis": "2026029",
+      "nisn": "002026029892",
+      "name": "Bella Anggraini",
+      "gender": "P",
+      "birthDate": "2012-05-15",
+      "classId": "cls-8a",
+      "parentName": "Bpk/Ibu Bella",
+      "parentPhone": "08129000128",
+      "active": true,
+      "version": 1,
+      "createdAt": "2026-09-22T02:42:28.727Z",
+      "updatedAt": "2026-09-22T02:42:28.727Z"
+    },
+    {
+      "id": "std-30",
+      "nis": "2026030",
+      "nisn": "002026030892",
+      "name": "Candra Wijaya",
+      "gender": "L",
+      "birthDate": "2012-05-15",
+      "classId": "cls-8a",
+      "parentName": "Bpk/Ibu Candra",
+      "parentPhone": "08129000129",
+      "active": true,
+      "version": 1,
+      "createdAt": "2026-09-22T02:42:28.727Z",
+      "updatedAt": "2026-09-22T02:42:28.727Z"
+    },
+    {
+      "id": "std-31",
+      "nis": "2026031",
+      "nisn": "002026031892",
+      "name": "Deni Herdian",
+      "gender": "L",
+      "birthDate": "2012-05-15",
+      "classId": "cls-8b",
+      "parentName": "Bpk/Ibu Deni",
+      "parentPhone": "08129000130",
+      "active": true,
+      "version": 1,
+      "createdAt": "2026-09-22T02:42:28.727Z",
+      "updatedAt": "2026-09-22T02:42:28.727Z"
+    },
+    {
+      "id": "std-32",
+      "nis": "2026032",
+      "nisn": "002026032892",
+      "name": "Elsa Safira",
+      "gender": "P",
+      "birthDate": "2012-05-15",
+      "classId": "cls-8b",
+      "parentName": "Bpk/Ibu Elsa",
+      "parentPhone": "08129000131",
+      "active": true,
+      "version": 1,
+      "createdAt": "2026-09-22T02:42:28.727Z",
+      "updatedAt": "2026-09-22T02:42:28.727Z"
+    },
+    {
+      "id": "std-33",
+      "nis": "2026033",
+      "nisn": "002026033892",
+      "name": "Fandi Ahmad",
+      "gender": "L",
+      "birthDate": "2012-05-15",
+      "classId": "cls-8b",
+      "parentName": "Bpk/Ibu Fandi",
+      "parentPhone": "08129000132",
+      "active": true,
+      "version": 1,
+      "createdAt": "2026-09-22T02:42:28.727Z",
+      "updatedAt": "2026-09-22T02:42:28.727Z"
+    },
+    {
+      "id": "std-34",
+      "nis": "2026034",
+      "nisn": "002026034892",
+      "name": "Ghea Nurul",
+      "gender": "P",
+      "birthDate": "2012-05-15",
+      "classId": "cls-8b",
+      "parentName": "Bpk/Ibu Ghea",
+      "parentPhone": "08129000133",
+      "active": true,
+      "version": 1,
+      "createdAt": "2026-09-22T02:42:28.727Z",
+      "updatedAt": "2026-09-22T02:42:28.727Z"
+    },
+    {
+      "id": "std-35",
+      "nis": "2026035",
+      "nisn": "002026035892",
+      "name": "Hadi Purnomo",
+      "gender": "L",
+      "birthDate": "2012-05-15",
+      "classId": "cls-8b",
+      "parentName": "Bpk/Ibu Hadi",
+      "parentPhone": "08129000134",
+      "active": true,
+      "version": 1,
+      "createdAt": "2026-09-22T02:42:28.727Z",
+      "updatedAt": "2026-09-22T02:42:28.727Z"
+    },
+    {
+      "id": "std-36",
+      "nis": "2026036",
+      "nisn": "002026036892",
+      "name": "Intan Suci",
+      "gender": "P",
+      "birthDate": "2012-05-15",
+      "classId": "cls-8b",
+      "parentName": "Bpk/Ibu Intan",
+      "parentPhone": "08129000135",
+      "active": true,
+      "version": 1,
+      "createdAt": "2026-09-22T02:42:28.727Z",
+      "updatedAt": "2026-09-22T02:42:28.727Z"
+    },
+    {
+      "id": "std-37",
+      "nis": "2026037",
+      "nisn": "002026037892",
+      "name": "Jerry Saputra",
+      "gender": "L",
+      "birthDate": "2012-05-15",
+      "classId": "cls-8b",
+      "parentName": "Bpk/Ibu Jerry",
+      "parentPhone": "08129000136",
+      "active": true,
+      "version": 1,
+      "createdAt": "2026-09-22T02:42:28.727Z",
+      "updatedAt": "2026-09-22T02:42:28.727Z"
+    },
+    {
+      "id": "std-38",
+      "nis": "2026038",
+      "nisn": "002026038892",
+      "name": "Kirana Maharani",
+      "gender": "P",
+      "birthDate": "2012-05-15",
+      "classId": "cls-8b",
+      "parentName": "Bpk/Ibu Kirana",
+      "parentPhone": "08129000137",
+      "active": true,
+      "version": 1,
+      "createdAt": "2026-09-22T02:42:28.727Z",
+      "updatedAt": "2026-09-22T02:42:28.727Z"
+    },
+    {
+      "id": "std-39",
+      "nis": "2026039",
+      "nisn": "002026039892",
+      "name": "Lukman Hakim",
+      "gender": "L",
+      "birthDate": "2012-05-15",
+      "classId": "cls-8b",
+      "parentName": "Bpk/Ibu Lukman",
+      "parentPhone": "08129000138",
+      "active": true,
+      "version": 1,
+      "createdAt": "2026-09-22T02:42:28.727Z",
+      "updatedAt": "2026-09-22T02:42:28.727Z"
+    },
+    {
+      "id": "std-40",
+      "nis": "2026040",
+      "nisn": "002026040892",
+      "name": "Mira Santika",
+      "gender": "P",
+      "birthDate": "2012-05-15",
+      "classId": "cls-8b",
+      "parentName": "Bpk/Ibu Mira",
+      "parentPhone": "08129000139",
+      "active": true,
+      "version": 1,
+      "createdAt": "2026-09-22T02:42:28.727Z",
+      "updatedAt": "2026-09-22T02:42:28.727Z"
+    },
+    {
+      "id": "std-41",
+      "nis": "2026041",
+      "nisn": "002026041892",
+      "name": "Niko Ardiansyah",
+      "gender": "L",
+      "birthDate": "2012-05-15",
+      "classId": "cls-9a",
+      "parentName": "Bpk/Ibu Niko",
+      "parentPhone": "08129000140",
+      "active": true,
+      "version": 1,
+      "createdAt": "2026-09-22T02:42:28.727Z",
+      "updatedAt": "2026-09-22T02:42:28.727Z"
+    },
+    {
+      "id": "std-42",
+      "nis": "2026042",
+      "nisn": "002026042892",
+      "name": "Olivia Syafira",
+      "gender": "P",
+      "birthDate": "2012-05-15",
+      "classId": "cls-9a",
+      "parentName": "Bpk/Ibu Olivia",
+      "parentPhone": "08129000141",
+      "active": true,
+      "version": 1,
+      "createdAt": "2026-09-22T02:42:28.727Z",
+      "updatedAt": "2026-09-22T02:42:28.727Z"
+    },
+    {
+      "id": "std-43",
+      "nis": "2026043",
+      "nisn": "002026043892",
+      "name": "Panji Gumilang",
+      "gender": "L",
+      "birthDate": "2012-05-15",
+      "classId": "cls-9a",
+      "parentName": "Bpk/Ibu Panji",
+      "parentPhone": "08129000142",
+      "active": true,
+      "version": 1,
+      "createdAt": "2026-09-22T02:42:28.727Z",
+      "updatedAt": "2026-09-22T02:42:28.727Z"
+    },
+    {
+      "id": "std-44",
+      "nis": "2026044",
+      "nisn": "002026044892",
+      "name": "Rara Kusuma",
+      "gender": "P",
+      "birthDate": "2012-05-15",
+      "classId": "cls-9a",
+      "parentName": "Bpk/Ibu Rara",
+      "parentPhone": "08129000143",
+      "active": true,
+      "version": 1,
+      "createdAt": "2026-09-22T02:42:28.727Z",
+      "updatedAt": "2026-09-22T02:42:28.727Z"
+    },
+    {
+      "id": "std-45",
+      "nis": "2026045",
+      "nisn": "002026045892",
+      "name": "Surya Darma",
+      "gender": "L",
+      "birthDate": "2012-05-15",
+      "classId": "cls-9a",
+      "parentName": "Bpk/Ibu Surya",
+      "parentPhone": "08129000144",
+      "active": true,
+      "version": 1,
+      "createdAt": "2026-09-22T02:42:28.727Z",
+      "updatedAt": "2026-09-22T02:42:28.727Z"
+    },
+    {
+      "id": "std-46",
+      "nis": "2026046",
+      "nisn": "002026046892",
+      "name": "Tania Pratiwi",
+      "gender": "P",
+      "birthDate": "2012-05-15",
+      "classId": "cls-9a",
+      "parentName": "Bpk/Ibu Tania",
+      "parentPhone": "08129000145",
+      "active": true,
+      "version": 1,
+      "createdAt": "2026-09-22T02:42:28.727Z",
+      "updatedAt": "2026-09-22T02:42:28.727Z"
+    },
+    {
+      "id": "std-47",
+      "nis": "2026047",
+      "nisn": "002026047892",
+      "name": "Utari Lestari",
+      "gender": "P",
+      "birthDate": "2012-05-15",
+      "classId": "cls-9a",
+      "parentName": "Bpk/Ibu Utari",
+      "parentPhone": "08129000146",
+      "active": true,
+      "version": 1,
+      "createdAt": "2026-09-22T02:42:28.727Z",
+      "updatedAt": "2026-09-22T02:42:28.727Z"
+    },
+    {
+      "id": "std-48",
+      "nis": "2026048",
+      "nisn": "002026048892",
+      "name": "Vicky Prasetyo",
+      "gender": "L",
+      "birthDate": "2012-05-15",
+      "classId": "cls-9a",
+      "parentName": "Bpk/Ibu Vicky",
+      "parentPhone": "08129000147",
+      "active": true,
+      "version": 1,
+      "createdAt": "2026-09-22T02:42:28.727Z",
+      "updatedAt": "2026-09-22T02:42:28.727Z"
+    },
+    {
+      "id": "std-49",
+      "nis": "2026049",
+      "nisn": "002026049892",
+      "name": "Wulan Dari",
+      "gender": "P",
+      "birthDate": "2012-05-15",
+      "classId": "cls-9a",
+      "parentName": "Bpk/Ibu Wulan",
+      "parentPhone": "08129000148",
+      "active": true,
+      "version": 1,
+      "createdAt": "2026-09-22T02:42:28.727Z",
+      "updatedAt": "2026-09-22T02:42:28.727Z"
+    },
+    {
+      "id": "std-50",
+      "nis": "2026050",
+      "nisn": "002026050892",
+      "name": "Zidan Maulana",
+      "gender": "L",
+      "birthDate": "2012-05-15",
+      "classId": "cls-9a",
+      "parentName": "Bpk/Ibu Zidan",
+      "parentPhone": "08129000149",
+      "active": true,
+      "version": 1,
+      "createdAt": "2026-09-22T02:42:28.727Z",
+      "updatedAt": "2026-09-22T02:42:28.727Z"
+    }
+  ],
+  "teachingSchedules": [
+    {
+      "id": "sch-budi-8a-senin",
+      "teacherId": "tch-budi-01",
+      "classId": "cls-8a",
+      "subjectId": "sbj-mtk",
+      "academicYearId": "ay-2026-2027",
+      "semesterId": "sem-2026-1",
+      "dayOfWeek": 1,
+      "startTime": "07:30",
+      "endTime": "08:15",
+      "room": "R. 201",
+      "active": true,
+      "version": 1
+    },
+    {
+      "id": "sch-budi-8b-senin",
+      "teacherId": "tch-budi-01",
+      "classId": "cls-8b",
+      "subjectId": "sbj-mtk",
+      "academicYearId": "ay-2026-2027",
+      "semesterId": "sem-2026-1",
+      "dayOfWeek": 1,
+      "startTime": "08:15",
+      "endTime": "09:00",
+      "room": "R. 202",
+      "active": true,
+      "version": 1
+    },
+    {
+      "id": "sch-siti-7a-senin",
+      "teacherId": "tch-siti-02",
+      "classId": "cls-7a",
+      "subjectId": "sbj-bin",
+      "academicYearId": "ay-2026-2027",
+      "semesterId": "sem-2026-1",
+      "dayOfWeek": 1,
+      "startTime": "07:30",
+      "endTime": "08:45",
+      "room": "R. 101",
+      "active": true,
+      "version": 1
+    },
+    {
+      "id": "sch-agus-7b-senin",
+      "teacherId": "tch-agus-03",
+      "classId": "cls-7b",
+      "subjectId": "sbj-ips",
+      "academicYearId": "ay-2026-2027",
+      "semesterId": "sem-2026-1",
+      "dayOfWeek": 1,
+      "startTime": "07:30",
+      "endTime": "08:45",
+      "room": "R. 102",
+      "active": true,
+      "version": 1
+    },
+    {
+      "id": "sch-dewi-9a-senin",
+      "teacherId": "tch-dewi-04",
+      "classId": "cls-9a",
+      "subjectId": "sbj-ipa",
+      "academicYearId": "ay-2026-2027",
+      "semesterId": "sem-2026-1",
+      "dayOfWeek": 1,
+      "startTime": "07:30",
+      "endTime": "08:45",
+      "room": "R. 301",
+      "active": true,
+      "version": 1
+    }
+  ],
+  "picketSchedules": [
+    {
+      "id": "pkt-budi-today",
+      "teacherId": "tch-budi-01",
+      "date": "2026-09-22",
+      "startTime": "07:00",
+      "endTime": "14:00",
+      "location": "Pos Utama & Lobby Sekolah",
+      "active": true,
+      "version": 1
+    },
+    {
+      "id": "pkt-agus-today",
+      "teacherId": "tch-agus-03",
+      "date": "2026-09-22",
+      "startTime": "07:00",
+      "endTime": "14:00",
+      "location": "Gerbang Belakang & Lapangan",
+      "active": true,
+      "version": 1
+    },
+    {
+      "id": "pkt-budi-test",
+      "teacherId": "tch-budi-01",
+      "date": "2026-09-28",
+      "startTime": "07:00",
+      "endTime": "14:00",
+      "location": "Pos Lobby Utama",
+      "active": true,
+      "version": 1
+    }
+  ],
+  "holidays": [
+    {
+      "id": "06814204-6e53-4023-9460-8bf7e8ff10a1",
+      "date": "2026-08-17",
+      "name": "Hari Kemerdekaan RI Ke-81",
+      "description": "Libur Nasional",
+      "isNational": true
+    },
+    {
+      "id": "e36fffb4-0e6d-4cb8-91d7-b4111ec83b22",
+      "date": "2026-10-01",
+      "name": "Hari Kesaktian Pancasila",
+      "description": "Upacara Nasional",
+      "isNational": false
+    },
+    {
+      "id": "de26a3d5-99c2-4573-a3a8-1d51888a515a",
+      "date": "2026-12-25",
+      "name": "Hari Raya Natal",
+      "description": "Libur Nasional",
+      "isNational": true
+    }
+  ],
+  "modules": [
+    {
+      "id": "mod-core",
+      "code": "CORE",
+      "name": "Platform Core & Pengaturan",
+      "description": "Manajemen sekolah, user, role, permission, dan audit log.",
+      "icon": "Settings",
+      "route": "/settings",
+      "status": "ACTIVE",
+      "enabled": true,
+      "sortOrder": 1,
+      "version": "1.0.0"
+    },
+    {
+      "id": "mod-att",
+      "code": "ATTENDANCE",
+      "name": "Modul Absensi Sekolah",
+      "description": "Absensi guru mengajar, absensi piket, absensi siswa, dan koreksi.",
+      "icon": "ClipboardCheck",
+      "route": "/attendance",
+      "status": "ACTIVE",
+      "enabled": true,
+      "sortOrder": 2,
+      "version": "1.0.0"
+    },
+    {
+      "id": "mod-kes",
+      "code": "KESISWAAN",
+      "name": "Kesiswaan",
+      "description": "Data mutasi siswa, catatan pelanggaran, buku induk, prestasi, dan alumni.",
+      "icon": "Users",
+      "route": "/kesiswaan",
+      "status": "PLANNED",
+      "enabled": false,
+      "sortOrder": 3,
+      "version": "1.0.0"
+    },
+    {
+      "id": "mod-akd",
+      "code": "AKADEMIK",
+      "name": "Akademik & Kurikulum",
+      "description": "Kurikulum merdeka, silabus, jurnal mengajar, penilaian, dan e-rapor.",
+      "icon": "GraduationCap",
+      "route": "/akademik",
+      "status": "PLANNED",
+      "enabled": false,
+      "sortOrder": 4,
+      "version": "1.0.0"
+    },
+    {
+      "id": "mod-kpg",
+      "code": "KEPEGAWAIAN",
+      "name": "Kepegawaian (SDM)",
+      "description": "Manajemen berkas guru & tenaga kependidikan, kenaikan pangkat, cuti, dan dinas luar.",
+      "icon": "Briefcase",
+      "route": "/kepegawaian",
+      "status": "PLANNED",
+      "enabled": false,
+      "sortOrder": 5,
+      "version": "1.0.0"
+    },
+    {
+      "id": "mod-keu",
+      "code": "KEUANGAN",
+      "name": "Keuangan & SPP",
+      "description": "Billing tagihan, pembayaran SPP, kas bendahara, pemasukan dan pengeluaran.",
+      "icon": "Wallet",
+      "route": "/keuangan",
+      "status": "PLANNED",
+      "enabled": false,
+      "sortOrder": 6,
+      "version": "1.0.0"
+    },
+    {
+      "id": "mod-srp",
+      "code": "SARPRAS",
+      "name": "Sarana & Prasarana",
+      "description": "Inventarisasi aset barang, monitoring kondisi ruangan, peminjaman, dan pemeliharaan.",
+      "icon": "Building2",
+      "route": "/sarpras",
+      "status": "PLANNED",
+      "enabled": false,
+      "sortOrder": 7,
+      "version": "1.0.0"
+    },
+    {
+      "id": "mod-pus",
+      "code": "PERPUSTAKAAN",
+      "name": "Perpustakaan Terpadu",
+      "description": "Katalog buku, sirkulasi peminjaman/pengembalian, kartu anggota, dan denda.",
+      "icon": "BookOpen",
+      "route": "/perpustakaan",
+      "status": "PLANNED",
+      "enabled": false,
+      "sortOrder": 8,
+      "version": "1.0.0"
+    },
+    {
+      "id": "mod-pdb",
+      "code": "PPDB",
+      "name": "PPDB Online",
+      "description": "Pendaftaran peserta didik baru, seleksi nilai/zonasi, verifikasi berkas, dan daftar ulang.",
+      "icon": "UserPlus",
+      "route": "/ppdb",
+      "status": "PLANNED",
+      "enabled": false,
+      "sortOrder": 9,
+      "version": "1.0.0"
+    },
+    {
+      "id": "mod-srt",
+      "code": "SURAT",
+      "name": "Surat & Tata Usaha",
+      "description": "Surat masuk, surat keluar, nomor agenda otomatis, disposisi digital, dan arsip.",
+      "icon": "Mail",
+      "route": "/surat",
+      "status": "PLANNED",
+      "enabled": false,
+      "sortOrder": 10,
+      "version": "1.0.0"
+    },
+    {
+      "id": "mod-kom",
+      "code": "KOMUNIKASI",
+      "name": "Komunikasi & Pengumuman",
+      "description": "Broadcasting pengumuman sekolah, notifikasi WhatsApp gateway/SMS ke wali murid.",
+      "icon": "Megaphone",
+      "route": "/komunikasi",
+      "status": "PLANNED",
+      "enabled": false,
+      "sortOrder": 11,
+      "version": "1.0.0"
+    },
+    {
+      "id": "mod-lap",
+      "code": "LAPORAN",
+      "name": "Pusat Pelaporan & Analitik",
+      "description": "Eksekutif dashboard, rekapitulasi cross-module, dan ekspor data agregat.",
+      "icon": "BarChart3",
+      "route": "/reports",
+      "status": "PLANNED",
+      "enabled": false,
+      "sortOrder": 12,
+      "version": "1.0.0"
+    }
+  ],
+  "teacherSubstitutions": [],
+  "teacherAttendance": [
+    {
+      "id": "961fc441-3c5d-4105-878c-b10db5bd6e62",
+      "teacherId": "tch-budi-01",
+      "attendanceType": "TEACHING",
+      "scheduleId": "sch-budi-8a-senin",
+      "attendanceDate": "2026-09-28",
+      "scheduledStart": "07:30",
+      "scheduledEnd": "08:15",
+      "actualTime": "07:30",
+      "status": "HADIR",
+      "source": "SYSTEM",
+      "version": 1
+    },
+    {
+      "id": "d27a2a31-d31a-4490-bb04-c6cc522b5add",
+      "teacherId": "tch-budi-01",
+      "attendanceType": "TEACHING",
+      "scheduleId": "sch-budi-8b-senin",
+      "attendanceDate": "2026-09-28",
+      "scheduledStart": "08:15",
+      "scheduledEnd": "09:00",
+      "actualTime": "08:15",
+      "status": "HADIR",
+      "source": "SYSTEM",
+      "version": 1
+    },
+    {
+      "id": "049e4890-5898-4be8-bb64-b4782978d501",
+      "teacherId": "tch-siti-02",
+      "attendanceType": "TEACHING",
+      "scheduleId": "sch-siti-7a-senin",
+      "attendanceDate": "2026-09-28",
+      "scheduledStart": "07:30",
+      "scheduledEnd": "08:45",
+      "actualTime": "07:30",
+      "status": "HADIR",
+      "source": "SYSTEM",
+      "version": 1
+    },
+    {
+      "id": "b4c237fd-bd13-4088-9e57-0ef0b32c2cb1",
+      "teacherId": "tch-agus-03",
+      "attendanceType": "TEACHING",
+      "scheduleId": "sch-agus-7b-senin",
+      "attendanceDate": "2026-09-28",
+      "scheduledStart": "07:30",
+      "scheduledEnd": "08:45",
+      "actualTime": "07:30",
+      "status": "HADIR",
+      "source": "SYSTEM",
+      "version": 1
+    },
+    {
+      "id": "092aa377-9d05-4825-accb-1ef0dbe882ba",
+      "teacherId": "tch-dewi-04",
+      "attendanceType": "TEACHING",
+      "scheduleId": "sch-dewi-9a-senin",
+      "attendanceDate": "2026-09-28",
+      "scheduledStart": "07:30",
+      "scheduledEnd": "08:45",
+      "actualTime": "07:30",
+      "status": "HADIR",
+      "source": "SYSTEM",
+      "version": 1
+    },
+    {
+      "id": "97c32afc-ea23-4719-9d21-92218cf506c0",
+      "teacherId": "tch-budi-01",
+      "attendanceType": "PICKET",
+      "scheduleId": "pkt-budi-test",
+      "attendanceDate": "2026-09-28",
+      "scheduledStart": "07:00",
+      "scheduledEnd": "14:00",
+      "actualTime": "07:00",
+      "status": "HADIR",
+      "source": "SYSTEM",
+      "note": "Tugas Piket di Pos Lobby Utama",
+      "version": 2,
+      "updatedAt": "2026-09-22T02:42:28.939Z"
+    }
+  ],
+  "studentAttendance": [
+    {
+      "id": "ef524ee9-ee5c-404b-8ae1-600e0ab0aaf0",
+      "studentId": "std-21",
+      "classId": "cls-8a",
+      "teacherId": "tch-budi-01",
+      "subjectId": "sbj-mtk",
+      "scheduleId": "sch-budi-8a-senin",
+      "attendanceDate": "2026-09-28",
+      "status": "HADIR",
+      "version": 3,
+      "originDeviceId": "local",
+      "note": "Surat dokter",
+      "updatedAt": "2026-09-22T02:42:28.943Z"
+    },
+    {
+      "id": "7c97f6d4-4df2-46b8-94d7-024ea28f099b",
+      "studentId": "std-22",
+      "classId": "cls-8a",
+      "teacherId": "tch-budi-01",
+      "subjectId": "sbj-mtk",
+      "scheduleId": "sch-budi-8a-senin",
+      "attendanceDate": "2026-09-28",
+      "status": "IZIN",
+      "version": 2,
+      "originDeviceId": "local",
+      "updatedAt": "2026-09-22T02:42:28.941Z"
+    },
+    {
+      "id": "482a35d8-20fa-4b33-9ab0-4fd1500e5b01",
+      "studentId": "std-23",
+      "classId": "cls-8a",
+      "teacherId": "tch-budi-01",
+      "subjectId": "sbj-mtk",
+      "scheduleId": "sch-budi-8a-senin",
+      "attendanceDate": "2026-09-28",
+      "status": "HADIR",
+      "version": 2,
+      "originDeviceId": "local",
+      "updatedAt": "2026-09-22T02:42:28.941Z"
+    },
+    {
+      "id": "8dbd02d0-7a2b-4bf9-aa1a-4ebe370f2b0f",
+      "studentId": "std-24",
+      "classId": "cls-8a",
+      "teacherId": "tch-budi-01",
+      "subjectId": "sbj-mtk",
+      "scheduleId": "sch-budi-8a-senin",
+      "attendanceDate": "2026-09-28",
+      "status": "HADIR",
+      "version": 2,
+      "originDeviceId": "local",
+      "updatedAt": "2026-09-22T02:42:28.941Z"
+    },
+    {
+      "id": "8f4f32da-ddbc-40d4-812b-434f156b878c",
+      "studentId": "std-25",
+      "classId": "cls-8a",
+      "teacherId": "tch-budi-01",
+      "subjectId": "sbj-mtk",
+      "scheduleId": "sch-budi-8a-senin",
+      "attendanceDate": "2026-09-28",
+      "status": "HADIR",
+      "version": 2,
+      "originDeviceId": "local",
+      "updatedAt": "2026-09-22T02:42:28.941Z"
+    },
+    {
+      "id": "e7f58388-3921-4606-99ca-0a7f920e9d37",
+      "studentId": "std-26",
+      "classId": "cls-8a",
+      "teacherId": "tch-budi-01",
+      "subjectId": "sbj-mtk",
+      "scheduleId": "sch-budi-8a-senin",
+      "attendanceDate": "2026-09-28",
+      "status": "HADIR",
+      "version": 2,
+      "originDeviceId": "local",
+      "updatedAt": "2026-09-22T02:42:28.941Z"
+    },
+    {
+      "id": "fb0108c1-1d16-43d5-965c-40e8bdeaf1e3",
+      "studentId": "std-27",
+      "classId": "cls-8a",
+      "teacherId": "tch-budi-01",
+      "subjectId": "sbj-mtk",
+      "scheduleId": "sch-budi-8a-senin",
+      "attendanceDate": "2026-09-28",
+      "status": "HADIR",
+      "version": 2,
+      "originDeviceId": "local",
+      "updatedAt": "2026-09-22T02:42:28.941Z"
+    },
+    {
+      "id": "fe842441-8e26-4afc-8020-2ecdb30fa24a",
+      "studentId": "std-28",
+      "classId": "cls-8a",
+      "teacherId": "tch-budi-01",
+      "subjectId": "sbj-mtk",
+      "scheduleId": "sch-budi-8a-senin",
+      "attendanceDate": "2026-09-28",
+      "status": "HADIR",
+      "version": 2,
+      "originDeviceId": "local",
+      "updatedAt": "2026-09-22T02:42:28.941Z"
+    },
+    {
+      "id": "9124bf65-74a0-4c5b-bd0e-efa037ab4a8d",
+      "studentId": "std-29",
+      "classId": "cls-8a",
+      "teacherId": "tch-budi-01",
+      "subjectId": "sbj-mtk",
+      "scheduleId": "sch-budi-8a-senin",
+      "attendanceDate": "2026-09-28",
+      "status": "HADIR",
+      "version": 2,
+      "originDeviceId": "local",
+      "updatedAt": "2026-09-22T02:42:28.941Z"
+    },
+    {
+      "id": "620008e1-d64b-4604-a8a6-a4b7df5f248a",
+      "studentId": "std-30",
+      "classId": "cls-8a",
+      "teacherId": "tch-budi-01",
+      "subjectId": "sbj-mtk",
+      "scheduleId": "sch-budi-8a-senin",
+      "attendanceDate": "2026-09-28",
+      "status": "HADIR",
+      "version": 2,
+      "originDeviceId": "local",
+      "updatedAt": "2026-09-22T02:42:28.941Z"
+    }
+  ],
+  "attendanceCorrections": [
+    {
+      "id": "8b3af449-3c7b-4143-8746-c22e13385ed5",
+      "targetAttendanceId": "ef524ee9-ee5c-404b-8ae1-600e0ab0aaf0",
+      "targetType": "STUDENT",
+      "oldStatus": "SAKIT",
+      "newStatus": "HADIR",
+      "reason": "Siswa salah input, ternyata hadir di kelas",
+      "correctedByUserId": "usr-admin-01",
+      "correctedAt": "2026-09-22T02:42:28.943Z"
+    }
+  ],
+  "auditLogs": [
+    {
+      "id": "97211ed4-dea2-4f47-b4de-615c81343d0e",
+      "userId": "usr-admin-01",
+      "action": "ATTENDANCE_CORRECTION",
+      "entity": "student_attendance",
+      "entityId": "ef524ee9-ee5c-404b-8ae1-600e0ab0aaf0",
+      "oldData": "{\"status\":\"SAKIT\"}",
+      "newData": "{\"status\":\"HADIR\"}",
+      "description": "Koreksi absensi STUDENT: SAKIT -> HADIR. Alasan: Siswa salah input, ternyata hadir di kelas",
+      "createdAt": "2026-09-22T02:42:28.944Z"
+    },
+    {
+      "id": "8e858d2f-91e2-404b-81dc-30382a00bb49",
+      "userId": null,
+      "action": "ATTENDANCE_CREATE",
+      "entity": "student_attendance",
+      "entityId": null,
+      "oldData": null,
+      "newData": null,
+      "description": "Input absensi siswa kelas cls-8a (10 siswa) untuk tanggal 2026-09-28",
+      "createdAt": "2026-09-22T02:42:28.942Z"
+    },
+    {
+      "id": "44b9ac65-d562-445e-906c-e1895c5d3489",
+      "userId": null,
+      "action": "SYNC",
+      "entity": "sync_devices",
+      "entityId": "device-test-01",
+      "oldData": null,
+      "newData": null,
+      "description": "Sinkronisasi push dari device-test-01: 0 berhasil, 1 konflik",
+      "createdAt": "2026-09-22T02:42:28.940Z"
+    },
+    {
+      "id": "369ffb12-aa59-4702-a3ad-fb0abeaeb095",
+      "userId": null,
+      "action": "SYNC",
+      "entity": "sync_devices",
+      "entityId": "device-test-01",
+      "oldData": null,
+      "newData": null,
+      "description": "Sinkronisasi push dari device-test-01: 1 berhasil, 0 konflik",
+      "createdAt": "2026-09-22T02:42:28.939Z"
+    },
+    {
+      "id": "8787f525-3e2c-42e0-b49a-18bb011971f7",
+      "userId": null,
+      "action": "ATTENDANCE_GENERATE",
+      "entity": "teacher_attendance",
+      "entityId": null,
+      "oldData": null,
+      "newData": null,
+      "description": "Generate absensi otomatis untuk tanggal 2026-09-28: 5 mengajar, 1 piket",
+      "createdAt": "2026-09-22T02:42:28.938Z"
+    },
+    {
+      "id": "0cef868b-4697-41f2-8d2a-1ff24fab63bc",
+      "userId": null,
+      "action": "ATTENDANCE_GENERATE",
+      "entity": "teacher_attendance",
+      "entityId": null,
+      "oldData": null,
+      "newData": null,
+      "description": "Generate absensi otomatis untuk tanggal 2026-09-28: 5 mengajar, 1 piket",
+      "createdAt": "2026-09-22T02:42:28.937Z"
+    },
+    {
+      "id": "954ba6e5-cb9b-4c7c-960f-f085f2b1387c",
+      "userId": "usr-guru-budi",
+      "action": "LOGIN",
+      "entity": "users",
+      "entityId": "usr-guru-budi",
+      "oldData": null,
+      "newData": null,
+      "description": "User budi berhasil login",
+      "createdAt": "2026-09-22T02:42:28.934Z"
+    },
+    {
+      "id": "aadca3b0-d9a1-4b58-8177-5a8e508b7aaf",
+      "userId": "usr-admin-01",
+      "action": "LOGIN",
+      "entity": "users",
+      "entityId": "usr-admin-01",
+      "oldData": null,
+      "newData": null,
+      "description": "User admin berhasil login",
+      "createdAt": "2026-09-22T02:42:28.827Z"
+    },
+    {
+      "id": "50ff1628-383f-4539-b81d-3e16797773e1",
+      "userId": "usr-admin-01",
+      "action": "SYSTEM_INIT",
+      "entity": "school",
+      "entityId": "sch-alhikam-001",
+      "description": "Inisialisasi sistem SIAKAD SEKOLAH TERPADU Fase 1",
+      "createdAt": "2026-09-22T02:42:28.727Z"
+    }
+  ],
+  "syncDevices": [
+    {
+      "id": "481b29c4-4431-4eda-83f7-79767289315d",
+      "deviceId": "device-test-01",
+      "deviceName": "Perangkat device-t",
+      "deviceType": "CLIENT_APP",
+      "lastSyncAt": "2026-09-22T02:42:28.939Z",
+      "isActive": true,
+      "registeredAt": "2026-09-22T02:42:28.939Z"
+    }
+  ],
+  "syncChanges": [],
+  "syncConflicts": [
+    {
+      "id": "29ee3616-dc9f-42b1-9ab1-9d6e2e534f84",
+      "entity": "teacher_attendance",
+      "entityId": "97c32afc-ea23-4719-9d21-92218cf506c0",
+      "localData": {
+        "id": "97c32afc-ea23-4719-9d21-92218cf506c0",
+        "teacherId": "tch-budi-01",
+        "attendanceType": "PICKET",
+        "scheduleId": "pkt-budi-test",
+        "attendanceDate": "2026-09-28",
+        "scheduledStart": "07:00",
+        "scheduledEnd": "14:00",
+        "actualTime": "07:00",
+        "status": "HADIR",
+        "source": "SYSTEM",
+        "note": "Tugas Piket di Pos Lobby Utama",
+        "version": 1
+      },
+      "serverData": {
+        "id": "97c32afc-ea23-4719-9d21-92218cf506c0",
+        "teacherId": "tch-budi-01",
+        "attendanceType": "PICKET",
+        "scheduleId": "pkt-budi-test",
+        "attendanceDate": "2026-09-28",
+        "scheduledStart": "07:00",
+        "scheduledEnd": "14:00",
+        "actualTime": "07:00",
+        "status": "HADIR",
+        "source": "SYSTEM",
+        "note": "Tugas Piket di Pos Lobby Utama",
+        "version": 2,
+        "updatedAt": "2026-09-22T02:42:28.939Z"
+      },
+      "localVersion": 1,
+      "serverVersion": 2,
+      "createdAt": "2026-09-22T02:42:28.939Z"
+    }
+  ]
+}

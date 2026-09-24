@@ -1,0 +1,8 @@
+{
+  "name": "SIAKAD SEKOLAH TERPADU",
+  "description": "Platform Administrasi dan Manajemen Sekolah Terintegrasi - Core & Modul Absensi Sekolah",
+  "requestFramePermissions": [
+    "camera"
+  ],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

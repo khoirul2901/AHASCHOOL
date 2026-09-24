@@ -1,0 +1,552 @@
+// Prisma schema for SIAKAD SEKOLAH TERPADU
+// Modular Monolith Architecture - Core + Attendance Module
+// Database: MySQL 8.x
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+// ==========================================
+// 1. CORE & ORGANIZATIONAL DOMAIN
+// ==========================================
+
+model School {
+  id          String   @id @default(uuid())
+  npsn        String   @unique
+  name        String
+  address     String?
+  phone       String?
+  email       String?
+  principal   String?
+  logoUrl     String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  version     Int      @default(1)
+
+  academicYears AcademicYear[]
+  users         User[]
+  settings      SchoolSetting[]
+
+  @@map("schools")
+}
+
+model SchoolSetting {
+  id                     String   @id @default(uuid())
+  schoolId               String
+  teacherAttendanceMode  String   @default("AUTO_HADIR") // AUTO_HADIR, CHECK_IN, AUTO_HADIR_WITH_CONFIRMATION
+  lateToleranceMinutes   Int      @default(10)
+  autoSyncIntervalSec    Int      @default(30)
+  allowOfflineAttendance Boolean  @default(true)
+  updatedAt              DateTime @updatedAt
+
+  school School @relation(fields: [schoolId], references: [id], onDelete: Cascade)
+
+  @@unique([schoolId])
+  @@map("school_settings")
+}
+
+model AcademicYear {
+  id        String    @id @default(uuid())
+  schoolId  String
+  name      String    // e.g., "2026/2027"
+  startDate DateTime
+  endDate   DateTime
+  active    Boolean   @default(true)
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  version   Int       @default(1)
+
+  school    School     @relation(fields: [schoolId], references: [id], onDelete: Cascade)
+  semesters Semester[]
+  classes   Class[]
+  schedules TeachingSchedule[]
+
+  @@unique([schoolId, name])
+  @@map("academic_years")
+}
+
+model Semester {
+  id             String       @id @default(uuid())
+  academicYearId String
+  semesterNumber Int          // 1 (Ganjil) or 2 (Genap)
+  name           String       // "Ganjil" or "Genap"
+  active         Boolean      @default(true)
+  startDate      DateTime
+  endDate        DateTime
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @updatedAt
+  version        Int          @default(1)
+
+  academicYear   AcademicYear @relation(fields: [academicYearId], references: [id], onDelete: Cascade)
+  schedules      TeachingSchedule[]
+
+  @@unique([academicYearId, semesterNumber])
+  @@map("semesters")
+}
+
+// ==========================================
+// 2. USER, RBAC & AUTHENTICATION DOMAIN
+// ==========================================
+
+model User {
+  id             String      @id @default(uuid())
+  schoolId       String
+  username       String      @unique
+  passwordHash   String
+  fullName       String
+  email          String?     @unique
+  phone          String?
+  active         Boolean     @default(true)
+  lastLoginAt    DateTime?
+  originDeviceId String?
+  createdAt      DateTime    @default(now())
+  updatedAt      DateTime    @updatedAt
+  deletedAt      DateTime?
+  version        Int         @default(1)
+
+  school         School      @relation(fields: [schoolId], references: [id], onDelete: Cascade)
+  roles          UserRole[]
+  teacherProfile Teacher?
+  auditLogs      AuditLog[]
+
+  @@map("users")
+}
+
+model Role {
+  id          String   @id @default(uuid())
+  code        String   @unique // SUPER_ADMIN, GURU, WALI_KELAS, etc.
+  name        String
+  description String?
+  isSystem    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  users       UserRole[]
+  permissions RolePermission[]
+
+  @@map("roles")
+}
+
+model Permission {
+  id          String   @id @default(uuid())
+  code        String   @unique // student.view, attendance.correct, etc.
+  name        String
+  module      String   // CORE, ATTENDANCE, etc.
+  description String?
+  createdAt   DateTime @default(now())
+
+  roles       RolePermission[]
+
+  @@map("permissions")
+}
+
+model UserRole {
+  id        String   @id @default(uuid())
+  userId    String
+  roleId    String
+  createdAt DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  role Role @relation(fields: [roleId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, roleId])
+  @@map("user_roles")
+}
+
+model RolePermission {
+  id           String   @id @default(uuid())
+  roleId       String
+  permissionId String
+  createdAt    DateTime @default(now())
+
+  role       Role       @relation(fields: [roleId], references: [id], onDelete: Cascade)
+  permission Permission @relation(fields: [permissionId], references: [id], onDelete: Cascade)
+
+  @@unique([roleId, permissionId])
+  @@map("role_permissions")
+}
+
+// ==========================================
+// 3. MASTER DATA DOMAIN
+// ==========================================
+
+model Teacher {
+  id             String    @id @default(uuid())
+  userId         String?   @unique
+  nip            String?   @unique
+  name           String
+  email          String?
+  phone          String?
+  gender         String    // L / P
+  address        String?
+  active         Boolean   @default(true)
+  originDeviceId String?
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+  deletedAt      DateTime?
+  version        Int       @default(1)
+
+  user           User?               @relation(fields: [userId], references: [id], onDelete: SetNull)
+  homeroomClasses Class[]            @relation("HomeroomTeacher")
+  teachingSchedules TeachingSchedule[]
+  picketSchedules   PicketSchedule[]
+  attendances       TeacherAttendance[]
+  substitutedSchedules TeacherSubstitution[] @relation("OriginalTeacher")
+  replacementSchedules TeacherSubstitution[] @relation("ReplacementTeacher")
+
+  @@index([nip])
+  @@index([name])
+  @@map("teachers")
+}
+
+model Student {
+  id             String    @id @default(uuid())
+  nis            String    @unique
+  nisn           String?   @unique
+  name           String
+  gender         String    // L / P
+  birthDate      DateTime?
+  classId        String
+  parentName     String?
+  parentPhone    String?
+  active         Boolean   @default(true)
+  originDeviceId String?
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+  deletedAt      DateTime?
+  version        Int       @default(1)
+
+  class       Class               @relation(fields: [classId], references: [id], onDelete: Restrict)
+  attendances StudentAttendance[]
+
+  @@index([nis])
+  @@index([nisn])
+  @@index([classId])
+  @@index([name])
+  @@map("students")
+}
+
+model Class {
+  id                String    @id @default(uuid())
+  name              String    // e.g., "7A", "8B", "9A"
+  grade             Int       // 7, 8, 9, 10, 11, 12
+  major             String?   // "Umum", "IPA", "IPS", etc.
+  homeroomTeacherId String?
+  academicYearId    String
+  active            Boolean   @default(true)
+  originDeviceId    String?
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
+  deletedAt         DateTime?
+  version           Int       @default(1)
+
+  homeroomTeacher Teacher?           @relation("HomeroomTeacher", fields: [homeroomTeacherId], references: [id], onDelete: SetNull)
+  academicYear    AcademicYear       @relation(fields: [academicYearId], references: [id], onDelete: Restrict)
+  students        Student[]
+  schedules       TeachingSchedule[]
+
+  @@unique([name, academicYearId])
+  @@map("classes")
+}
+
+model Subject {
+  id             String    @id @default(uuid())
+  code           String    @unique // e.g., "MTK", "BIN", "IPA"
+  name           String    // e.g., "Matematika", "Bahasa Indonesia"
+  description    String?
+  active         Boolean   @default(true)
+  originDeviceId String?
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+  deletedAt      DateTime?
+  version        Int       @default(1)
+
+  schedules TeachingSchedule[]
+
+  @@map("subjects")
+}
+
+// ==========================================
+// 4. SCHEDULE DOMAIN
+// ==========================================
+
+model TeachingSchedule {
+  id             String    @id @default(uuid())
+  teacherId      String
+  classId        String
+  subjectId      String
+  academicYearId String
+  semesterId     String
+  dayOfWeek      Int       // 1 = Senin, 2 = Selasa, ... 7 = Minggu
+  startTime      String    // "07:30"
+  endTime        String    // "08:15"
+  room           String?   // "R. 101"
+  active         Boolean   @default(true)
+  originDeviceId String?
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+  deletedAt      DateTime?
+  version        Int       @default(1)
+
+  teacher      Teacher      @relation(fields: [teacherId], references: [id], onDelete: Restrict)
+  class        Class        @relation(fields: [classId], references: [id], onDelete: Restrict)
+  subject      Subject      @relation(fields: [subjectId], references: [id], onDelete: Restrict)
+  academicYear AcademicYear @relation(fields: [academicYearId], references: [id], onDelete: Restrict)
+  semester     Semester     @relation(fields: [semesterId], references: [id], onDelete: Restrict)
+
+  attendances   TeacherAttendance[]
+  studentAttendances StudentAttendance[]
+  substitutions TeacherSubstitution[]
+
+  @@index([dayOfWeek, teacherId])
+  @@index([dayOfWeek, classId])
+  @@index([dayOfWeek, room])
+  @@map("teaching_schedules")
+}
+
+model PicketSchedule {
+  id             String    @id @default(uuid())
+  teacherId      String
+  date           String    // "YYYY-MM-DD"
+  startTime      String    // "07:00"
+  endTime        String    // "14:00"
+  location       String?   // "Pos Gerbang / Lobby"
+  active         Boolean   @default(true)
+  originDeviceId String?
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+  deletedAt      DateTime?
+  version        Int       @default(1)
+
+  teacher     Teacher             @relation(fields: [teacherId], references: [id], onDelete: Restrict)
+  attendances TeacherAttendance[]
+
+  @@index([date, teacherId])
+  @@map("picket_schedules")
+}
+
+model Holiday {
+  id          String   @id @default(uuid())
+  date        String   @unique // "YYYY-MM-DD"
+  name        String
+  description String?
+  isNational  Boolean  @default(true)
+  createdAt   DateTime @default(now())
+
+  @@map("holidays")
+}
+
+model TeacherSubstitution {
+  id                   String   @id @default(uuid())
+  scheduleId           String
+  originalTeacherId    String
+  replacementTeacherId String
+  date                 String   // "YYYY-MM-DD"
+  reason               String?
+  createdAt            DateTime @default(now())
+  updatedAt            DateTime @updatedAt
+
+  schedule           TeachingSchedule @relation(fields: [scheduleId], references: [id], onDelete: Cascade)
+  originalTeacher    Teacher          @relation("OriginalTeacher", fields: [originalTeacherId], references: [id], onDelete: Restrict)
+  replacementTeacher Teacher          @relation("ReplacementTeacher", fields: [replacementTeacherId], references: [id], onDelete: Restrict)
+
+  @@unique([scheduleId, date])
+  @@map("teacher_substitutions")
+}
+
+// ==========================================
+// 5. ATTENDANCE DOMAIN (CORE FEATURE)
+// ==========================================
+
+enum AttendanceType {
+  TEACHING
+  PICKET
+}
+
+enum AttendanceStatus {
+  HADIR
+  TERLAMBAT
+  IZIN
+  SAKIT
+  ALPHA
+  DINAS
+  LIBUR
+  DIBATALKAN
+}
+
+enum AttendanceSource {
+  SYSTEM
+  CHECK_IN
+  MANUAL
+  OFFLINE
+}
+
+model TeacherAttendance {
+  id             String           @id @default(uuid())
+  teacherId      String
+  attendanceType AttendanceType
+  scheduleId     String?          // Links to teaching_schedules.id or picket_schedules.id
+  attendanceDate String           // "YYYY-MM-DD"
+  scheduledStart String           // "07:30"
+  scheduledEnd   String           // "08:15"
+  actualTime     String?          // "07:35"
+  status         AttendanceStatus @default(HADIR)
+  source         AttendanceSource @default(SYSTEM)
+  note           String?
+  originDeviceId String?
+  createdAt      DateTime         @default(now())
+  updatedAt      DateTime         @updatedAt
+  deletedAt      DateTime?
+  version        Int              @default(1)
+
+  teacher          Teacher           @relation(fields: [teacherId], references: [id], onDelete: Restrict)
+  teachingSchedule TeachingSchedule? @relation(fields: [scheduleId], references: [id], onDelete: SetNull)
+  picketSchedule   PicketSchedule?   @relation(fields: [scheduleId], references: [id], onDelete: SetNull)
+  corrections      AttendanceCorrection[]
+
+  // Logical uniqueness ensuring idempotency:
+  @@unique([teacherId, attendanceDate, attendanceType, scheduleId])
+  @@index([attendanceDate, teacherId])
+  @@index([attendanceDate, status])
+  @@map("teacher_attendance")
+}
+
+model StudentAttendance {
+  id             String           @id @default(uuid())
+  studentId      String
+  classId        String
+  teacherId      String
+  subjectId      String?
+  scheduleId     String?
+  attendanceDate String           // "YYYY-MM-DD"
+  status         AttendanceStatus @default(HADIR)
+  checkInTime    String?          // "07:40"
+  note           String?
+  originDeviceId String?
+  createdAt      DateTime         @default(now())
+  updatedAt      DateTime         @updatedAt
+  deletedAt      DateTime?
+  version        Int              @default(1)
+
+  student          Student           @relation(fields: [studentId], references: [id], onDelete: Restrict)
+  teachingSchedule TeachingSchedule? @relation(fields: [scheduleId], references: [id], onDelete: SetNull)
+  corrections      AttendanceCorrection[]
+
+  // Logical uniqueness ensuring idempotency:
+  @@unique([studentId, attendanceDate, scheduleId])
+  @@index([attendanceDate, classId])
+  @@index([attendanceDate, status])
+  @@map("student_attendance")
+}
+
+model AttendanceCorrection {
+  id                  String   @id @default(uuid())
+  targetAttendanceId  String
+  targetType          String   // "TEACHER" or "STUDENT"
+  oldStatus           String
+  newStatus           String
+  reason              String
+  correctedByUserId   String
+  correctedAt         DateTime @default(now())
+
+  teacherAttendance TeacherAttendance? @relation(fields: [targetAttendanceId], references: [id], onDelete: Cascade)
+  studentAttendance StudentAttendance? @relation(fields: [targetAttendanceId], references: [id], onDelete: Cascade)
+
+  @@index([targetAttendanceId])
+  @@map("attendance_corrections")
+}
+
+// ==========================================
+// 6. SYSTEM, AUDIT, SYNC & MODULE REGISTRY
+// ==========================================
+
+model ModuleRegistry {
+  id          String   @id @default(uuid())
+  code        String   @unique
+  name        String
+  description String?
+  icon        String
+  route       String
+  status      String   @default("PLANNED") // ACTIVE, PLANNED, COMING_SOON, DISABLED
+  enabled     Boolean  @default(true)
+  sortOrder   Int      @default(0)
+  version     String   @default("1.0.0")
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@map("modules")
+}
+
+model AuditLog {
+  id          String   @id @default(uuid())
+  userId      String?
+  action      String   // LOGIN, LOGOUT, CREATE, UPDATE, DELETE, ATTENDANCE_CREATE, ATTENDANCE_CORRECTION, SYNC, SYNC_CONFLICT, EXPORT
+  entity      String   // "teacher", "student", "attendance", etc.
+  entityId    String?
+  oldData     String?  @db.Text
+  newData     String?  @db.Text
+  description String?
+  createdAt   DateTime @default(now())
+
+  user User? @relation(fields: [userId], references: [id], onDelete: SetNull)
+
+  @@index([action])
+  @@index([createdAt])
+  @@map("audit_logs")
+}
+
+model SyncDevice {
+  id             String    @id @default(uuid())
+  deviceId       String    @unique
+  deviceName     String
+  deviceType     String    // "MOBILE_PWA", "DESKTOP_WEB", "LOCAL_SERVER"
+  lastSyncAt     DateTime?
+  ipAddress      String?
+  isActive       Boolean   @default(true)
+  registeredAt   DateTime  @default(now())
+
+  changes        SyncChange[]
+
+  @@map("sync_devices")
+}
+
+model SyncChange {
+  id             String   @id @default(uuid())
+  deviceId       String
+  entity         String
+  entityId       String
+  operation      String   // "INSERT", "UPDATE", "DELETE"
+  payload        String   @db.Text
+  version        Int      @default(1)
+  status         String   @default("PENDING") // PENDING, SYNCED, CONFLICT
+  createdAt      DateTime @default(now())
+  processedAt    DateTime?
+
+  device SyncDevice @relation(fields: [deviceId], references: [deviceId], onDelete: Cascade)
+
+  @@index([status])
+  @@index([deviceId, createdAt])
+  @@map("sync_changes")
+}
+
+model SyncConflict {
+  id            String    @id @default(uuid())
+  entity        String
+  entityId      String
+  localData     String    @db.Text
+  serverData    String    @db.Text
+  localVersion  Int
+  serverVersion Int
+  resolution    String?   // "USE_LOCAL", "USE_SERVER", "MERGE"
+  resolvedAt    DateTime?
+  resolvedBy    String?
+  createdAt     DateTime  @default(now())
+
+  @@index([entity, entityId])
+  @@map("sync_conflicts")
+}
