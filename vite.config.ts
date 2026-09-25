@@ -6,6 +6,7 @@ import { VitePWA } from 'vite-plugin-pwa';
 
 export default defineConfig(() => {
   return {
+    base: './',
     plugins: [
       react(),
       tailwindcss(),
@@ -13,15 +14,15 @@ export default defineConfig(() => {
         registerType: 'autoUpdate',
         includeAssets: ['icon.svg'],
         manifest: {
-          id: '/',
+          id: './',
           name: 'SIAKAD SEKOLAH TERPADU',
           short_name: 'SIAKAD',
           description: 'Platform Administrasi dan Manajemen Sekolah Terintegrasi - Modul Absensi',
           theme_color: '#1e3a8a',
           background_color: '#f8fafc',
           display: 'standalone',
-          start_url: '/',
-          scope: '/',
+          start_url: './',
+          scope: './',
           icons: [
             {
               src: '/icon.svg',

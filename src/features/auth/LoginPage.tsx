@@ -45,15 +45,85 @@ export const LoginPage: React.FC<LoginPageProps> = ({
         body: JSON.stringify({ username: username.trim(), password: password.trim() }),
       });
 
-      const data = await res.json();
-      if (!res.ok) {
-        throw new Error(data.error || 'Username atau password tidak sesuai.');
+      if (res.ok) {
+        const data = await res.json();
+        localStorage.setItem('siakad_session', JSON.stringify(data.session));
+        onLoginSuccess(data.session);
+        return;
       }
 
-      localStorage.setItem('siakad_session', JSON.stringify(data.session));
-      onLoginSuccess(data.session);
+      // If server explicitly rejected password (e.g. 401 with JSON)
+      const data = await res.json().catch(() => null);
+      if (res.status === 401 && data?.error) {
+        throw new Error(data.error);
+      }
+      throw new Error('API server tidak merespons (Mode Static / GitHub Pages)');
     } catch (err: any) {
-      setErrorMessage(err.message || 'Gagal masuk ke sistem. Silakan coba kembali.');
+      // Fallback for static GitHub Pages / offline mode:
+      const u = username.trim().toLowerCase();
+      const p = password.trim();
+
+      const demoUsers: Record<string, { pass: string; session: any }> = {
+        admin: {
+          pass: 'admin123',
+          session: {
+            id: 'usr-admin',
+            username: 'admin',
+            fullName: 'Administrator SIAKAD',
+            roles: ['ADMIN_SEKOLAH', 'SUPER_ADMIN'],
+            permissions: ['*'],
+            schoolId: 'sch-smpn1',
+            user: { id: 'usr-admin', username: 'admin', name: 'Administrator SIAKAD', role: 'ADMIN', isActive: true, email: 'admin@sekolah.sch.id' }
+          }
+        },
+        guru: {
+          pass: 'guru123',
+          session: {
+            id: 'usr-guru',
+            username: 'guru',
+            fullName: 'Drs. H. Mulyono, M.Pd.',
+            roles: ['GURU'],
+            permissions: ['ATTENDANCE_VIEW', 'ATTENDANCE_EDIT_OWN', 'SCHEDULE_VIEW'],
+            schoolId: 'sch-smpn1',
+            teacherId: 'tch-01',
+            user: { id: 'usr-guru', username: 'guru', name: 'Drs. H. Mulyono, M.Pd.', role: 'GURU', teacherId: 'tch-01', isActive: true, email: 'mulyono@sekolah.sch.id' }
+          }
+        },
+        siswa: {
+          pass: 'siswa123',
+          session: {
+            id: 'usr-siswa',
+            username: 'siswa',
+            fullName: 'Ahmad Faiz Pratama (Kelas VII-A)',
+            roles: ['SISWA', 'ORANG_TUA'],
+            permissions: ['ATTENDANCE_VIEW_STUDENT'],
+            schoolId: 'sch-smpn1',
+            studentId: 'std-01',
+            user: { id: 'usr-siswa', username: 'siswa', name: 'Ahmad Faiz Pratama', role: 'SISWA', isActive: true }
+          }
+        },
+        kepsek: {
+          pass: 'kepsek123',
+          session: {
+            id: 'usr-kepsek',
+            username: 'kepsek',
+            fullName: 'Dra. Hj. Siti Rahmawati, M.M. (Kepala Sekolah)',
+            roles: ['KEPALA_SEKOLAH'],
+            permissions: ['*'],
+            schoolId: 'sch-smpn1',
+            user: { id: 'usr-kepsek', username: 'kepsek', name: 'Dra. Hj. Siti Rahmawati, M.M.', role: 'KEPALA_SEKOLAH', isActive: true }
+          }
+        }
+      };
+
+      if (demoUsers[u] && demoUsers[u].pass === p) {
+        const session = demoUsers[u].session;
+        localStorage.setItem('siakad_session', JSON.stringify(session));
+        onLoginSuccess(session);
+        return;
+      }
+
+      setErrorMessage(err.message && !err.message.includes('API server') ? err.message : 'Username atau password salah. Silakan coba salah satu akun demo.');
     } finally {
       setLoading(false);
     }
