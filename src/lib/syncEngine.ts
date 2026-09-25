@@ -140,6 +140,13 @@ class SyncEngine {
     let pulled = 0;
     let conflicts: SyncConflictItem[] = [];
 
+    if (typeof window !== 'undefined' && (window.location.hostname.includes('github.io') || window.location.protocol === 'file:')) {
+      this.currentStatus = 'ONLINE';
+      this.isSyncing = false;
+      await this.notify();
+      return { success: true, pushed: 0, pulled: 0, conflicts: [] };
+    }
+
     try {
       const queue = await getOfflineQueue();
       const pendingItems = queue.filter((i) => i.status === 'PENDING' || i.status === 'FAILED');

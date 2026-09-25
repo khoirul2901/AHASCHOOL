@@ -48,6 +48,78 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
   const loadData = async () => {
     try {
       setLoading(true);
+
+      const isStaticDeploy = typeof window !== 'undefined' && (window.location.hostname.includes('github.io') || window.location.protocol === 'file:');
+
+      if (isStaticDeploy) {
+        setStats({
+          totalStudents: 384,
+          totalTeachers: 28,
+          totalClasses: 12,
+          teachersPresent: 26,
+          teachersLate: 2,
+          teachersPicket: 4,
+          studentAttendanceRate: 96.8,
+          studentsPresent: 372,
+          studentsSick: 5,
+          studentsPermit: 4,
+          studentsAlpha: 3,
+          classesCompleted: 8,
+          classesInProgress: 4,
+          totalClassesScheduled: 12,
+          weeklyTrends: [
+            { day: 'Sen', hadir: 375, izin: 4, sakit: 3, alpha: 2 },
+            { day: 'Sel', hadir: 378, izin: 3, sakit: 2, alpha: 1 },
+            { day: 'Rab', hadir: 370, izin: 6, sakit: 5, alpha: 3 },
+            { day: 'Kam', hadir: 374, izin: 4, sakit: 4, alpha: 2 },
+            { day: 'Jum', hadir: 380, izin: 2, sakit: 2, alpha: 0 },
+          ],
+          classAttendanceList: [
+            { classId: 'cls-7a', className: 'Kelas 7-A', rate: 98.2, total: 32, present: 31 },
+            { classId: 'cls-7b', className: 'Kelas 7-B', rate: 96.5, total: 32, present: 30 },
+            { classId: 'cls-8a', className: 'Kelas 8-A', rate: 94.0, total: 32, present: 29 },
+            { classId: 'cls-8b', className: 'Kelas 8-B', rate: 97.1, total: 32, present: 31 },
+            { classId: 'cls-9a', className: 'Kelas 9-A', rate: 95.8, total: 32, present: 30 },
+          ],
+          recentActivities: [
+            { id: 'act-1', text: 'Scan RFID Siswa berhasil - M. Ridwan (7-A)', time: '06:55' },
+            { id: 'act-2', text: 'Check-in Guru Piket - Drs. H. Mulyono', time: '06:45' },
+            { id: 'act-3', text: 'Absensi Jam ke-1 Kelas 8-B diselesaikan', time: '07:35' },
+            { id: 'act-4', text: 'Sinkronisasi offline 12 kartu presensi sukses', time: '07:40' },
+          ],
+        });
+
+        if (isTeacher) {
+          setMyAttendances([
+            {
+              id: 'att-tch-1',
+              teacherId: teacherId || 'tch-01',
+              date: new Date().toISOString().split('T')[0],
+              attendanceType: 'TEACHING',
+              status: 'HADIR',
+              scheduledStart: '07:30',
+              scheduledEnd: '09:00',
+              actualTime: '07:20',
+              source: 'RFID_GATE',
+              scheduleDetail: 'Kelas VII-A (Matematika)',
+            },
+            {
+              id: 'att-tch-2',
+              teacherId: teacherId || 'tch-01',
+              date: new Date().toISOString().split('T')[0],
+              attendanceType: 'PICKET',
+              status: 'HADIR',
+              scheduledStart: '06:30',
+              scheduledEnd: '08:00',
+              actualTime: '06:25',
+              source: 'RFID_GATE',
+              scheduleDetail: 'Piket Gerbang Utama & Lobi',
+            },
+          ]);
+        }
+        return;
+      }
+
       const res = await fetch('/api/dashboard/stats');
       if (res.ok) {
         const data = await res.json();

@@ -13,6 +13,12 @@ export default defineConfig(() => {
       VitePWA({
         registerType: 'autoUpdate',
         includeAssets: ['icon.svg'],
+        workbox: {
+          skipWaiting: true,
+          clientsClaim: true,
+          cleanupOutdatedCaches: true,
+          globPatterns: ['**/*.{js,css,html,svg,png,jpg,jpeg,woff2}'],
+        },
         manifest: {
           id: './',
           name: 'SIAKAD SEKOLAH TERPADU',
