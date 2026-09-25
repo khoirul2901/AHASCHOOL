@@ -1,4 +1,7 @@
 import React, { useState, useEffect } from 'react';
+import heroSchoolBuilding from '../../assets/images/hero_school_building_1790150623062.jpg';
+import schoolPrincipalPortrait from '../../assets/images/school_principal_portrait_1790150661629.jpg';
+import schoolLibraryStem from '../../assets/images/school_library_stem_1790150644800.jpg';
 import {
   GraduationCap,
   Award,
@@ -41,7 +44,11 @@ export const SchoolLandingPage: React.FC<SchoolLandingPageProps> = ({
   const [activeTab, setActiveTab] = useState<'profil' | 'program' | 'fasilitas' | 'prestasi'>('profil');
 
   useEffect(() => {
-    // Fetch live counts if available
+    // Avoid fetching API on static GitHub Pages to prevent 404 console errors
+    if (typeof window !== 'undefined' && (window.location.hostname.includes('github.io') || window.location.protocol === 'file:')) {
+      return;
+    }
+    // Fetch live counts if available on backend server
     fetch('/api/settings')
       .then((r) => r.json())
       .then((data) => {
@@ -167,7 +174,7 @@ export const SchoolLandingPage: React.FC<SchoolLandingPageProps> = ({
             <div className="lg:col-span-5 relative">
               <div className="relative rounded-2xl overflow-hidden border border-slate-700 shadow-2xl bg-slate-800">
                 <img
-                  src="/src/assets/images/hero_school_building_1790150623062.jpg"
+                  src={heroSchoolBuilding}
                   alt="Gedung Kampus Sekolah Terpadu"
                   referrerPolicy="no-referrer"
                   className="w-full h-80 sm:h-96 object-cover"
@@ -192,7 +199,7 @@ export const SchoolLandingPage: React.FC<SchoolLandingPageProps> = ({
             <div className="lg:col-span-5 flex flex-col items-center">
               <div className="w-full max-w-sm rounded-2xl overflow-hidden shadow-lg border border-slate-200 bg-slate-50">
                 <img
-                  src="/src/assets/images/school_principal_portrait_1790150661629.jpg"
+                  src={schoolPrincipalPortrait}
                   alt="Kepala Sekolah SMP Negeri 1 Indonesia Terpadu"
                   referrerPolicy="no-referrer"
                   className="w-full h-80 object-cover object-top"
@@ -348,7 +355,7 @@ export const SchoolLandingPage: React.FC<SchoolLandingPageProps> = ({
             <div className="lg:col-span-6">
               <div className="rounded-2xl overflow-hidden border border-slate-200 shadow-xl bg-slate-900">
                 <img
-                  src="/src/assets/images/school_library_stem_1790150644800.jpg"
+                  src={schoolLibraryStem}
                   alt="Perpustakaan dan Laboratorium Digital Sekolah"
                   referrerPolicy="no-referrer"
                   className="w-full h-80 sm:h-96 object-cover"
