@@ -3,7 +3,8 @@ name: Deploy to GitHub Pages
 on:
   push:
     branches:
-      - main # Jalankan otomatis saat ada push ke branch 'main'
+      - main
+      - master
   workflow_dispatch: # Memungkinkan trigger manual dari tab Actions di GitHub
 
 permissions:
