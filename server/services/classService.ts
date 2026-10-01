@@ -39,10 +39,13 @@ export class ClassService {
       throw new Error(`Kelas dengan nama ${data.name} sudah ada.`);
     }
 
+    const rawLevel = (data as any).level ?? data.grade ?? '7';
     const newClass: SchoolClass = {
       id: uuidv4(),
       name: data.name || 'Kelas Baru',
-      grade: data.grade || 7,
+      grade: rawLevel,
+      level: rawLevel,
+      room: (data as any).room || undefined,
       major: data.major || 'Umum',
       homeroomTeacherId: data.homeroomTeacherId || undefined,
       academicYearId: data.academicYearId || store.academicYear.id,
@@ -59,10 +62,34 @@ export class ClassService {
       entity: 'classes',
       entityId: newClass.id,
       newData: newClass,
-      description: `Menambahkan kelas baru: ${newClass.name}`,
+      description: `Menambahkan kelas baru: ${newClass.name} (Tingkat ${rawLevel})`,
     });
 
     return newClass;
+  }
+
+  public static delete(id: string, currentUserId?: string) {
+    const store = dbManager.getStore();
+    const index = store.classes.findIndex((c) => c.id === id && !c.deletedAt);
+    if (index === -1) {
+      throw new Error('Data kelas tidak ditemukan.');
+    }
+
+    const current = store.classes[index];
+    current.deletedAt = new Date().toISOString();
+    current.version += 1;
+    dbManager.saveSync();
+
+    AuditService.log({
+      userId: currentUserId,
+      action: 'DELETE',
+      entity: 'classes',
+      entityId: current.id,
+      oldData: current,
+      description: `Menghapus kelas: ${current.name}`,
+    });
+
+    return true;
   }
 }
 

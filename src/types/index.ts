@@ -2,21 +2,46 @@
 
 export type RoleCode =
   | 'SUPER_ADMIN'
+  | 'GURU_BK'
+  | 'GURU'
+  | 'WALI_KELAS'
+  | 'BENDAHARA'
+  | 'TU'
+  | 'SISWA'
   | 'KEPALA_SEKOLAH'
   | 'WAKASEK'
   | 'ADMIN_SEKOLAH'
   | 'OPERATOR'
   | 'TATA_USAHA'
-  | 'BENDAHARA'
-  | 'GURU'
   | 'GURU_PIKET'
-  | 'WALI_KELAS'
   | 'PETUGAS_PERPUSTAKAAN'
   | 'PETUGAS_SARPRAS'
-  | 'SISWA'
   | 'ORANG_TUA';
 
-export type AttendanceType = 'TEACHING' | 'PICKET';
+export interface UserAccountItem {
+  id: string;
+  username: string;
+  fullName: string;
+  email?: string;
+  roleCode: RoleCode;
+  roleName: string;
+  active: boolean;
+  teacherId?: string;
+  teacherName?: string;
+  studentId?: string;
+  studentName?: string;
+  lastLoginAt?: string;
+  createdAt?: string;
+}
+
+export interface RoleAccessRule {
+  tabId: string;
+  name: string;
+  category: string;
+  allowedRoles: RoleCode[];
+}
+
+export type AttendanceType = 'TEACHING' | 'PICKET' | 'MANAGEMENT';
 
 export type AttendanceStatus =
   | 'HADIR'
@@ -42,6 +67,7 @@ export interface UserSession {
   roles: RoleCode[];
   permissions: string[];
   teacherId?: string;
+  studentId?: string;
   schoolId: string;
   user?: {
     id: string;
@@ -50,6 +76,7 @@ export interface UserSession {
     role?: string;
     email?: string;
     teacherId?: string;
+    studentId?: string;
     isActive?: boolean;
   };
 }
@@ -105,6 +132,12 @@ export interface Teacher {
   phone?: string;
   gender: 'L' | 'P';
   address?: string;
+  cardId?: string;
+  nfcUid?: string;
+  subject?: string;
+  employmentStatus?: string;
+  positionStatus?: string;
+  photoUrl?: string;
   active: boolean;
   version: number;
   createdAt: string;
@@ -123,6 +156,9 @@ export interface Student {
   className?: string;
   parentName?: string;
   parentPhone?: string;
+  cardId?: string;
+  nfcUid?: string;
+  photoUrl?: string;
   active: boolean;
   version: number;
   createdAt: string;
@@ -133,8 +169,10 @@ export interface Student {
 export interface SchoolClass {
   id: string;
   name: string;
-  grade: number;
+  grade: number | string;
+  level?: number | string;
   major?: string;
+  room?: string;
   homeroomTeacherId?: string;
   homeroomTeacherName?: string;
   academicYearId: string;
@@ -142,6 +180,7 @@ export interface SchoolClass {
   studentCount?: number;
   active: boolean;
   version: number;
+  deletedAt?: string | null;
 }
 
 export interface Subject {
@@ -166,6 +205,9 @@ export interface TeachingSchedule {
   dayOfWeek: number; // 1 = Senin, ... 7 = Minggu
   startTime: string; // "HH:MM"
   endTime: string;   // "HH:MM"
+  startPeriod?: number; // Jam Ke Mulai (misal: 1)
+  endPeriod?: number;   // Jam Ke Selesai (misal: 3)
+  periodCount?: number; // Total JP (misal: 3 JP)
   room?: string;
   active: boolean;
   version: number;
@@ -182,6 +224,22 @@ export interface PicketSchedule {
   startTime: string; // "07:00"
   endTime: string; // "14:00"
   location?: string;
+  active: boolean;
+  version: number;
+  teacher?: { name: string };
+}
+
+export interface ManagementSchedule {
+  id: string;
+  teacherId: string;
+  teacherName?: string;
+  teacherNip?: string;
+  roleTitle: string; // e.g. "Kepala Sekolah", "Waka Kurikulum", "Waka Kesiswaan", "Waka Sarpras", "Waka Humas", "Kepala Lab", "Kepala Perpustakaan", "Pembina OSIS", "Wali Kelas"
+  dayOfWeek?: number; // 0 = Setiap Hari Kerja, 1 = Senin, ... 6 = Sabtu
+  startTime: string; // "07:00"
+  endTime: string;   // "15:00"
+  roomOrDesk?: string; // e.g. "Ruang Pimpinan / Kantor Waka"
+  description?: string;
   active: boolean;
   version: number;
   teacher?: { name: string };
@@ -218,6 +276,7 @@ export interface TeacherAttendance {
   scheduledStart: string;
   scheduledEnd: string;
   actualTime?: string;
+  checkOutTime?: string;
   status: AttendanceStatus;
   source: AttendanceSource;
   note?: string;
@@ -238,9 +297,30 @@ export interface StudentAttendance {
   attendanceDate: string; // YYYY-MM-DD
   status: AttendanceStatus;
   checkInTime?: string;
+  actualTime?: string;
+  checkOutTime?: string;
   note?: string;
   version: number;
   originDeviceId?: string;
+}
+
+export type DhuhaStatus = 'HADIR' | 'BERHALANGAN' | 'TIDAK_HADIR';
+
+export interface DhuhaAttendance {
+  id: string;
+  targetType: 'STUDENT' | 'TEACHER';
+  personId: string;
+  name: string;
+  identifier: string; // NIS or NIP
+  classOrSubject?: string;
+  gender?: 'L' | 'P';
+  date: string; // YYYY-MM-DD
+  time: string; // HH:mm:ss
+  status: DhuhaStatus;
+  note?: string;
+  version: number;
+  createdAt: string;
+  updatedAt: string;
 }
 
 export interface AttendanceCorrection {
@@ -327,14 +407,25 @@ export interface DashboardStats {
 }
 
 // Aliases for unified feature naming
-export type TeacherItem = Teacher & { phone?: string; employmentStatus?: string };
+export type TeacherItem = Teacher & { phone?: string; employmentStatus?: string; positionStatus?: string };
 export type StudentItem = Student & { phone?: string; parentName?: string; class?: { name: string } };
 export type ClassItem = SchoolClass & { room?: string; level?: number };
 export type SubjectItem = Subject & { category?: string; hoursPerWeek?: number };
 export type ModuleRegistry = ModuleItem & { isEnabled?: boolean; dependencies?: string[] };
 export type SyncQueueItem = OfflineQueueItem & { tableName?: string; recordId?: string; timestamp?: string };
 
-export type ScanMethod = 'CAMERA' | 'HARDWARE_SCANNER';
+export type ScanMethod = 'MANUAL' | 'CAMERA' | 'HARDWARE_SCANNER' | 'NFC';
+
+export interface LessonPeriodSlot {
+  id: string;
+  periodNumber: number; // 1, 2, 3... (0 untuk Istirahat)
+  name: string;         // "Jam Ke-1", "Jam Ke-2", "Istirahat Pagi", dll.
+  startTime: string;    // "07:15"
+  endTime: string;      // "07:45"
+  isBreak?: boolean;    // true jika waktu istirahat
+  dayOfWeek?: number;   // 0 = Semua Hari Kerja, 1 = Senin, dll.
+  active: boolean;
+}
 
 export interface ScanAttendanceResult {
   success: boolean;
@@ -351,6 +442,8 @@ export interface ScanAttendanceResult {
   time: string;
   isLate: boolean;
   isAlreadyRecorded: boolean;
+  scanSession?: 'MASUK' | 'TERLAMBAT' | 'PULANG';
+  checkOutTime?: string;
   message: string;
 }
 

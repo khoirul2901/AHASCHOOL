@@ -1,0 +1,407 @@
+{
+  "tableName": "master_academic",
+  "description": "Database Pengaturan Sekolah, Kelas, Mata Pelajaran, & Tahun Ajaran",
+  "updatedAt": "2026-10-01T07:24:39.169Z",
+  "school": {
+    "id": "sch-alhikam-001",
+    "npsn": "20260901",
+    "name": "SMP AL-HIKAM TERPADU",
+    "address": "Jl. Pendidikan No. 45, Kompleks Terpadu",
+    "phone": "021-88992211",
+    "email": "admin@smpalhikam.sch.id",
+    "principal": "Dr. H. Ahmad Dahlan, M.Pd.",
+    "logoUrl": "/icon.svg",
+    "createdAt": "2026-09-22T02:42:28.724Z",
+    "updatedAt": "2026-09-22T02:42:28.725Z",
+    "version": 1
+  },
+  "schoolSetting": {
+    "id": "063aa29b-d501-4718-89f8-c3b832c3c771",
+    "schoolId": "sch-alhikam-001",
+    "teacherAttendanceMode": "AUTO_HADIR",
+    "lateToleranceMinutes": 10,
+    "autoSyncIntervalSec": 30,
+    "allowOfflineAttendance": true,
+    "updatedAt": "2026-09-22T02:42:28.725Z"
+  },
+  "academicYear": {
+    "id": "ay-2026-2027",
+    "schoolId": "sch-alhikam-001",
+    "name": "2026/2027",
+    "startDate": "2026-07-15T00:00:00.000Z",
+    "endDate": "2027-06-25T00:00:00.000Z",
+    "active": true,
+    "createdAt": "2026-09-22T02:42:28.725Z",
+    "updatedAt": "2026-09-22T02:42:28.725Z",
+    "version": 1
+  },
+  "semester": {
+    "id": "sem-2026-1",
+    "academicYearId": "ay-2026-2027",
+    "semesterNumber": 1,
+    "name": "Semester Ganjil",
+    "active": true,
+    "startDate": "2026-07-15T00:00:00.000Z",
+    "endDate": "2026-12-20T00:00:00.000Z",
+    "createdAt": "2026-09-22T02:42:28.725Z",
+    "updatedAt": "2026-09-22T02:42:28.725Z",
+    "version": 1
+  },
+  "classes": [
+    {
+      "id": "cls-7a",
+      "name": "7A",
+      "grade": 7,
+      "major": "Umum",
+      "homeroomTeacherId": "tch-siti-02",
+      "academicYearId": "ay-2026-2027",
+      "active": true,
+      "version": 1
+    },
+    {
+      "id": "cls-7b",
+      "name": "7B",
+      "grade": 7,
+      "major": "Umum",
+      "homeroomTeacherId": "tch-dewi-04",
+      "academicYearId": "ay-2026-2027",
+      "active": true,
+      "version": 1
+    },
+    {
+      "id": "cls-8a",
+      "name": "8A",
+      "grade": 8,
+      "major": "Umum",
+      "homeroomTeacherId": "tch-budi-01",
+      "academicYearId": "ay-2026-2027",
+      "active": true,
+      "version": 1
+    },
+    {
+      "id": "cls-8b",
+      "name": "8B",
+      "grade": 8,
+      "major": "Umum",
+      "homeroomTeacherId": "tch-agus-03",
+      "academicYearId": "ay-2026-2027",
+      "active": true,
+      "version": 1
+    },
+    {
+      "id": "cls-9a",
+      "name": "9A",
+      "grade": 9,
+      "major": "Umum",
+      "homeroomTeacherId": "tch-hendra-05",
+      "academicYearId": "ay-2026-2027",
+      "active": true,
+      "version": 1
+    }
+  ],
+  "subjects": [
+    {
+      "id": "sbj-mtk",
+      "code": "MTK",
+      "name": "Matematika",
+      "description": "Matematika Terpadu Kurikulum Merdeka",
+      "active": true,
+      "version": 1
+    },
+    {
+      "id": "sbj-bin",
+      "code": "BIN",
+      "name": "Bahasa Indonesia",
+      "description": "Literasi dan Bahasa Indonesia",
+      "active": true,
+      "version": 1
+    },
+    {
+      "id": "sbj-big",
+      "code": "BIG",
+      "name": "Bahasa Inggris",
+      "description": "Bahasa Inggris Komunikatif",
+      "active": true,
+      "version": 1
+    },
+    {
+      "id": "sbj-ipa",
+      "code": "IPA",
+      "name": "Ilmu Pengetahuan Alam",
+      "description": "Fisika, Biologi, Kimia Dasar",
+      "active": true,
+      "version": 1
+    },
+    {
+      "id": "sbj-ips",
+      "code": "IPS",
+      "name": "Ilmu Pengetahuan Sosial",
+      "description": "Geografi, Sejarah, Ekonomi Terpadu",
+      "active": true,
+      "version": 1
+    },
+    {
+      "id": "sbj-pai",
+      "code": "PAI",
+      "name": "Pendidikan Agama Islam",
+      "description": "Pendidikan Agama & Budi Pekerti",
+      "active": true,
+      "version": 1
+    },
+    {
+      "id": "sbj-pkn",
+      "code": "PPKN",
+      "name": "Pendidikan Pancasila & Kewarganegaraan",
+      "description": "Kewarganegaraan dan Konstitusi",
+      "active": true,
+      "version": 1
+    },
+    {
+      "id": "sbj-pjk",
+      "code": "PJOK",
+      "name": "Pendidikan Jasmani & Olahraga",
+      "description": "Olahraga dan Kesehatan",
+      "active": true,
+      "version": 1
+    },
+    {
+      "id": "sbj-inf",
+      "code": "INF",
+      "name": "Informatika",
+      "description": "Algoritma, Pemrograman, Literasi Digital",
+      "active": true,
+      "version": 1
+    },
+    {
+      "id": "sbj-snk",
+      "code": "SNB",
+      "name": "Seni Budaya",
+      "description": "Seni Rupa dan Seni Musik",
+      "active": true,
+      "version": 1
+    },
+    {
+      "id": "544f9751-d0f4-4f98-9816-ed9651f5a27c",
+      "code": "KKA",
+      "name": "Koding dan Kecerdasan Artificial",
+      "active": true,
+      "version": 1
+    }
+  ],
+  "roles": [
+    {
+      "id": "role-superadmin",
+      "code": "SUPER_ADMIN",
+      "name": "Admin Super",
+      "description": "Akses penuh ke seluruh menu, pengaturan akun, database, dan hak akses sistem.",
+      "isSystem": true
+    },
+    {
+      "id": "role-kepsek",
+      "code": "KEPALA_SEKOLAH",
+      "name": "Kepala Sekolah",
+      "description": "Monitoring dan pelaporan seluruh unit",
+      "isSystem": true
+    },
+    {
+      "id": "role-wakasek",
+      "code": "WAKASEK",
+      "name": "Wakil Kepala Sekolah",
+      "description": "Manajemen kurikulum dan kesiswaan",
+      "isSystem": true
+    },
+    {
+      "id": "role-admin",
+      "code": "ADMIN_SEKOLAH",
+      "name": "Admin Sekolah",
+      "description": "Pengelolaan data operasional",
+      "isSystem": true
+    },
+    {
+      "id": "role-operator",
+      "code": "OPERATOR",
+      "name": "Operator Dapodik / SI",
+      "description": "Entri dan sinkronisasi data",
+      "isSystem": true
+    },
+    {
+      "id": "role-tu",
+      "code": "TATA_USAHA",
+      "name": "Tata Usaha",
+      "description": "Administrasi dan persuratan",
+      "isSystem": true
+    },
+    {
+      "id": "role-bendahara",
+      "code": "BENDAHARA",
+      "name": "Bendahara",
+      "description": "Pengelolaan keuangan sekolah, administrasi SPP, penerimaan, dan rekap pembayaran.",
+      "isSystem": true
+    },
+    {
+      "id": "role-guru",
+      "code": "GURU",
+      "name": "Guru",
+      "description": "Jadwal mengajar, presensi kelas, presensi piket, dan jurnal mengajar harian.",
+      "isSystem": true
+    },
+    {
+      "id": "role-piket",
+      "code": "GURU_PIKET",
+      "name": "Guru Piket",
+      "description": "Absensi harian, kontrol gerbang, dan rekap piket",
+      "isSystem": true
+    },
+    {
+      "id": "role-walikelas",
+      "code": "WALI_KELAS",
+      "name": "Wali Kelas",
+      "description": "Monitoring siswa kelas binaan, absensi harian kelas, rekap kehadiran, dan komunikasi ortu.",
+      "isSystem": true
+    },
+    {
+      "id": "role-perpus",
+      "code": "PETUGAS_PERPUSTAKAAN",
+      "name": "Petugas Perpustakaan",
+      "description": "Layanan perpustakaan",
+      "isSystem": true
+    },
+    {
+      "id": "role-sarpras",
+      "code": "PETUGAS_SARPRAS",
+      "name": "Petugas Sarpras",
+      "description": "Inventaris dan ruangan",
+      "isSystem": true
+    },
+    {
+      "id": "role-siswa",
+      "code": "SISWA",
+      "name": "Siswa",
+      "description": "Melihat jadwal pelajaran pribadi, rekap kehadiran diri, dan pengumuman sekolah.",
+      "isSystem": true
+    },
+    {
+      "id": "role-ortu",
+      "code": "ORANG_TUA",
+      "name": "Orang Tua / Wali",
+      "description": "Monitoring absensi dan nilai anak",
+      "isSystem": true
+    },
+    {
+      "id": "role-gurubk",
+      "code": "GURU_BK",
+      "name": "Guru BK",
+      "description": "Bimbingan Konseling, monitoring kedisiplinan siswa, catatan absensi, dan pembinaan.",
+      "isSystem": true
+    },
+    {
+      "id": "role-tu",
+      "code": "TU",
+      "name": "TU (Tata Usaha)",
+      "description": "Administrasi kesiswaan, kepegawaian, cetak kartu ID/NFC, dan persuratan dinas.",
+      "isSystem": true
+    }
+  ],
+  "users": [
+    {
+      "id": "usr-admin-01",
+      "schoolId": "sch-alhikam-001",
+      "username": "admin",
+      "passwordHash": "$2b$10$iZXzIhpWKkO7Pq59Owsjpu0hq9KEb9nNOJSa.ui8PSnhF84VpIDT.",
+      "fullName": "Administrator Sekolah Terpadu",
+      "email": "admin@sekolah.sch.id",
+      "phone": "081234567890",
+      "active": true,
+      "createdAt": "2026-09-22T02:42:28.726Z",
+      "updatedAt": "2026-09-22T02:42:28.726Z",
+      "version": 1,
+      "lastLoginAt": "2026-09-28T15:15:10.595Z"
+    },
+    {
+      "id": "usr-guru-budi",
+      "schoolId": "sch-alhikam-001",
+      "username": "budi",
+      "passwordHash": "$2b$10$Yhi4W4s4rb2j9HJ5GSPEJO14qDLHze09aPvPfz4YRCpXWFN.u02o.",
+      "fullName": "Budi Santoso, S.Pd.",
+      "email": "budi.santoso@sekolah.sch.id",
+      "phone": "081398765432",
+      "active": true,
+      "createdAt": "2026-09-22T02:42:28.726Z",
+      "updatedAt": "2026-09-22T02:42:28.726Z",
+      "version": 1,
+      "lastLoginAt": "2026-09-22T02:42:28.933Z"
+    },
+    {
+      "id": "usr-gurubk",
+      "schoolId": "sch-alhikam-001",
+      "username": "gurubk",
+      "passwordHash": "$2b$10$uES3vv1nbuzkpJ2kvRtPnuehqBs03K3wDY0Idd29tabK5B6Lw/jxC",
+      "fullName": "Dra. Hj. Siti Aminah, M.Si. (Guru BK)",
+      "email": "gurubk@sekolah.sch.id",
+      "active": true,
+      "createdAt": "2026-09-30T07:25:09.544Z",
+      "updatedAt": "2026-09-30T07:25:09.544Z",
+      "version": 1
+    },
+    {
+      "id": "usr-walikelas",
+      "schoolId": "sch-alhikam-001",
+      "username": "walikelas",
+      "passwordHash": "$2b$10$qPM3ax1tKDM05dn3yveGM.wp.S0.q8.dbBi/PP1g744xoJtpnwd8q",
+      "fullName": "Hendra Gunawan, S.Kom. (Wali Kelas VII-A)",
+      "email": "walikelas@sekolah.sch.id",
+      "active": true,
+      "createdAt": "2026-09-30T07:25:09.643Z",
+      "updatedAt": "2026-09-30T07:25:09.643Z",
+      "version": 1
+    },
+    {
+      "id": "usr-bendahara",
+      "schoolId": "sch-alhikam-001",
+      "username": "bendahara",
+      "passwordHash": "$2b$10$JYRMhBJrE.ytihTD4VRAROsxbhG6494Y5cSe7qShgINDH4YR6U7ou",
+      "fullName": "Ratna Sari, S.Pd. (Bendahara Sekolah)",
+      "email": "bendahara@sekolah.sch.id",
+      "active": true,
+      "createdAt": "2026-09-30T07:25:09.739Z",
+      "updatedAt": "2026-09-30T07:25:09.739Z",
+      "version": 1
+    },
+    {
+      "id": "usr-tu",
+      "schoolId": "sch-alhikam-001",
+      "username": "tu",
+      "passwordHash": "$2b$10$5nGR/8Yy6CNR.IxpfcRYpeIQu46V.NQ3RfnLB1HAdy.k3LWCF7YkS",
+      "fullName": "Joko Purnomo, S.Pd. (Staf Tata Usaha)",
+      "email": "tu@sekolah.sch.id",
+      "active": true,
+      "createdAt": "2026-09-30T07:25:09.836Z",
+      "updatedAt": "2026-09-30T07:25:09.836Z",
+      "version": 1
+    },
+    {
+      "id": "usr-siswa",
+      "schoolId": "sch-alhikam-001",
+      "username": "siswa",
+      "passwordHash": "$2b$10$QukYYKMc8iCQg0WH3p7Av.bFGE6fbFEfSC5Jn7rbDkDab.J/V.liK",
+      "fullName": "Ahmad Faiz Pratama (Siswa VII-A)",
+      "email": "siswa@sekolah.sch.id",
+      "active": true,
+      "createdAt": "2026-09-30T07:25:09.933Z",
+      "updatedAt": "2026-09-30T07:25:09.933Z",
+      "version": 1
+    },
+    {
+      "id": "9fc4a819-7e07-4879-8a04-badb8f7a1ee7",
+      "schoolId": "sch-alhikam-001",
+      "username": "bk_dewi",
+      "passwordHash": "$2b$10$UDArVBgDc2BJltFfYBdhnO/jm/2Z0kr79zFBMSLgyFgUHN/j/of5O",
+      "fullName": "Dewi Lestari, S.Psi.",
+      "email": "dewi@sekolah.sch.id",
+      "active": true,
+      "createdAt": "2026-10-01T07:24:39.167Z",
+      "updatedAt": "2026-10-01T07:24:39.167Z",
+      "version": 1
+    }
+  ]
+}

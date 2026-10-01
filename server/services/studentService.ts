@@ -28,7 +28,8 @@ export class StudentService {
         (s) =>
           s.name.toLowerCase().includes(q) ||
           s.nis.includes(q) ||
-          (s.nisn && s.nisn.includes(q))
+          (s.nisn && s.nisn.includes(q)) ||
+          ((s as any).cardId && (s as any).cardId.toLowerCase().includes(q))
       );
     }
 
@@ -78,7 +79,7 @@ export class StudentService {
       }
     }
 
-    const newStudent: Student = {
+    const newStudent: Student & { cardId?: string } = {
       id: uuidv4(),
       nis: data.nis,
       nisn: data.nisn || undefined,
@@ -88,6 +89,8 @@ export class StudentService {
       classId: data.classId || 'cls-7a',
       parentName: data.parentName || undefined,
       parentPhone: data.parentPhone || undefined,
+      cardId: (data as any).cardId || (data as any).rfidTag || data.nis,
+      nfcUid: data.nfcUid ? data.nfcUid.trim().toUpperCase() : undefined,
       active: data.active !== undefined ? data.active : true,
       version: 1,
       createdAt: new Date().toISOString(),
@@ -129,6 +132,12 @@ export class StudentService {
     const updated: Student = {
       ...current,
       ...data,
+      nfcUid:
+        data.nfcUid !== undefined
+          ? data.nfcUid
+            ? data.nfcUid.trim().toUpperCase()
+            : undefined
+          : current.nfcUid,
       version: current.version + 1,
       updatedAt: new Date().toISOString(),
     };

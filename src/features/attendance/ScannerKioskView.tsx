@@ -8,6 +8,7 @@ import {
   MicOff,
   CheckCircle2,
   AlertTriangle,
+  AlertCircle,
   Clock,
   Sparkles,
   Zap,
@@ -20,8 +21,14 @@ import {
   History,
   QrCode,
   Flame,
+  LogIn,
+  LogOut,
+  Radio,
+  Smartphone,
+  Cpu,
 } from 'lucide-react';
 import { Html5Qrcode, Html5QrcodeSupportedFormats } from 'html5-qrcode';
+import { isWebNfcSupported, nfcManager } from '../../utils/nfcHelper.js';
 import {
   playSuccessBeep,
   playDuplicateBeep,
@@ -34,8 +41,10 @@ interface ScannerKioskViewProps {
   currentSession: UserSession | null;
 }
 
+export type KioskScannerMode = 'ALL' | 'NFC' | 'HARDWARE' | 'CAMERA' | 'MANUAL';
+
 export const ScannerKioskView: React.FC<ScannerKioskViewProps> = ({ currentSession }) => {
-  const [activeMode, setActiveMode] = useState<'CAMERA' | 'HARDWARE' | 'DUAL'>('DUAL');
+  const [activeMode, setActiveMode] = useState<KioskScannerMode>('ALL');
   const [targetFilter, setTargetFilter] = useState<'AUTO' | 'STUDENT' | 'TEACHER'>('AUTO');
   const [soundEnabled, setSoundEnabled] = useState(true);
   const [voiceEnabled, setVoiceEnabled] = useState(true);
@@ -57,6 +66,9 @@ export const ScannerKioskView: React.FC<ScannerKioskViewProps> = ({ currentSessi
   const [isProcessing, setIsProcessing] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
+  // NFC Scanner State
+  const [isNfcListening, setIsNfcListening] = useState(false);
+
   // Stats Counters
   const [todayStats, setTodayStats] = useState({
     totalScanned: 0,
@@ -74,10 +86,18 @@ export const ScannerKioskView: React.FC<ScannerKioskViewProps> = ({ currentSessi
     return () => clearInterval(timer);
   }, []);
 
+  const timeStr = currentTime.toLocaleTimeString('id-ID', {
+    hour: '2-digit',
+    minute: '2-digit',
+    hour12: false,
+  });
+  const isCheckOutSession = timeStr >= '12:00';
+  const isLateSession = !isCheckOutSession && timeStr > '07:15';
+
   // Process code logic
   const handleProcessCode = async (
     scannedCode: string,
-    method: 'CAMERA' | 'HARDWARE_SCANNER'
+    method: 'MANUAL' | 'CAMERA' | 'HARDWARE_SCANNER' | 'NFC'
   ) => {
     const code = scannedCode.trim();
     if (!code || isProcessing || isCooldownRef.current) return;
@@ -112,14 +132,16 @@ export const ScannerKioskView: React.FC<ScannerKioskViewProps> = ({ currentSessi
         setLastResult(scanRes);
         setScannedHistory((prev) => [scanRes, ...prev.slice(0, 19)]);
 
-        // Update session counters
-        setTodayStats((prev) => ({
-          totalScanned: prev.totalScanned + 1,
-          presentOnTime:
-            scanRes.status === 'HADIR' ? prev.presentOnTime + 1 : prev.presentOnTime,
-          lateCount:
-            scanRes.status === 'TERLAMBAT' ? prev.lateCount + 1 : prev.lateCount,
-        }));
+        // Update session counters ONLY if this is a fresh record
+        if (!scanRes.isAlreadyRecorded) {
+          setTodayStats((prev) => ({
+            totalScanned: prev.totalScanned + 1,
+            presentOnTime:
+              scanRes.status === 'HADIR' ? prev.presentOnTime + 1 : prev.presentOnTime,
+            lateCount:
+              scanRes.status === 'TERLAMBAT' ? prev.lateCount + 1 : prev.lateCount,
+          }));
+        }
 
         // Audio & Voice feedback
         if (soundEnabled) {
@@ -131,7 +153,39 @@ export const ScannerKioskView: React.FC<ScannerKioskViewProps> = ({ currentSessi
         }
 
         if (voiceEnabled) {
-          announceAttendanceVoice(scanRes.person.name, scanRes.status, scanRes.person.subtext);
+          if (scanRes.isAlreadyRecorded) {
+            if ('speechSynthesis' in window) {
+              try {
+                window.speechSynthesis.cancel();
+                const utter = new SpeechSynthesisUtterance(
+                  `${scanRes.person.name}, sudah absensi sebelumnya. Tidak dapat absen ganda.`
+                );
+                utter.lang = 'id-ID';
+                utter.rate = 1.05;
+                window.speechSynthesis.speak(utter);
+              } catch (e) {
+                // ignore
+              }
+            }
+          } else if (scanRes.scanSession === 'PULANG') {
+            if ('speechSynthesis' in window) {
+              try {
+                window.speechSynthesis.cancel();
+                const utter = new SpeechSynthesisUtterance(
+                  `Terima kasih ${scanRes.person.name}. Scan pulang tercatat.`
+                );
+                utter.lang = 'id-ID';
+                utter.rate = 1.05;
+                window.speechSynthesis.speak(utter);
+              } catch (e) {
+                announceAttendanceVoice(scanRes.person.name, scanRes.status, scanRes.person.subtext);
+              }
+            } else {
+              announceAttendanceVoice(scanRes.person.name, scanRes.status, scanRes.person.subtext);
+            }
+          } else {
+            announceAttendanceVoice(scanRes.person.name, scanRes.status, scanRes.person.subtext);
+          }
         }
       }
     } catch (err: any) {
@@ -145,14 +199,52 @@ export const ScannerKioskView: React.FC<ScannerKioskViewProps> = ({ currentSessi
     }
   };
 
-  // Hardware Scanner Keyboard Wedge Listener
+  // Web NFC Scanner Initializer
+  useEffect(() => {
+    if (activeMode !== 'ALL' && activeMode !== 'NFC') {
+      nfcManager.stopScan();
+      setIsNfcListening(false);
+      return;
+    }
+
+    if (isWebNfcSupported()) {
+      nfcManager
+        .startScan(
+          (result) => {
+            const uid = result.serialNumber || result.records?.[0]?.data;
+            if (uid) {
+              handleProcessCode(uid, 'NFC');
+            }
+          },
+          (err) => {
+            console.warn('NFC Scan issue:', err);
+          }
+        )
+        .then((started) => {
+          setIsNfcListening(started);
+        });
+    }
+
+    return () => {
+      nfcManager.stopScan();
+      setIsNfcListening(false);
+    };
+  }, [activeMode, targetFilter, soundEnabled, voiceEnabled]);
+
+  // Hardware Scanner & USB NFC Keyboard Wedge Listener
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
+      // Don't intercept if user is typing into input
+      if (document.activeElement?.tagName.toLowerCase() === 'input') {
+        return;
+      }
+
       if (e.key === 'Enter') {
         if (keyBufferRef.current.length >= 3) {
-          const buffer = keyBufferRef.current;
+          const buffer = keyBufferRef.current.trim();
           keyBufferRef.current = '';
-          handleProcessCode(buffer, 'HARDWARE_SCANNER');
+          const scanMethod = activeMode === 'NFC' ? 'NFC' : 'HARDWARE_SCANNER';
+          handleProcessCode(buffer, scanMethod);
           e.preventDefault();
           return;
         }
@@ -175,11 +267,11 @@ export const ScannerKioskView: React.FC<ScannerKioskViewProps> = ({ currentSessi
     return () => {
       window.removeEventListener('keydown', handleKeyDown);
     };
-  }, [isProcessing, targetFilter, soundEnabled, voiceEnabled]);
+  }, [activeMode, isProcessing, targetFilter, soundEnabled, voiceEnabled]);
 
   // Camera Initializer
   useEffect(() => {
-    if (activeMode === 'HARDWARE') {
+    if (activeMode !== 'ALL' && activeMode !== 'CAMERA') {
       stopCamera();
       return;
     }
@@ -292,7 +384,7 @@ export const ScannerKioskView: React.FC<ScannerKioskViewProps> = ({ currentSessi
             <QrCode className="h-7 w-7" />
           </div>
           <div>
-            <div className="flex items-center gap-2">
+            <div className="flex flex-wrap items-center gap-2">
               <h1 className="text-2xl font-extrabold text-slate-800 dark:text-slate-100">
                 Mesin Scan Absensi (Kiosk Pos Gerbang)
               </h1>
@@ -300,9 +392,26 @@ export const ScannerKioskView: React.FC<ScannerKioskViewProps> = ({ currentSessi
                 <span className="h-2 w-2 rounded-full bg-emerald-500 animate-ping" />
                 Live Standby
               </span>
+              {/* Sesi Jam Otomatis */}
+              {isCheckOutSession ? (
+                <span className="flex items-center gap-1.5 rounded-full bg-indigo-100 px-3 py-0.5 text-xs font-extrabold text-indigo-900 dark:bg-indigo-950 dark:text-indigo-200 border border-indigo-300 dark:border-indigo-800">
+                  <LogOut className="h-3.5 w-3.5" />
+                  Sesi Pulang (≥ 12:00)
+                </span>
+              ) : isLateSession ? (
+                <span className="flex items-center gap-1.5 rounded-full bg-amber-100 px-3 py-0.5 text-xs font-extrabold text-amber-900 dark:bg-amber-950 dark:text-amber-200 border border-amber-300 dark:border-amber-800">
+                  <Clock className="h-3.5 w-3.5" />
+                  Sesi Terlambat (&gt; 07:15)
+                </span>
+              ) : (
+                <span className="flex items-center gap-1.5 rounded-full bg-emerald-100 px-3 py-0.5 text-xs font-extrabold text-emerald-900 dark:bg-emerald-950 dark:text-emerald-200 border border-emerald-300 dark:border-emerald-800">
+                  <LogIn className="h-3.5 w-3.5" />
+                  Sesi Masuk Tepat Waktu (≤ 07:15)
+                </span>
+              )}
             </div>
             <p className="text-sm text-slate-500 dark:text-slate-400">
-              Mendukung kamera HP/Webcam dan Hard Scanner USB / RFID otomatis tanpa jeda.
+              Perekaman otomatis: jam masuk, status terlambat, dan jam pulang tersimpan langsung saat kartu di-scan.
             </p>
           </div>
         </div>
@@ -326,48 +435,87 @@ export const ScannerKioskView: React.FC<ScannerKioskViewProps> = ({ currentSessi
       </div>
 
       {/* Control Strip & Counters */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-        {/* Mode Selector */}
-        <div className="flex flex-col justify-center rounded-2xl border border-slate-200 bg-white p-4 dark:border-slate-800 dark:bg-slate-900">
-          <span className="text-xs font-bold uppercase tracking-wider text-slate-400 mb-2">
-            Metode Pindai Aktif
-          </span>
-          <div className="grid grid-cols-3 gap-1 rounded-xl bg-slate-100 p-1 dark:bg-slate-800">
+      <div className="grid grid-cols-1 md:grid-cols-12 gap-4">
+        {/* Mode Selector (5 modes: ALL, NFC, HARDWARE, CAMERA, MANUAL) */}
+        <div className="md:col-span-6 flex flex-col justify-center rounded-2xl border border-slate-200 bg-white p-4 dark:border-slate-800 dark:bg-slate-900">
+          <div className="flex items-center justify-between mb-2">
+            <span className="text-xs font-bold uppercase tracking-wider text-slate-400">
+              Metode Scanner Aktif
+            </span>
+            <span className="text-[11px] font-bold text-indigo-600 dark:text-indigo-400">
+              {activeMode === 'ALL' && 'Semua Mode Aktif (Otomatis)'}
+              {activeMode === 'NFC' && 'Mode Khusus Sensor NFC'}
+              {activeMode === 'HARDWARE' && 'Mode Hard Scanner Laser'}
+              {activeMode === 'CAMERA' && 'Mode Kamera Visual'}
+              {activeMode === 'MANUAL' && 'Mode Input Manual'}
+            </span>
+          </div>
+          <div className="grid grid-cols-5 gap-1 rounded-xl bg-slate-100 p-1 dark:bg-slate-800 text-[11px]">
             <button
-              onClick={() => setActiveMode('DUAL')}
-              className={`py-1.5 text-xs font-bold rounded-lg transition-all ${
-                activeMode === 'DUAL'
+              onClick={() => setActiveMode('ALL')}
+              className={`py-1.5 px-1 font-bold rounded-lg transition-all flex items-center justify-center gap-1 ${
+                activeMode === 'ALL'
                   ? 'bg-white text-blue-700 shadow-xs dark:bg-slate-700 dark:text-blue-300'
                   : 'text-slate-600 dark:text-slate-400'
               }`}
+              title="Semua Sensor Aktif (NFC, Laser, Kamera, Manual)"
             >
-              Dual Mode
+              <Sparkles className="w-3.5 h-3.5" />
+              <span>Semua</span>
             </button>
             <button
-              onClick={() => setActiveMode('CAMERA')}
-              className={`py-1.5 text-xs font-bold rounded-lg transition-all ${
-                activeMode === 'CAMERA'
-                  ? 'bg-white text-blue-700 shadow-xs dark:bg-slate-700 dark:text-blue-300'
-                  : 'text-slate-600 dark:text-slate-400'
+              onClick={() => setActiveMode('NFC')}
+              className={`py-1.5 px-1 font-bold rounded-lg transition-all flex items-center justify-center gap-1 ${
+                activeMode === 'NFC'
+                  ? 'bg-indigo-600 text-white shadow-xs font-black'
+                  : 'text-slate-600 hover:text-indigo-600 dark:text-slate-400'
               }`}
+              title="Sensor Tap Kartu NFC / Smartphone"
             >
-              Kamera
+              <Radio className="w-3.5 h-3.5" />
+              <span>NFC</span>
             </button>
             <button
               onClick={() => setActiveMode('HARDWARE')}
-              className={`py-1.5 text-xs font-bold rounded-lg transition-all ${
+              className={`py-1.5 px-1 font-bold rounded-lg transition-all flex items-center justify-center gap-1 ${
                 activeMode === 'HARDWARE'
                   ? 'bg-white text-blue-700 shadow-xs dark:bg-slate-700 dark:text-blue-300'
                   : 'text-slate-600 dark:text-slate-400'
               }`}
+              title="Hard Scanner Laser Barcode Gun / RFID"
             >
-              Hard Scan
+              <Barcode className="w-3.5 h-3.5" />
+              <span>Laser</span>
+            </button>
+            <button
+              onClick={() => setActiveMode('CAMERA')}
+              className={`py-1.5 px-1 font-bold rounded-lg transition-all flex items-center justify-center gap-1 ${
+                activeMode === 'CAMERA'
+                  ? 'bg-white text-blue-700 shadow-xs dark:bg-slate-700 dark:text-blue-300'
+                  : 'text-slate-600 dark:text-slate-400'
+              }`}
+              title="Kamera Webcam / HP"
+            >
+              <Camera className="w-3.5 h-3.5" />
+              <span>Kamera</span>
+            </button>
+            <button
+              onClick={() => setActiveMode('MANUAL')}
+              className={`py-1.5 px-1 font-bold rounded-lg transition-all flex items-center justify-center gap-1 ${
+                activeMode === 'MANUAL'
+                  ? 'bg-white text-blue-700 shadow-xs dark:bg-slate-700 dark:text-blue-300'
+                  : 'text-slate-600 dark:text-slate-400'
+              }`}
+              title="Input Manual NIS / NIP / ID"
+            >
+              <QrCode className="w-3.5 h-3.5" />
+              <span>Manual</span>
             </button>
           </div>
         </div>
 
         {/* Target Filter */}
-        <div className="flex flex-col justify-center rounded-2xl border border-slate-200 bg-white p-4 dark:border-slate-800 dark:bg-slate-900">
+        <div className="md:col-span-3 flex flex-col justify-center rounded-2xl border border-slate-200 bg-white p-4 dark:border-slate-800 dark:bg-slate-900">
           <span className="text-xs font-bold uppercase tracking-wider text-slate-400 mb-2">
             Target Presensi
           </span>
@@ -406,13 +554,18 @@ export const ScannerKioskView: React.FC<ScannerKioskViewProps> = ({ currentSessi
         </div>
 
         {/* Counter: Total Scanned */}
-        <div className="rounded-2xl border border-slate-200 bg-white p-4 dark:border-slate-800 dark:bg-slate-900 flex items-center justify-between">
+        <div className="md:col-span-3 rounded-2xl border border-slate-200 bg-white p-4 dark:border-slate-800 dark:bg-slate-900 flex items-center justify-between">
           <div>
             <span className="text-xs font-bold uppercase tracking-wider text-slate-400">
               Total Dipindai Sesi Ini
             </span>
             <div className="mt-1 font-mono text-2xl font-black text-slate-800 dark:text-slate-100">
               {todayStats.totalScanned}
+            </div>
+            <div className="flex items-center gap-2 mt-0.5 text-[10px]">
+              <span className="text-emerald-600 font-bold">✓ Tepat: {todayStats.presentOnTime}</span>
+              <span className="text-slate-300">&bull;</span>
+              <span className="text-amber-600 font-bold">⚠ Telat: {todayStats.lateCount}</span>
             </div>
           </div>
           <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-blue-100 text-blue-700 dark:bg-blue-900/50 dark:text-blue-300">
@@ -466,7 +619,9 @@ export const ScannerKioskView: React.FC<ScannerKioskViewProps> = ({ currentSessi
           {lastResult && (
             <div
               className={`rounded-2xl border-2 p-6 shadow-md transition-all duration-300 animate-in slide-in-from-top-4 ${
-                lastResult.status === 'HADIR'
+                lastResult.isAlreadyRecorded
+                  ? 'border-amber-400 bg-amber-50/90 dark:border-amber-500/80 dark:bg-amber-950/40'
+                  : lastResult.status === 'HADIR'
                   ? 'border-emerald-500 bg-emerald-50 dark:border-emerald-600 dark:bg-emerald-950/40'
                   : lastResult.status === 'TERLAMBAT'
                   ? 'border-amber-500 bg-amber-50 dark:border-amber-600 dark:bg-amber-950/40'
@@ -476,14 +631,18 @@ export const ScannerKioskView: React.FC<ScannerKioskViewProps> = ({ currentSessi
               <div className="flex flex-col sm:flex-row items-center sm:items-start gap-5">
                 <div
                   className={`flex h-20 w-20 shrink-0 items-center justify-center rounded-2xl shadow-md text-white ${
-                    lastResult.status === 'HADIR'
+                    lastResult.isAlreadyRecorded
+                      ? 'bg-amber-500'
+                      : lastResult.status === 'HADIR'
                       ? 'bg-emerald-600'
                       : lastResult.status === 'TERLAMBAT'
                       ? 'bg-amber-600'
                       : 'bg-blue-600'
                   }`}
                 >
-                  {lastResult.targetType === 'STUDENT' ? (
+                  {lastResult.isAlreadyRecorded ? (
+                    <AlertTriangle className="h-10 w-10 text-white animate-bounce" />
+                  ) : lastResult.targetType === 'STUDENT' ? (
                     <GraduationCap className="h-10 w-10" />
                   ) : (
                     <Briefcase className="h-10 w-10" />
@@ -494,15 +653,33 @@ export const ScannerKioskView: React.FC<ScannerKioskViewProps> = ({ currentSessi
                   <div className="flex flex-wrap items-center justify-center sm:justify-between gap-2">
                     <span
                       className={`inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-sm font-black ${
-                        lastResult.status === 'HADIR'
+                        lastResult.isAlreadyRecorded
+                          ? 'bg-amber-600 text-white shadow-xs'
+                          : lastResult.scanSession === 'PULANG'
+                          ? 'bg-indigo-200 text-indigo-950 dark:bg-indigo-900/90 dark:text-indigo-100 border border-indigo-300'
+                          : lastResult.status === 'HADIR'
                           ? 'bg-emerald-200 text-emerald-900 dark:bg-emerald-900/80 dark:text-emerald-200'
                           : lastResult.status === 'TERLAMBAT'
                           ? 'bg-amber-200 text-amber-900 dark:bg-amber-900/80 dark:text-amber-200'
                           : 'bg-blue-200 text-blue-900 dark:bg-blue-900/80 dark:text-blue-200'
                       }`}
                     >
-                      <CheckCircle2 className="h-4 w-4" />
-                      {lastResult.status} {lastResult.isLate ? '(TERLAMBAT)' : '(TEPAT WAKTU)'}
+                      {lastResult.isAlreadyRecorded ? (
+                        <>
+                          <AlertTriangle className="h-4 w-4" />
+                          <span>SUDAH ABSEN (HANYA 1X / HARI)</span>
+                        </>
+                      ) : lastResult.scanSession === 'PULANG' ? (
+                        <>
+                          <LogOut className="h-4 w-4" />
+                          <span>PULANG (CHECK-OUT)</span>
+                        </>
+                      ) : (
+                        <>
+                          <CheckCircle2 className="h-4 w-4" />
+                          <span>{lastResult.status} {lastResult.isLate ? '(TERLAMBAT)' : '(TEPAT WAKTU)'}</span>
+                        </>
+                      )}
                     </span>
 
                     <span className="font-mono text-sm font-bold text-slate-600 dark:text-slate-300">
@@ -518,7 +695,11 @@ export const ScannerKioskView: React.FC<ScannerKioskViewProps> = ({ currentSessi
                   </p>
 
                   <div className="mt-3 flex items-center justify-center sm:justify-start gap-2 text-xs font-bold text-slate-700 dark:text-slate-300 bg-white/70 dark:bg-slate-900/50 py-1.5 px-3 rounded-xl border border-slate-200/50 dark:border-slate-800">
-                    <Sparkles className="h-4 w-4 text-amber-500" />
+                    {lastResult.isAlreadyRecorded ? (
+                      <AlertCircle className="h-4 w-4 text-amber-600" />
+                    ) : (
+                      <Sparkles className="h-4 w-4 text-emerald-500" />
+                    )}
                     <span>{lastResult.message}</span>
                   </div>
                 </div>
@@ -526,8 +707,64 @@ export const ScannerKioskView: React.FC<ScannerKioskViewProps> = ({ currentSessi
             </div>
           )}
 
-          {/* Scanner Viewfinder Area */}
-          {(activeMode === 'CAMERA' || activeMode === 'DUAL') && (
+          {/* 1. NFC Tap Station Area */}
+          {(activeMode === 'ALL' || activeMode === 'NFC') && (
+            <div className="rounded-2xl border-2 border-indigo-200 bg-gradient-to-br from-indigo-50/70 to-blue-50/40 p-6 dark:border-indigo-900/50 dark:from-slate-900 dark:to-indigo-950/30 shadow-xs">
+              <div className="flex items-center justify-between pb-3 border-b border-indigo-100 dark:border-indigo-900/50">
+                <div className="flex items-center gap-2.5">
+                  <div className="p-2 rounded-xl bg-indigo-600 text-white shadow-md shadow-indigo-600/20">
+                    <Radio className="h-5 w-5 animate-pulse" />
+                  </div>
+                  <div>
+                    <h3 className="font-bold text-slate-900 dark:text-white flex items-center gap-2">
+                      Sensor NFC Reader Aktif
+                      <span className="rounded-md bg-indigo-100 px-2 py-0.5 text-[10px] font-black text-indigo-800 dark:bg-indigo-950 dark:text-indigo-300 border border-indigo-300 dark:border-indigo-800">
+                        TAP & GO
+                      </span>
+                    </h3>
+                    <p className="text-xs text-slate-500">
+                      Mendukung Kartu Pelajar Pintar, e-KTP, dan Tap Smartphone NFC
+                    </p>
+                  </div>
+                </div>
+
+                <div className="flex items-center gap-2">
+                  {isWebNfcSupported() ? (
+                    <span className="inline-flex items-center gap-1.5 rounded-full bg-emerald-100 px-2.5 py-1 text-[11px] font-bold text-emerald-800 dark:bg-emerald-950 dark:text-emerald-300">
+                      <span className="h-2 w-2 rounded-full bg-emerald-500 animate-ping" />
+                      Web NFC Aktif
+                    </span>
+                  ) : (
+                    <span className="inline-flex items-center gap-1.5 rounded-full bg-amber-100 px-2.5 py-1 text-[11px] font-bold text-amber-800 dark:bg-amber-950 dark:text-amber-300">
+                      <Cpu className="w-3.5 h-3.5" />
+                      USB NFC Ready
+                    </span>
+                  )}
+                </div>
+              </div>
+
+              {/* Animated Tap Graphic */}
+              <div className="my-4 flex flex-col items-center justify-center rounded-2xl border border-dashed border-indigo-300 bg-white/70 p-6 text-center dark:border-indigo-800/80 dark:bg-slate-800/60">
+                <div className="relative flex items-center justify-center my-2">
+                  <span className="absolute h-20 w-20 rounded-full bg-indigo-500/20 animate-ping" />
+                  <span className="absolute h-14 w-14 rounded-full bg-indigo-500/30 animate-pulse" />
+                  <div className="relative flex h-14 w-14 items-center justify-center rounded-2xl bg-indigo-600 text-white shadow-lg shadow-indigo-600/30">
+                    <Smartphone className="h-7 w-7" />
+                  </div>
+                </div>
+
+                <h4 className="mt-2 text-xs font-bold text-slate-800 dark:text-slate-100">
+                  Tempelkan Kartu NFC Siswa / Guru di Sini
+                </h4>
+                <p className="mt-0.5 text-[11px] text-slate-500 max-w-sm">
+                  Cukup sentuhkan kartu NFC pada sensor. Presensi, jam masuk/pulang, dan suara konfirmasi otomatis diproses seketika!
+                </p>
+              </div>
+            </div>
+          )}
+
+          {/* 2. Scanner Viewfinder Area */}
+          {(activeMode === 'CAMERA' || activeMode === 'ALL') && (
             <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-xs dark:border-slate-800 dark:bg-slate-900 space-y-4">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
@@ -574,7 +811,7 @@ export const ScannerKioskView: React.FC<ScannerKioskViewProps> = ({ currentSessi
                     <AlertTriangle className="h-8 w-8 text-red-400 mb-2" />
                     <p className="text-sm font-bold">{cameraError}</p>
                     <p className="text-xs text-slate-400 mt-1">
-                      Kamera tidak dapat diakses. Anda tetap dapat menggunakan Hard Scanner USB / RFID.
+                      Kamera tidak dapat diakses. Anda tetap dapat menggunakan Sensor NFC atau Hard Scanner Laser.
                     </p>
                   </div>
                 )}
@@ -582,29 +819,40 @@ export const ScannerKioskView: React.FC<ScannerKioskViewProps> = ({ currentSessi
             </div>
           )}
 
-          {/* Hard Scanner Radar / Input */}
-          <div className="rounded-2xl border border-blue-200 bg-gradient-to-br from-blue-50/70 to-indigo-50/40 p-6 dark:border-blue-900/50 dark:from-slate-800/60 dark:to-blue-950/20">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-3">
-                <div className="relative flex h-5 w-5 items-center justify-center">
-                  <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-75"></span>
-                  <span className="relative inline-flex h-3.5 w-3.5 rounded-full bg-emerald-500"></span>
-                </div>
-                <div>
-                  <h3 className="font-bold text-slate-800 dark:text-slate-100 flex items-center gap-2">
-                    Hard Scanner Auto-Listen Aktif
-                    <span className="rounded-md bg-emerald-100 px-2 py-0.5 text-[10px] font-black text-emerald-800 dark:bg-emerald-900/60 dark:text-emerald-300">
-                      SIAP PINDAI
-                    </span>
-                  </h3>
-                  <p className="text-xs text-slate-600 dark:text-slate-400">
-                    Cukup tap kartu RFID atau tembak barcode kartu dengan Barcode Gun USB/Bluetooth.
-                  </p>
+          {/* 3. Hard Scanner Radar / Input */}
+          {(activeMode === 'HARDWARE' || activeMode === 'ALL') && (
+            <div className="rounded-2xl border border-blue-200 bg-gradient-to-br from-blue-50/70 to-indigo-50/40 p-6 dark:border-blue-900/50 dark:from-slate-800/60 dark:to-blue-950/20">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-3">
+                  <div className="relative flex h-5 w-5 items-center justify-center">
+                    <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-75"></span>
+                    <span className="relative inline-flex h-3.5 w-3.5 rounded-full bg-emerald-500"></span>
+                  </div>
+                  <div>
+                    <h3 className="font-bold text-slate-800 dark:text-slate-100 flex items-center gap-2">
+                      Hard Scanner Laser Auto-Listen
+                      <span className="rounded-md bg-emerald-100 px-2 py-0.5 text-[10px] font-black text-emerald-800 dark:bg-emerald-900/60 dark:text-emerald-300">
+                        SIAP TEMBAK
+                      </span>
+                    </h3>
+                    <p className="text-xs text-slate-600 dark:text-slate-400">
+                      Tembak barcode / QR kartu dengan Barcode Gun USB atau RFID reader otomatis.
+                    </p>
+                  </div>
                 </div>
               </div>
             </div>
+          )}
 
-            <div className="mt-4 rounded-xl bg-white/90 p-4 border border-blue-100 shadow-xs dark:bg-slate-800 dark:border-slate-700">
+          {/* 4. Manual Input Bar */}
+          {(activeMode === 'MANUAL' || activeMode === 'ALL') && (
+            <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-xs dark:border-slate-800 dark:bg-slate-900">
+              <div className="flex items-center gap-2 mb-3">
+                <QrCode className="w-4 h-4 text-indigo-600" />
+                <h4 className="text-xs font-bold uppercase tracking-wider text-slate-700 dark:text-slate-200">
+                  Input Manual NIS / NIP / UID Kartu
+                </h4>
+              </div>
               <form onSubmit={handleManualSubmit} className="flex gap-2">
                 <div className="relative flex-1">
                   <Barcode className="absolute left-3 top-3 h-4 w-4 text-slate-400" />
@@ -612,8 +860,8 @@ export const ScannerKioskView: React.FC<ScannerKioskViewProps> = ({ currentSessi
                     type="text"
                     value={manualCode}
                     onChange={(e) => setManualCode(e.target.value)}
-                    placeholder="Input manual barcode / RFID / NISN jika kartu rusak..."
-                    className="w-full rounded-xl border border-slate-300 bg-white py-2.5 pl-9 pr-4 text-sm font-mono text-slate-800 focus:border-blue-500 focus:outline-hidden dark:border-slate-600 dark:bg-slate-900 dark:text-slate-100"
+                    placeholder="Ketik NIS / NIP / UID NFC manual jika kartu rusak..."
+                    className="w-full rounded-xl border border-slate-300 bg-slate-50 py-2.5 pl-9 pr-4 text-sm font-mono text-slate-800 focus:bg-white focus:border-blue-500 focus:outline-hidden dark:border-slate-600 dark:bg-slate-800 dark:text-slate-100"
                   />
                 </div>
                 <button
@@ -625,7 +873,7 @@ export const ScannerKioskView: React.FC<ScannerKioskViewProps> = ({ currentSessi
                 </button>
               </form>
             </div>
-          </div>
+          )}
         </div>
 
         {/* Right Column: Scanned Attendees Stream */}

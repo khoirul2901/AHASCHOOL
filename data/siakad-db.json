@@ -48,8 +48,8 @@
     {
       "id": "role-superadmin",
       "code": "SUPER_ADMIN",
-      "name": "Super Administrator",
-      "description": "Akses penuh ke seluruh sistem",
+      "name": "Admin Super",
+      "description": "Akses penuh ke seluruh menu, pengaturan akun, database, dan hak akses sistem.",
       "isSystem": true
     },
     {
@@ -90,15 +90,15 @@
     {
       "id": "role-bendahara",
       "code": "BENDAHARA",
-      "name": "Bendahara Sekolah",
-      "description": "Administrasi keuangan",
+      "name": "Bendahara",
+      "description": "Pengelolaan keuangan sekolah, administrasi SPP, penerimaan, dan rekap pembayaran.",
       "isSystem": true
     },
     {
       "id": "role-guru",
       "code": "GURU",
-      "name": "Guru Pengajar",
-      "description": "Jadwal, absensi mengajar, dan nilai",
+      "name": "Guru",
+      "description": "Jadwal mengajar, presensi kelas, presensi piket, dan jurnal mengajar harian.",
       "isSystem": true
     },
     {
@@ -112,7 +112,7 @@
       "id": "role-walikelas",
       "code": "WALI_KELAS",
       "name": "Wali Kelas",
-      "description": "Monitoring absensi dan kesiswaan kelas binaan",
+      "description": "Monitoring siswa kelas binaan, absensi harian kelas, rekap kehadiran, dan komunikasi ortu.",
       "isSystem": true
     },
     {
@@ -133,7 +133,7 @@
       "id": "role-siswa",
       "code": "SISWA",
       "name": "Siswa",
-      "description": "Melihat absensi dan jadwal pribadi",
+      "description": "Melihat jadwal pelajaran pribadi, rekap kehadiran diri, dan pengumuman sekolah.",
       "isSystem": true
     },
     {
@@ -141,6 +141,20 @@
       "code": "ORANG_TUA",
       "name": "Orang Tua / Wali",
       "description": "Monitoring absensi dan nilai anak",
+      "isSystem": true
+    },
+    {
+      "id": "role-gurubk",
+      "code": "GURU_BK",
+      "name": "Guru BK",
+      "description": "Bimbingan Konseling, monitoring kedisiplinan siswa, catatan absensi, dan pembinaan.",
+      "isSystem": true
+    },
+    {
+      "id": "role-tu",
+      "code": "TU",
+      "name": "TU (Tata Usaha)",
+      "description": "Administrasi kesiswaan, kepegawaian, cetak kartu ID/NFC, dan persuratan dinas.",
       "isSystem": true
     }
   ],
@@ -562,7 +576,7 @@
       "createdAt": "2026-09-22T02:42:28.726Z",
       "updatedAt": "2026-09-22T02:42:28.726Z",
       "version": 1,
-      "lastLoginAt": "2026-09-22T02:42:28.826Z"
+      "lastLoginAt": "2026-09-28T15:15:10.595Z"
     },
     {
       "id": "usr-guru-budi",
@@ -577,6 +591,78 @@
       "updatedAt": "2026-09-22T02:42:28.726Z",
       "version": 1,
       "lastLoginAt": "2026-09-22T02:42:28.933Z"
+    },
+    {
+      "id": "usr-gurubk",
+      "schoolId": "sch-alhikam-001",
+      "username": "gurubk",
+      "passwordHash": "$2b$10$uES3vv1nbuzkpJ2kvRtPnuehqBs03K3wDY0Idd29tabK5B6Lw/jxC",
+      "fullName": "Dra. Hj. Siti Aminah, M.Si. (Guru BK)",
+      "email": "gurubk@sekolah.sch.id",
+      "active": true,
+      "createdAt": "2026-09-30T07:25:09.544Z",
+      "updatedAt": "2026-09-30T07:25:09.544Z",
+      "version": 1
+    },
+    {
+      "id": "usr-walikelas",
+      "schoolId": "sch-alhikam-001",
+      "username": "walikelas",
+      "passwordHash": "$2b$10$qPM3ax1tKDM05dn3yveGM.wp.S0.q8.dbBi/PP1g744xoJtpnwd8q",
+      "fullName": "Hendra Gunawan, S.Kom. (Wali Kelas VII-A)",
+      "email": "walikelas@sekolah.sch.id",
+      "active": true,
+      "createdAt": "2026-09-30T07:25:09.643Z",
+      "updatedAt": "2026-09-30T07:25:09.643Z",
+      "version": 1
+    },
+    {
+      "id": "usr-bendahara",
+      "schoolId": "sch-alhikam-001",
+      "username": "bendahara",
+      "passwordHash": "$2b$10$JYRMhBJrE.ytihTD4VRAROsxbhG6494Y5cSe7qShgINDH4YR6U7ou",
+      "fullName": "Ratna Sari, S.Pd. (Bendahara Sekolah)",
+      "email": "bendahara@sekolah.sch.id",
+      "active": true,
+      "createdAt": "2026-09-30T07:25:09.739Z",
+      "updatedAt": "2026-09-30T07:25:09.739Z",
+      "version": 1
+    },
+    {
+      "id": "usr-tu",
+      "schoolId": "sch-alhikam-001",
+      "username": "tu",
+      "passwordHash": "$2b$10$5nGR/8Yy6CNR.IxpfcRYpeIQu46V.NQ3RfnLB1HAdy.k3LWCF7YkS",
+      "fullName": "Joko Purnomo, S.Pd. (Staf Tata Usaha)",
+      "email": "tu@sekolah.sch.id",
+      "active": true,
+      "createdAt": "2026-09-30T07:25:09.836Z",
+      "updatedAt": "2026-09-30T07:25:09.836Z",
+      "version": 1
+    },
+    {
+      "id": "usr-siswa",
+      "schoolId": "sch-alhikam-001",
+      "username": "siswa",
+      "passwordHash": "$2b$10$QukYYKMc8iCQg0WH3p7Av.bFGE6fbFEfSC5Jn7rbDkDab.J/V.liK",
+      "fullName": "Ahmad Faiz Pratama (Siswa VII-A)",
+      "email": "siswa@sekolah.sch.id",
+      "active": true,
+      "createdAt": "2026-09-30T07:25:09.933Z",
+      "updatedAt": "2026-09-30T07:25:09.933Z",
+      "version": 1
+    },
+    {
+      "id": "9fc4a819-7e07-4879-8a04-badb8f7a1ee7",
+      "schoolId": "sch-alhikam-001",
+      "username": "bk_dewi",
+      "passwordHash": "$2b$10$UDArVBgDc2BJltFfYBdhnO/jm/2Z0kr79zFBMSLgyFgUHN/j/of5O",
+      "fullName": "Dewi Lestari, S.Psi.",
+      "email": "dewi@sekolah.sch.id",
+      "active": true,
+      "createdAt": "2026-10-01T07:24:39.167Z",
+      "updatedAt": "2026-10-01T07:24:39.167Z",
+      "version": 1
     }
   ],
   "userRoles": [
@@ -604,6 +690,36 @@
       "id": "02ae5141-ba7f-4cbf-98e2-d1ab27c7a9f1",
       "userId": "usr-guru-budi",
       "roleId": "role-walikelas"
+    },
+    {
+      "id": "ff469a3f-50ed-4f7c-87d7-eb082c122064",
+      "userId": "usr-gurubk",
+      "roleId": "role-gurubk"
+    },
+    {
+      "id": "8a80db29-58ed-4c4e-95ec-20c87d37bd65",
+      "userId": "usr-walikelas",
+      "roleId": "role-walikelas"
+    },
+    {
+      "id": "167fda05-99ad-4f19-9aa0-bdc0123821f3",
+      "userId": "usr-bendahara",
+      "roleId": "role-bendahara"
+    },
+    {
+      "id": "1c2efbe5-82e8-4224-ac7b-26cf8a01bbff",
+      "userId": "usr-tu",
+      "roleId": "role-tu"
+    },
+    {
+      "id": "97a87e3d-c884-4afd-8aca-a92c294b892e",
+      "userId": "usr-siswa",
+      "roleId": "role-siswa"
+    },
+    {
+      "id": "797536f4-b568-4590-b184-db12b35c207c",
+      "userId": "9fc4a819-7e07-4879-8a04-badb8f7a1ee7",
+      "roleId": "role-gurubk"
     }
   ],
   "teachers": [
@@ -737,6 +853,20 @@
       "version": 1,
       "createdAt": "2026-09-22T02:42:28.726Z",
       "updatedAt": "2026-09-22T02:42:28.726Z"
+    },
+    {
+      "id": "cbb521c5-bf35-4abe-b482-d4b70b50c59f",
+      "name": "Drs. H. Mulyono, M.Pd.",
+      "gender": "L",
+      "cardId": "GURU-2311",
+      "subject": "Matematika",
+      "employmentStatus": "PNS",
+      "positionStatus": "Waka Kurikulum",
+      "active": true,
+      "version": 1,
+      "createdAt": "2026-10-01T07:24:17.639Z",
+      "updatedAt": "2026-10-01T07:24:17.639Z",
+      "deletedAt": null
     }
   ],
   "subjects": [
@@ -817,6 +947,13 @@
       "code": "SNB",
       "name": "Seni Budaya",
       "description": "Seni Rupa dan Seni Musik",
+      "active": true,
+      "version": 1
+    },
+    {
+      "id": "544f9751-d0f4-4f98-9816-ed9651f5a27c",
+      "code": "KKA",
+      "name": "Koding dan Kecerdasan Artificial",
       "active": true,
       "version": 1
     }
@@ -1636,9 +1773,9 @@
       "dayOfWeek": 1,
       "startTime": "07:30",
       "endTime": "08:15",
-      "room": "R. 201",
+      "room": "R. 8A Unggulan",
       "active": true,
-      "version": 1
+      "version": 2
     },
     {
       "id": "sch-budi-8b-senin",
@@ -1693,6 +1830,40 @@
       "startTime": "07:30",
       "endTime": "08:45",
       "room": "R. 301",
+      "active": true,
+      "version": 1
+    },
+    {
+      "id": "240059c7-235e-45d4-af8a-4c346570ca58",
+      "teacherId": "tch-budi-01",
+      "classId": "cls-7a",
+      "subjectId": "sbj-snk",
+      "academicYearId": "ay-2026-2027",
+      "semesterId": "sem-2026-1",
+      "dayOfWeek": 3,
+      "startTime": "07:15",
+      "endTime": "08:15",
+      "startPeriod": 1,
+      "endPeriod": 2,
+      "periodCount": 2,
+      "room": "R. 201",
+      "active": true,
+      "version": 2
+    },
+    {
+      "id": "51359d15-7963-4583-9d4e-ed15f4a28c95",
+      "teacherId": "tch-rina-08",
+      "classId": "cls-7a",
+      "subjectId": "544f9751-d0f4-4f98-9816-ed9651f5a27c",
+      "academicYearId": "ay-2026-2027",
+      "semesterId": "sem-2026-1",
+      "dayOfWeek": 1,
+      "startTime": "08:45",
+      "endTime": "11:05",
+      "startPeriod": 4,
+      "endPeriod": 7,
+      "periodCount": 4,
+      "room": "R. 101",
       "active": true,
       "version": 1
     }
@@ -1911,7 +2082,9 @@
       "actualTime": "07:30",
       "status": "HADIR",
       "source": "SYSTEM",
-      "version": 1
+      "version": 2,
+      "checkOutTime": "15.34",
+      "updatedAt": "2026-09-28T15:34:36.872Z"
     },
     {
       "id": "d27a2a31-d31a-4490-bb04-c6cc522b5add",
@@ -1924,7 +2097,9 @@
       "actualTime": "08:15",
       "status": "HADIR",
       "source": "SYSTEM",
-      "version": 1
+      "version": 2,
+      "checkOutTime": "15.34",
+      "updatedAt": "2026-09-28T15:34:36.872Z"
     },
     {
       "id": "049e4890-5898-4be8-bb64-b4782978d501",
@@ -1977,8 +2152,248 @@
       "status": "HADIR",
       "source": "SYSTEM",
       "note": "Tugas Piket di Pos Lobby Utama",
-      "version": 2,
-      "updatedAt": "2026-09-22T02:42:28.939Z"
+      "version": 3,
+      "updatedAt": "2026-09-28T15:34:36.872Z",
+      "checkOutTime": "15.34"
+    },
+    {
+      "id": "5ac8d721-6ada-49d4-9547-37b9f33776c9",
+      "teacherId": "tch-2",
+      "attendanceType": "MANAGEMENT",
+      "scheduleId": "mgmt-1",
+      "attendanceDate": "2026-09-28",
+      "scheduledStart": "07:00",
+      "scheduledEnd": "15:00",
+      "actualTime": "07:00",
+      "status": "HADIR",
+      "source": "SYSTEM",
+      "note": "Tugas Manajemen: Waka Kurikulum (Ruang Waka Kurikulum)",
+      "version": 1
+    },
+    {
+      "id": "71c9b17c-5ba7-49e2-8e56-76ee7fe24292",
+      "teacherId": "tch-3",
+      "attendanceType": "MANAGEMENT",
+      "scheduleId": "mgmt-2",
+      "attendanceDate": "2026-09-28",
+      "scheduledStart": "07:00",
+      "scheduledEnd": "15:00",
+      "actualTime": "07:00",
+      "status": "HADIR",
+      "source": "SYSTEM",
+      "note": "Tugas Manajemen: Waka Kesiswaan & Pembina OSIS (Ruang Kesiswaan)",
+      "version": 1
+    },
+    {
+      "id": "66efb065-6dd6-4a02-8a34-3942bbf03867",
+      "teacherId": "tch-4",
+      "attendanceType": "MANAGEMENT",
+      "scheduleId": "mgmt-3",
+      "attendanceDate": "2026-09-28",
+      "scheduledStart": "07:00",
+      "scheduledEnd": "15:00",
+      "actualTime": "07:00",
+      "status": "HADIR",
+      "source": "SYSTEM",
+      "note": "Tugas Manajemen: Kepala Laboratorium Komputer & IPA (Laboratorium)",
+      "version": 1
+    },
+    {
+      "id": "231a5002-3204-4477-aae3-1eb624949a8e",
+      "teacherId": "tch-5",
+      "attendanceType": "MANAGEMENT",
+      "scheduleId": "mgmt-4",
+      "attendanceDate": "2026-09-28",
+      "scheduledStart": "07:00",
+      "scheduledEnd": "15:00",
+      "actualTime": "07:00",
+      "status": "HADIR",
+      "source": "SYSTEM",
+      "note": "Tugas Manajemen: Kepala Perpustakaan (Perpustakaan Utama)",
+      "version": 1
+    },
+    {
+      "id": "bf82c7a8-9e6b-4ef1-9782-9676409bda36",
+      "teacherId": "tch-1",
+      "attendanceType": "MANAGEMENT",
+      "scheduleId": "mgmt-5",
+      "attendanceDate": "2026-09-28",
+      "scheduledStart": "07:00",
+      "scheduledEnd": "15:30",
+      "actualTime": "07:00",
+      "status": "HADIR",
+      "source": "SYSTEM",
+      "note": "Tugas Manajemen: Kepala Sekolah (Ruang Kepala Sekolah)",
+      "version": 1
+    },
+    {
+      "id": "8189c0c3-ce21-4c40-a0b2-eeb1a9104766",
+      "teacherId": "tch-budi-01",
+      "attendanceDate": "2026-09-29",
+      "attendanceType": "TEACHING",
+      "scheduledStart": "07:00",
+      "scheduledEnd": "15:00",
+      "actualTime": "07:05",
+      "checkInTime": "07:05",
+      "status": "HADIR",
+      "source": "CHECK_IN",
+      "note": "Tap Sensor NFC Presensi Kehadiran Pagi",
+      "version": 1,
+      "createdAt": "2026-09-28T15:35:00.035Z",
+      "updatedAt": "2026-09-28T15:35:00.035Z"
+    },
+    {
+      "id": "5238ee9c-b459-4444-8add-19d443630fb0",
+      "teacherId": "tch-2",
+      "attendanceType": "MANAGEMENT",
+      "scheduleId": "mgmt-1",
+      "attendanceDate": "2026-09-30",
+      "scheduledStart": "07:00",
+      "scheduledEnd": "15:00",
+      "actualTime": "07:00",
+      "status": "HADIR",
+      "source": "SYSTEM",
+      "note": "Tugas Manajemen: Waka Kurikulum (Ruang Waka Kurikulum)",
+      "version": 1
+    },
+    {
+      "id": "d82f8983-7e15-4f9d-a4f8-ec90f11d3701",
+      "teacherId": "tch-3",
+      "attendanceType": "MANAGEMENT",
+      "scheduleId": "mgmt-2",
+      "attendanceDate": "2026-09-30",
+      "scheduledStart": "07:00",
+      "scheduledEnd": "15:00",
+      "actualTime": "07:00",
+      "status": "HADIR",
+      "source": "SYSTEM",
+      "note": "Tugas Manajemen: Waka Kesiswaan & Pembina OSIS (Ruang Kesiswaan)",
+      "version": 1
+    },
+    {
+      "id": "04f94812-35f1-4684-9159-1c5adb48de92",
+      "teacherId": "tch-4",
+      "attendanceType": "MANAGEMENT",
+      "scheduleId": "mgmt-3",
+      "attendanceDate": "2026-09-30",
+      "scheduledStart": "07:00",
+      "scheduledEnd": "15:00",
+      "actualTime": "07:00",
+      "status": "HADIR",
+      "source": "SYSTEM",
+      "note": "Tugas Manajemen: Kepala Laboratorium Komputer & IPA (Laboratorium)",
+      "version": 1
+    },
+    {
+      "id": "d62f6db0-035a-46cc-a404-19b0574882cd",
+      "teacherId": "tch-5",
+      "attendanceType": "MANAGEMENT",
+      "scheduleId": "mgmt-4",
+      "attendanceDate": "2026-09-30",
+      "scheduledStart": "07:00",
+      "scheduledEnd": "15:00",
+      "actualTime": "07:00",
+      "status": "HADIR",
+      "source": "SYSTEM",
+      "note": "Tugas Manajemen: Kepala Perpustakaan (Perpustakaan Utama)",
+      "version": 1
+    },
+    {
+      "id": "a8a4c298-d956-4ac1-b117-e106908e5da3",
+      "teacherId": "tch-1",
+      "attendanceType": "MANAGEMENT",
+      "scheduleId": "mgmt-5",
+      "attendanceDate": "2026-09-30",
+      "scheduledStart": "07:00",
+      "scheduledEnd": "15:30",
+      "actualTime": "07:00",
+      "status": "HADIR",
+      "source": "SYSTEM",
+      "note": "Tugas Manajemen: Kepala Sekolah (Ruang Kepala Sekolah)",
+      "version": 1
+    },
+    {
+      "id": "a014030a-4305-4037-9975-64cc961af061",
+      "teacherId": "tch-budi-01",
+      "attendanceType": "TEACHING",
+      "scheduleId": "240059c7-235e-45d4-af8a-4c346570ca58",
+      "attendanceDate": "2026-09-30",
+      "scheduledStart": "07:15",
+      "scheduledEnd": "08:15",
+      "actualTime": "07:15",
+      "status": "HADIR",
+      "source": "SYSTEM",
+      "version": 1
+    },
+    {
+      "id": "fb2fa102-7a26-461e-81c4-92b1fdd3dfd3",
+      "teacherId": "tch-2",
+      "attendanceType": "MANAGEMENT",
+      "scheduleId": "mgmt-1",
+      "attendanceDate": "2026-10-01",
+      "scheduledStart": "07:00",
+      "scheduledEnd": "15:00",
+      "actualTime": "07:00",
+      "status": "HADIR",
+      "source": "SYSTEM",
+      "note": "Tugas Manajemen: Waka Kurikulum (Ruang Waka Kurikulum)",
+      "version": 1
+    },
+    {
+      "id": "ef6b622c-c587-47e4-b455-abbfefdb8004",
+      "teacherId": "tch-3",
+      "attendanceType": "MANAGEMENT",
+      "scheduleId": "mgmt-2",
+      "attendanceDate": "2026-10-01",
+      "scheduledStart": "07:00",
+      "scheduledEnd": "15:00",
+      "actualTime": "07:00",
+      "status": "HADIR",
+      "source": "SYSTEM",
+      "note": "Tugas Manajemen: Waka Kesiswaan & Pembina OSIS (Ruang Kesiswaan)",
+      "version": 1
+    },
+    {
+      "id": "8c1754fb-2984-4a4d-b5c3-c81c2606657d",
+      "teacherId": "tch-4",
+      "attendanceType": "MANAGEMENT",
+      "scheduleId": "mgmt-3",
+      "attendanceDate": "2026-10-01",
+      "scheduledStart": "07:00",
+      "scheduledEnd": "15:00",
+      "actualTime": "07:00",
+      "status": "HADIR",
+      "source": "SYSTEM",
+      "note": "Tugas Manajemen: Kepala Laboratorium Komputer & IPA (Laboratorium)",
+      "version": 1
+    },
+    {
+      "id": "47452f0c-44aa-4768-a5bf-b2aebbeaeada",
+      "teacherId": "tch-5",
+      "attendanceType": "MANAGEMENT",
+      "scheduleId": "mgmt-4",
+      "attendanceDate": "2026-10-01",
+      "scheduledStart": "07:00",
+      "scheduledEnd": "15:00",
+      "actualTime": "07:00",
+      "status": "HADIR",
+      "source": "SYSTEM",
+      "note": "Tugas Manajemen: Kepala Perpustakaan (Perpustakaan Utama)",
+      "version": 1
+    },
+    {
+      "id": "78600671-869f-45cc-9e9b-5dc6b76c6337",
+      "teacherId": "tch-1",
+      "attendanceType": "MANAGEMENT",
+      "scheduleId": "mgmt-5",
+      "attendanceDate": "2026-10-01",
+      "scheduledStart": "07:00",
+      "scheduledEnd": "15:30",
+      "actualTime": "07:00",
+      "status": "HADIR",
+      "source": "SYSTEM",
+      "note": "Tugas Manajemen: Kepala Sekolah (Ruang Kepala Sekolah)",
+      "version": 1
     }
   ],
   "studentAttendance": [
@@ -2112,6 +2527,126 @@
       "version": 2,
       "originDeviceId": "local",
       "updatedAt": "2026-09-22T02:42:28.941Z"
+    },
+    {
+      "id": "e2682df1-a2f2-4f5e-a3de-eac7c25301bc",
+      "studentId": "std-21",
+      "classId": "cls-8a",
+      "teacherId": "tch-budi-01",
+      "subjectId": "sbj-mtk",
+      "scheduleId": "sch-budi-8a-senin",
+      "attendanceDate": "2026-09-30",
+      "status": "HADIR",
+      "version": 1,
+      "originDeviceId": "local"
+    },
+    {
+      "id": "f38a3bc8-f144-4e0b-96d2-fa8ea371f751",
+      "studentId": "std-22",
+      "classId": "cls-8a",
+      "teacherId": "tch-budi-01",
+      "subjectId": "sbj-mtk",
+      "scheduleId": "sch-budi-8a-senin",
+      "attendanceDate": "2026-09-30",
+      "status": "HADIR",
+      "version": 1,
+      "originDeviceId": "local"
+    },
+    {
+      "id": "e0b3cdf6-b05d-45af-8073-8e468915c62a",
+      "studentId": "std-23",
+      "classId": "cls-8a",
+      "teacherId": "tch-budi-01",
+      "subjectId": "sbj-mtk",
+      "scheduleId": "sch-budi-8a-senin",
+      "attendanceDate": "2026-09-30",
+      "status": "HADIR",
+      "version": 1,
+      "originDeviceId": "local"
+    },
+    {
+      "id": "cc74a224-235a-4165-9461-264f3a51e004",
+      "studentId": "std-24",
+      "classId": "cls-8a",
+      "teacherId": "tch-budi-01",
+      "subjectId": "sbj-mtk",
+      "scheduleId": "sch-budi-8a-senin",
+      "attendanceDate": "2026-09-30",
+      "status": "HADIR",
+      "version": 1,
+      "originDeviceId": "local"
+    },
+    {
+      "id": "79bef5fb-cb25-4784-a395-8fe2d26528f1",
+      "studentId": "std-25",
+      "classId": "cls-8a",
+      "teacherId": "tch-budi-01",
+      "subjectId": "sbj-mtk",
+      "scheduleId": "sch-budi-8a-senin",
+      "attendanceDate": "2026-09-30",
+      "status": "HADIR",
+      "version": 1,
+      "originDeviceId": "local"
+    },
+    {
+      "id": "d0e35b26-af9f-4b43-91d8-2d766535ae20",
+      "studentId": "std-26",
+      "classId": "cls-8a",
+      "teacherId": "tch-budi-01",
+      "subjectId": "sbj-mtk",
+      "scheduleId": "sch-budi-8a-senin",
+      "attendanceDate": "2026-09-30",
+      "status": "HADIR",
+      "version": 1,
+      "originDeviceId": "local"
+    },
+    {
+      "id": "4e5cb63d-eb92-424c-973d-4a6d0548621f",
+      "studentId": "std-27",
+      "classId": "cls-8a",
+      "teacherId": "tch-budi-01",
+      "subjectId": "sbj-mtk",
+      "scheduleId": "sch-budi-8a-senin",
+      "attendanceDate": "2026-09-30",
+      "status": "HADIR",
+      "version": 1,
+      "originDeviceId": "local"
+    },
+    {
+      "id": "4117c530-3de8-469d-b7e0-a9647d792a50",
+      "studentId": "std-28",
+      "classId": "cls-8a",
+      "teacherId": "tch-budi-01",
+      "subjectId": "sbj-mtk",
+      "scheduleId": "sch-budi-8a-senin",
+      "attendanceDate": "2026-09-30",
+      "status": "HADIR",
+      "version": 1,
+      "originDeviceId": "local"
+    },
+    {
+      "id": "67898d84-605d-4807-b71c-ba90be326acc",
+      "studentId": "std-29",
+      "classId": "cls-8a",
+      "teacherId": "tch-budi-01",
+      "subjectId": "sbj-mtk",
+      "scheduleId": "sch-budi-8a-senin",
+      "attendanceDate": "2026-09-30",
+      "status": "HADIR",
+      "version": 1,
+      "originDeviceId": "local"
+    },
+    {
+      "id": "ae1cd1d3-2563-462f-a000-fc1edafd59c0",
+      "studentId": "std-30",
+      "classId": "cls-8a",
+      "teacherId": "tch-budi-01",
+      "subjectId": "sbj-mtk",
+      "scheduleId": "sch-budi-8a-senin",
+      "attendanceDate": "2026-09-30",
+      "status": "HADIR",
+      "version": 1,
+      "originDeviceId": "local"
     }
   ],
   "attendanceCorrections": [
@@ -2127,6 +2662,545 @@
     }
   ],
   "auditLogs": [
+    {
+      "id": "a0e7c714-be2d-4acc-92f7-d3914e7b62f2",
+      "userId": "usr-admin",
+      "action": "CREATE",
+      "entity": "users",
+      "entityId": "9fc4a819-7e07-4879-8a04-badb8f7a1ee7",
+      "oldData": null,
+      "newData": "{\"username\":\"bk_dewi\",\"role\":\"GURU_BK\"}",
+      "description": "Menambahkan akun pengguna baru: bk_dewi (GURU_BK)",
+      "createdAt": "2026-10-01T07:24:39.169Z"
+    },
+    {
+      "id": "c1b44de8-0492-4ef3-9f10-fbbfafaf7568",
+      "userId": "usr-admin",
+      "action": "CREATE",
+      "entity": "teachers",
+      "entityId": "cbb521c5-bf35-4abe-b482-d4b70b50c59f",
+      "oldData": null,
+      "newData": "{\"id\":\"cbb521c5-bf35-4abe-b482-d4b70b50c59f\",\"name\":\"Drs. H. Mulyono, M.Pd.\",\"gender\":\"L\",\"cardId\":\"GURU-2311\",\"subject\":\"Matematika\",\"employmentStatus\":\"PNS\",\"positionStatus\":\"Waka Kurikulum\",\"active\":true,\"version\":1,\"createdAt\":\"2026-10-01T07:24:17.639Z\",\"updatedAt\":\"2026-10-01T07:24:17.639Z\",\"deletedAt\":null}",
+      "description": "Menambahkan guru baru: Drs. H. Mulyono, M.Pd.",
+      "createdAt": "2026-10-01T07:24:17.641Z"
+    },
+    {
+      "id": "a8916983-3cc4-455c-aa43-830a04e120d1",
+      "userId": null,
+      "action": "ATTENDANCE_GENERATE",
+      "entity": "teacher_attendance",
+      "entityId": null,
+      "oldData": null,
+      "newData": null,
+      "description": "Generate absensi otomatis untuk tanggal 2026-10-01: 0 mengajar, 0 piket, 5 manajemen",
+      "createdAt": "2026-10-01T07:24:08.505Z"
+    },
+    {
+      "id": "1d9529aa-11b0-4849-82e8-0cb09379a636",
+      "userId": null,
+      "action": "ATTENDANCE_GENERATE",
+      "entity": "teacher_attendance",
+      "entityId": null,
+      "oldData": null,
+      "newData": null,
+      "description": "Generate absensi otomatis untuk tanggal 2026-10-01: 0 mengajar, 0 piket, 5 manajemen",
+      "createdAt": "2026-10-01T07:23:46.352Z"
+    },
+    {
+      "id": "92ef3d07-5428-4506-9ddc-a5284408fe6d",
+      "userId": null,
+      "action": "ATTENDANCE_GENERATE",
+      "entity": "teacher_attendance",
+      "entityId": null,
+      "oldData": null,
+      "newData": null,
+      "description": "Generate absensi otomatis untuk tanggal 2026-09-30: 1 mengajar, 0 piket, 5 manajemen",
+      "createdAt": "2026-09-30T07:25:06.359Z"
+    },
+    {
+      "id": "a0bfb410-d9f7-4ec8-b7ae-40aaf4f7fc3a",
+      "userId": null,
+      "action": "ATTENDANCE_GENERATE",
+      "entity": "teacher_attendance",
+      "entityId": null,
+      "oldData": null,
+      "newData": null,
+      "description": "Generate absensi otomatis untuk tanggal 2026-09-30: 1 mengajar, 0 piket, 5 manajemen",
+      "createdAt": "2026-09-30T07:23:40.561Z"
+    },
+    {
+      "id": "1919156a-3e3a-4569-b10b-bf11b03e9179",
+      "userId": null,
+      "action": "ATTENDANCE_GENERATE",
+      "entity": "teacher_attendance",
+      "entityId": null,
+      "oldData": null,
+      "newData": null,
+      "description": "Generate absensi otomatis untuk tanggal 2026-09-30: 1 mengajar, 0 piket, 5 manajemen",
+      "createdAt": "2026-09-30T07:22:30.031Z"
+    },
+    {
+      "id": "1c642027-3f13-486d-b369-1d823137524b",
+      "userId": null,
+      "action": "ATTENDANCE_GENERATE",
+      "entity": "teacher_attendance",
+      "entityId": null,
+      "oldData": null,
+      "newData": null,
+      "description": "Generate absensi otomatis untuk tanggal 2026-09-30: 1 mengajar, 0 piket, 5 manajemen",
+      "createdAt": "2026-09-30T07:17:30.029Z"
+    },
+    {
+      "id": "8cff9934-d2ee-405f-9044-070f81136ce7",
+      "userId": null,
+      "action": "ATTENDANCE_GENERATE",
+      "entity": "teacher_attendance",
+      "entityId": null,
+      "oldData": null,
+      "newData": null,
+      "description": "Generate absensi otomatis untuk tanggal 2026-09-30: 1 mengajar, 0 piket, 5 manajemen",
+      "createdAt": "2026-09-30T07:12:30.028Z"
+    },
+    {
+      "id": "6fe00951-ab84-44da-9609-619dc29c84cc",
+      "userId": null,
+      "action": "ATTENDANCE_GENERATE",
+      "entity": "teacher_attendance",
+      "entityId": null,
+      "oldData": null,
+      "newData": null,
+      "description": "Generate absensi otomatis untuk tanggal 2026-09-30: 1 mengajar, 0 piket, 5 manajemen",
+      "createdAt": "2026-09-30T07:07:30.020Z"
+    },
+    {
+      "id": "362ce3f5-b06d-45ba-9cf8-b37a2e612be4",
+      "userId": null,
+      "action": "ATTENDANCE_GENERATE",
+      "entity": "teacher_attendance",
+      "entityId": null,
+      "oldData": null,
+      "newData": null,
+      "description": "Generate absensi otomatis untuk tanggal 2026-09-30: 1 mengajar, 0 piket, 5 manajemen",
+      "createdAt": "2026-09-30T07:07:25.951Z"
+    },
+    {
+      "id": "a2137686-ee31-45a4-bc53-31d3b9ebba25",
+      "userId": "usr-admin-01",
+      "action": "UPDATE",
+      "entity": "teaching_schedules",
+      "entityId": "240059c7-235e-45d4-af8a-4c346570ca58",
+      "oldData": "{\"id\":\"240059c7-235e-45d4-af8a-4c346570ca58\",\"teacherId\":\"tch-budi-01\",\"classId\":\"cls-7a\",\"subjectId\":\"sbj-mat\",\"academicYearId\":\"ay-2026-2027\",\"semesterId\":\"sem-2026-1\",\"dayOfWeek\":3,\"startTime\":\"07:15\",\"endTime\":\"08:15\",\"startPeriod\":1,\"endPeriod\":2,\"periodCount\":2,\"room\":\"R. 201\",\"active\":true,\"version\":1}",
+      "newData": "{\"id\":\"240059c7-235e-45d4-af8a-4c346570ca58\",\"teacherId\":\"tch-budi-01\",\"classId\":\"cls-7a\",\"subjectId\":\"sbj-snk\",\"academicYearId\":\"ay-2026-2027\",\"semesterId\":\"sem-2026-1\",\"dayOfWeek\":3,\"startTime\":\"07:15\",\"endTime\":\"08:15\",\"startPeriod\":1,\"endPeriod\":2,\"periodCount\":2,\"room\":\"R. 201\",\"active\":true,\"version\":2}",
+      "description": "Memperbarui jadwal mengajar: Hari 3 07:15-08:15",
+      "createdAt": "2026-09-30T07:05:20.325Z"
+    },
+    {
+      "id": "d076985f-3da9-4edc-bcbf-9d29c4ef5cdc",
+      "userId": null,
+      "action": "ATTENDANCE_GENERATE",
+      "entity": "teacher_attendance",
+      "entityId": null,
+      "oldData": null,
+      "newData": null,
+      "description": "Generate absensi otomatis untuk tanggal 2026-09-30: 1 mengajar, 0 piket, 5 manajemen",
+      "createdAt": "2026-09-30T07:04:15.014Z"
+    },
+    {
+      "id": "dadca45a-e4c8-490d-8863-197bbaa45787",
+      "userId": "usr-admin",
+      "action": "UPDATE",
+      "entity": "teaching_schedules",
+      "entityId": "sch-budi-8a-senin",
+      "oldData": "{\"id\":\"sch-budi-8a-senin\",\"teacherId\":\"tch-budi-01\",\"classId\":\"cls-8a\",\"subjectId\":\"sbj-mtk\",\"academicYearId\":\"ay-2026-2027\",\"semesterId\":\"sem-2026-1\",\"dayOfWeek\":1,\"startTime\":\"07:30\",\"endTime\":\"08:15\",\"room\":\"R. 201\",\"active\":true,\"version\":1}",
+      "newData": "{\"id\":\"sch-budi-8a-senin\",\"teacherId\":\"tch-budi-01\",\"classId\":\"cls-8a\",\"subjectId\":\"sbj-mtk\",\"academicYearId\":\"ay-2026-2027\",\"semesterId\":\"sem-2026-1\",\"dayOfWeek\":1,\"startTime\":\"07:30\",\"endTime\":\"08:15\",\"room\":\"R. 8A Unggulan\",\"active\":true,\"version\":2}",
+      "description": "Memperbarui jadwal mengajar: Hari 1 07:30-08:15",
+      "createdAt": "2026-09-30T07:04:04.879Z"
+    },
+    {
+      "id": "ab02fc4a-3494-4eb2-a47e-6f4a7c6ffb94",
+      "userId": null,
+      "action": "ATTENDANCE_GENERATE",
+      "entity": "teacher_attendance",
+      "entityId": null,
+      "oldData": null,
+      "newData": null,
+      "description": "Generate absensi otomatis untuk tanggal 2026-09-30: 1 mengajar, 0 piket, 5 manajemen",
+      "createdAt": "2026-09-30T07:03:58.650Z"
+    },
+    {
+      "id": "2f86789e-ad39-463f-8ae1-ab6b6b8e22dc",
+      "userId": null,
+      "action": "ATTENDANCE_GENERATE",
+      "entity": "teacher_attendance",
+      "entityId": null,
+      "oldData": null,
+      "newData": null,
+      "description": "Generate absensi otomatis untuk tanggal 2026-09-30: 1 mengajar, 0 piket, 5 manajemen",
+      "createdAt": "2026-09-30T07:01:35.699Z"
+    },
+    {
+      "id": "bca5d847-bbdb-4119-9764-cfd46784a8ec",
+      "userId": "usr-admin-01",
+      "action": "CREATE",
+      "entity": "teaching_schedules",
+      "entityId": "51359d15-7963-4583-9d4e-ed15f4a28c95",
+      "oldData": null,
+      "newData": "{\"id\":\"51359d15-7963-4583-9d4e-ed15f4a28c95\",\"teacherId\":\"tch-rina-08\",\"classId\":\"cls-7a\",\"subjectId\":\"544f9751-d0f4-4f98-9816-ed9651f5a27c\",\"academicYearId\":\"ay-2026-2027\",\"semesterId\":\"sem-2026-1\",\"dayOfWeek\":1,\"startTime\":\"08:45\",\"endTime\":\"11:05\",\"startPeriod\":4,\"endPeriod\":7,\"periodCount\":4,\"room\":\"R. 101\",\"active\":true,\"version\":1}",
+      "description": "Menambahkan jadwal mengajar baru: Hari 1 08:45-11:05",
+      "createdAt": "2026-09-30T06:59:59.055Z"
+    },
+    {
+      "id": "bdf70b77-56b2-43f8-a8f0-a897a7b06420",
+      "userId": null,
+      "action": "ATTENDANCE_GENERATE",
+      "entity": "teacher_attendance",
+      "entityId": null,
+      "oldData": null,
+      "newData": null,
+      "description": "Generate absensi otomatis untuk tanggal 2026-09-30: 1 mengajar, 0 piket, 5 manajemen",
+      "createdAt": "2026-09-30T06:56:35.699Z"
+    },
+    {
+      "id": "adb9afed-aa9a-4be4-85bd-aa88cf225755",
+      "userId": null,
+      "action": "ATTENDANCE_GENERATE",
+      "entity": "teacher_attendance",
+      "entityId": null,
+      "oldData": null,
+      "newData": null,
+      "description": "Generate absensi otomatis untuk tanggal 2026-09-30: 1 mengajar, 0 piket, 5 manajemen",
+      "createdAt": "2026-09-30T06:51:35.698Z"
+    },
+    {
+      "id": "284b0e37-505c-41cc-9337-3fb7bbfe0c8f",
+      "userId": null,
+      "action": "ATTENDANCE_GENERATE",
+      "entity": "teacher_attendance",
+      "entityId": null,
+      "oldData": null,
+      "newData": null,
+      "description": "Generate absensi otomatis untuk tanggal 2026-09-30: 1 mengajar, 0 piket, 5 manajemen",
+      "createdAt": "2026-09-30T06:46:35.699Z"
+    },
+    {
+      "id": "a7f7c960-6509-4df1-bc98-0f685445707e",
+      "userId": null,
+      "action": "ATTENDANCE_GENERATE",
+      "entity": "teacher_attendance",
+      "entityId": null,
+      "oldData": null,
+      "newData": null,
+      "description": "Generate absensi otomatis untuk tanggal 2026-09-30: 1 mengajar, 0 piket, 5 manajemen",
+      "createdAt": "2026-09-30T06:41:35.690Z"
+    },
+    {
+      "id": "898d2fbf-6663-445e-865f-73a258d02b89",
+      "userId": null,
+      "action": "ATTENDANCE_GENERATE",
+      "entity": "teacher_attendance",
+      "entityId": null,
+      "oldData": null,
+      "newData": null,
+      "description": "Generate absensi otomatis untuk tanggal 2026-09-30: 1 mengajar, 0 piket, 5 manajemen",
+      "createdAt": "2026-09-30T06:41:19.352Z"
+    },
+    {
+      "id": "55e3d6fe-14c6-48d4-91ad-bfda701593b5",
+      "userId": "usr-admin",
+      "action": "CREATE",
+      "entity": "teaching_schedules",
+      "entityId": "240059c7-235e-45d4-af8a-4c346570ca58",
+      "oldData": null,
+      "newData": "{\"id\":\"240059c7-235e-45d4-af8a-4c346570ca58\",\"teacherId\":\"tch-budi-01\",\"classId\":\"cls-7a\",\"subjectId\":\"sbj-mat\",\"academicYearId\":\"ay-2026-2027\",\"semesterId\":\"sem-2026-1\",\"dayOfWeek\":3,\"startTime\":\"07:15\",\"endTime\":\"08:15\",\"startPeriod\":1,\"endPeriod\":2,\"periodCount\":2,\"room\":\"R. 201\",\"active\":true,\"version\":1}",
+      "description": "Menambahkan jadwal mengajar baru: Hari 3 07:15-08:15",
+      "createdAt": "2026-09-30T06:40:41.370Z"
+    },
+    {
+      "id": "9bc95878-e8b7-4d90-93c8-aba3ca36cd33",
+      "userId": null,
+      "action": "ATTENDANCE_GENERATE",
+      "entity": "teacher_attendance",
+      "entityId": null,
+      "oldData": null,
+      "newData": null,
+      "description": "Generate absensi otomatis untuk tanggal 2026-09-30: 0 mengajar, 0 piket, 5 manajemen",
+      "createdAt": "2026-09-30T06:40:22.595Z"
+    },
+    {
+      "id": "cf940cf5-a99b-4bf5-b35a-f1967b4acde8",
+      "userId": null,
+      "action": "ATTENDANCE_GENERATE",
+      "entity": "teacher_attendance",
+      "entityId": null,
+      "oldData": null,
+      "newData": null,
+      "description": "Generate absensi otomatis untuk tanggal 2026-09-30: 0 mengajar, 0 piket, 5 manajemen",
+      "createdAt": "2026-09-30T06:37:59.117Z"
+    },
+    {
+      "id": "4db42cec-b896-42df-ab49-d4b93f8ea19a",
+      "userId": null,
+      "action": "ATTENDANCE_GENERATE",
+      "entity": "teacher_attendance",
+      "entityId": null,
+      "oldData": null,
+      "newData": null,
+      "description": "Generate absensi otomatis untuk tanggal 2026-09-30: 0 mengajar, 0 piket, 5 manajemen",
+      "createdAt": "2026-09-30T06:32:59.117Z"
+    },
+    {
+      "id": "a7bdc81a-43b2-4ba5-9784-4d444d76b6e7",
+      "userId": null,
+      "action": "ATTENDANCE_GENERATE",
+      "entity": "teacher_attendance",
+      "entityId": null,
+      "oldData": null,
+      "newData": null,
+      "description": "Generate absensi otomatis untuk tanggal 2026-09-30: 0 mengajar, 0 piket, 5 manajemen",
+      "createdAt": "2026-09-30T06:27:59.116Z"
+    },
+    {
+      "id": "4badaa08-d216-42c4-8b3a-96e8867ead90",
+      "userId": "usr-admin-01",
+      "action": "CREATE",
+      "entity": "subjects",
+      "entityId": "544f9751-d0f4-4f98-9816-ed9651f5a27c",
+      "oldData": null,
+      "newData": "{\"id\":\"544f9751-d0f4-4f98-9816-ed9651f5a27c\",\"code\":\"KKA\",\"name\":\"Koding dan Kecerdasan Artificial\",\"active\":true,\"version\":1}",
+      "description": "Menambahkan mata pelajaran: Koding dan Kecerdasan Artificial (KKA)",
+      "createdAt": "2026-09-30T06:26:25.605Z"
+    },
+    {
+      "id": "10eba659-22c0-4e7e-afbf-2022158663c7",
+      "userId": null,
+      "action": "ATTENDANCE_GENERATE",
+      "entity": "teacher_attendance",
+      "entityId": null,
+      "oldData": null,
+      "newData": null,
+      "description": "Generate absensi otomatis untuk tanggal 2026-09-30: 0 mengajar, 0 piket, 5 manajemen",
+      "createdAt": "2026-09-30T06:22:59.109Z"
+    },
+    {
+      "id": "47e65c8e-e3b1-41fe-bc0a-66957a640a7d",
+      "userId": null,
+      "action": "ATTENDANCE_GENERATE",
+      "entity": "teacher_attendance",
+      "entityId": null,
+      "oldData": null,
+      "newData": null,
+      "description": "Generate absensi otomatis untuk tanggal 2026-09-30: 0 mengajar, 0 piket, 5 manajemen",
+      "createdAt": "2026-09-30T06:22:47.368Z"
+    },
+    {
+      "id": "96bf461d-aa93-4a84-b5c8-5fb217c581f6",
+      "userId": null,
+      "action": "ATTENDANCE_GENERATE",
+      "entity": "teacher_attendance",
+      "entityId": null,
+      "oldData": null,
+      "newData": null,
+      "description": "Generate absensi otomatis untuk tanggal 2026-09-30: 0 mengajar, 0 piket, 5 manajemen",
+      "createdAt": "2026-09-30T06:22:19.307Z"
+    },
+    {
+      "id": "7119495e-2cd1-4099-9b60-2867649528e8",
+      "userId": null,
+      "action": "ATTENDANCE_GENERATE",
+      "entity": "teacher_attendance",
+      "entityId": null,
+      "oldData": null,
+      "newData": null,
+      "description": "Generate absensi otomatis untuk tanggal 2026-09-30: 0 mengajar, 0 piket, 5 manajemen",
+      "createdAt": "2026-09-30T06:17:19.298Z"
+    },
+    {
+      "id": "559ede3b-ee48-4622-90ed-be72c280281d",
+      "userId": "scanner",
+      "action": "ATTENDANCE_SCAN",
+      "entity": "teacher_attendance",
+      "entityId": "8189c0c3-ce21-4c40-a0b2-eeb1a9104766",
+      "oldData": null,
+      "newData": null,
+      "description": "Presensi scan guru Tap Sensor NFC [MASUK]: Budi Santoso, S.Pd. status HADIR jam 07:05 (Kehadiran Umum Guru)",
+      "createdAt": "2026-09-28T15:35:00.036Z"
+    },
+    {
+      "id": "5c5f1204-f1de-4cb7-a661-fe27da56150c",
+      "userId": "scanner",
+      "action": "ATTENDANCE_SCAN",
+      "entity": "teacher_attendance",
+      "entityId": "961fc441-3c5d-4105-878c-b10db5bd6e62",
+      "oldData": null,
+      "newData": null,
+      "description": "Presensi scan guru Tap Sensor NFC [PULANG]: Budi Santoso, S.Pd. status HADIR jam 15.34 (1x Tap)",
+      "createdAt": "2026-09-28T15:34:36.874Z"
+    },
+    {
+      "id": "2096dad5-c376-4f72-b7c8-4610748932a7",
+      "userId": null,
+      "action": "ATTENDANCE_GENERATE",
+      "entity": "teacher_attendance",
+      "entityId": null,
+      "oldData": null,
+      "newData": null,
+      "description": "Generate absensi otomatis untuk tanggal 2026-09-28: 5 mengajar, 1 piket, 5 manajemen",
+      "createdAt": "2026-09-28T15:34:24.201Z"
+    },
+    {
+      "id": "d6aaa093-0fa9-4d5d-9a1d-b793e0cce0b1",
+      "userId": null,
+      "action": "ATTENDANCE_GENERATE",
+      "entity": "teacher_attendance",
+      "entityId": null,
+      "oldData": null,
+      "newData": null,
+      "description": "Generate absensi otomatis untuk tanggal 2026-09-28: 5 mengajar, 1 piket, 5 manajemen",
+      "createdAt": "2026-09-28T15:33:38.555Z"
+    },
+    {
+      "id": "39d6ef5c-10d2-4f60-9fa4-0406521aa149",
+      "userId": null,
+      "action": "ATTENDANCE_GENERATE",
+      "entity": "teacher_attendance",
+      "entityId": null,
+      "oldData": null,
+      "newData": null,
+      "description": "Generate absensi otomatis untuk tanggal 2026-09-28: 5 mengajar, 1 piket",
+      "createdAt": "2026-09-28T15:29:11.711Z"
+    },
+    {
+      "id": "101abaf3-9ac8-4213-9f3c-584b63f6c40e",
+      "userId": null,
+      "action": "ATTENDANCE_GENERATE",
+      "entity": "teacher_attendance",
+      "entityId": null,
+      "oldData": null,
+      "newData": null,
+      "description": "Generate absensi otomatis untuk tanggal 2026-09-28: 5 mengajar, 1 piket",
+      "createdAt": "2026-09-28T15:24:11.712Z"
+    },
+    {
+      "id": "2ec20d33-e87a-40cb-a6f8-065f0b4e7eac",
+      "userId": null,
+      "action": "ATTENDANCE_GENERATE",
+      "entity": "teacher_attendance",
+      "entityId": null,
+      "oldData": null,
+      "newData": null,
+      "description": "Generate absensi otomatis untuk tanggal 2026-09-28: 5 mengajar, 1 piket",
+      "createdAt": "2026-09-28T15:19:11.711Z"
+    },
+    {
+      "id": "0d122a44-fdad-4199-9954-fcbc4fb10417",
+      "userId": "usr-admin-01",
+      "action": "LOGIN",
+      "entity": "users",
+      "entityId": "usr-admin-01",
+      "oldData": null,
+      "newData": null,
+      "description": "User admin berhasil login",
+      "createdAt": "2026-09-28T15:15:10.597Z"
+    },
+    {
+      "id": "e21e2c87-bfd1-4238-a024-d68c7ecd0012",
+      "userId": null,
+      "action": "ATTENDANCE_GENERATE",
+      "entity": "teacher_attendance",
+      "entityId": null,
+      "oldData": null,
+      "newData": null,
+      "description": "Generate absensi otomatis untuk tanggal 2026-09-28: 5 mengajar, 1 piket",
+      "createdAt": "2026-09-28T15:14:11.706Z"
+    },
+    {
+      "id": "3ef6db27-141f-4349-9e77-96ea906a1783",
+      "userId": null,
+      "action": "ATTENDANCE_GENERATE",
+      "entity": "teacher_attendance",
+      "entityId": null,
+      "oldData": null,
+      "newData": null,
+      "description": "Generate absensi otomatis untuk tanggal 2026-09-28: 5 mengajar, 1 piket",
+      "createdAt": "2026-09-28T15:13:46.898Z"
+    },
+    {
+      "id": "7f2ef712-6b5e-4657-9f4f-9e66de1a6f8c",
+      "userId": "usr-admin-01",
+      "action": "LOGIN",
+      "entity": "users",
+      "entityId": "usr-admin-01",
+      "oldData": null,
+      "newData": null,
+      "description": "User admin berhasil login",
+      "createdAt": "2026-09-28T15:11:51.274Z"
+    },
+    {
+      "id": "b9481e8e-dcaa-4a81-8bd9-a05a62e9a27c",
+      "userId": null,
+      "action": "ATTENDANCE_GENERATE",
+      "entity": "teacher_attendance",
+      "entityId": null,
+      "oldData": null,
+      "newData": null,
+      "description": "Generate absensi otomatis untuk tanggal 2026-09-28: 5 mengajar, 1 piket",
+      "createdAt": "2026-09-28T15:10:48.504Z"
+    },
+    {
+      "id": "caa140ef-e660-4aba-88bf-2fcd197c2e2e",
+      "userId": "usr-admin-01",
+      "action": "LOGIN",
+      "entity": "users",
+      "entityId": "usr-admin-01",
+      "oldData": null,
+      "newData": null,
+      "description": "User admin berhasil login",
+      "createdAt": "2026-09-28T15:08:14.215Z"
+    },
+    {
+      "id": "213bbe93-21fb-4796-9b6e-a766922fb8ca",
+      "userId": null,
+      "action": "ATTENDANCE_GENERATE",
+      "entity": "teacher_attendance",
+      "entityId": null,
+      "oldData": null,
+      "newData": null,
+      "description": "Generate absensi otomatis untuk tanggal 2026-09-28: 5 mengajar, 1 piket",
+      "createdAt": "2026-09-28T15:05:48.498Z"
+    },
+    {
+      "id": "7f76ccd1-e3cc-4897-9a2f-e1e748a23d7d",
+      "userId": null,
+      "action": "ATTENDANCE_GENERATE",
+      "entity": "teacher_attendance",
+      "entityId": null,
+      "oldData": null,
+      "newData": null,
+      "description": "Generate absensi otomatis untuk tanggal 2026-09-28: 5 mengajar, 1 piket",
+      "createdAt": "2026-09-28T15:05:29.876Z"
+    },
+    {
+      "id": "8daf0988-6854-4697-816f-1b0e3f26f79e",
+      "userId": null,
+      "action": "ATTENDANCE_GENERATE",
+      "entity": "teacher_attendance",
+      "entityId": null,
+      "oldData": null,
+      "newData": null,
+      "description": "Generate absensi otomatis untuk tanggal 2026-09-28: 5 mengajar, 1 piket",
+      "createdAt": "2026-09-28T15:01:13.129Z"
+    },
+    {
+      "id": "82e07cd6-b98c-4867-9dd4-a63e2466749c",
+      "userId": null,
+      "action": "ATTENDANCE_GENERATE",
+      "entity": "teacher_attendance",
+      "entityId": null,
+      "oldData": null,
+      "newData": null,
+      "description": "Generate absensi otomatis untuk tanggal 2026-09-28: 5 mengajar, 1 piket",
+      "createdAt": "2026-09-28T14:56:13.123Z"
+    },
     {
       "id": "97211ed4-dea2-4f47-b4de-615c81343d0e",
       "userId": "usr-admin-01",
@@ -2274,6 +3348,375 @@
       "localVersion": 1,
       "serverVersion": 2,
       "createdAt": "2026-09-22T02:42:28.939Z"
+    }
+  ],
+  "dhuhaAttendance": [],
+  "managementSchedules": [
+    {
+      "id": "mgmt-1",
+      "teacherId": "tch-2",
+      "teacherName": "Budi Santoso, S.Pd.",
+      "roleTitle": "Waka Kurikulum",
+      "dayOfWeek": 0,
+      "startTime": "07:00",
+      "endTime": "15:00",
+      "roomOrDesk": "Ruang Waka Kurikulum",
+      "description": "Pengelolaan kurikulum, KBM harian, dan evaluasi pembelajaran",
+      "active": true,
+      "version": 1
+    },
+    {
+      "id": "mgmt-2",
+      "teacherId": "tch-3",
+      "teacherName": "Siti Nurhaliza, S.Pd.",
+      "roleTitle": "Waka Kesiswaan & Pembina OSIS",
+      "dayOfWeek": 0,
+      "startTime": "07:00",
+      "endTime": "15:00",
+      "roomOrDesk": "Ruang Kesiswaan",
+      "description": "Kedisiplinan siswa, kegiatan OSIS, dan ekstrakurikuler",
+      "active": true,
+      "version": 1
+    },
+    {
+      "id": "mgmt-3",
+      "teacherId": "tch-4",
+      "teacherName": "Drs. Joko Purwanto",
+      "roleTitle": "Kepala Laboratorium Komputer & IPA",
+      "dayOfWeek": 0,
+      "startTime": "07:00",
+      "endTime": "15:00",
+      "roomOrDesk": "Laboratorium",
+      "description": "Pemeliharaan fasilitas laboratorium dan sarana praktikum",
+      "active": true,
+      "version": 1
+    },
+    {
+      "id": "mgmt-4",
+      "teacherId": "tch-5",
+      "teacherName": "Rina Kartika, S.Si.",
+      "roleTitle": "Kepala Perpustakaan",
+      "dayOfWeek": 0,
+      "startTime": "07:00",
+      "endTime": "15:00",
+      "roomOrDesk": "Perpustakaan Utama",
+      "description": "Pengembangan literasi dan sirkulasi buku perpustakaan",
+      "active": true,
+      "version": 1
+    },
+    {
+      "id": "mgmt-5",
+      "teacherId": "tch-1",
+      "teacherName": "Dr. H. Muhammad Ihsan, M.Pd.",
+      "roleTitle": "Kepala Sekolah",
+      "dayOfWeek": 0,
+      "startTime": "07:00",
+      "endTime": "15:30",
+      "roomOrDesk": "Ruang Kepala Sekolah",
+      "description": "Manajerial dan kepemimpinan satuan pendidikan SMP Al Hikam",
+      "active": true,
+      "version": 1
+    }
+  ],
+  "lessonPeriods": [
+    {
+      "id": "jp-1",
+      "periodNumber": 1,
+      "name": "Jam Ke-1",
+      "startTime": "07:15",
+      "endTime": "07:45",
+      "isBreak": false,
+      "dayOfWeek": 0,
+      "active": true
+    },
+    {
+      "id": "jp-2",
+      "periodNumber": 2,
+      "name": "Jam Ke-2",
+      "startTime": "07:45",
+      "endTime": "08:15",
+      "isBreak": false,
+      "dayOfWeek": 0,
+      "active": true
+    },
+    {
+      "id": "jp-3",
+      "periodNumber": 3,
+      "name": "Jam Ke-3",
+      "startTime": "08:15",
+      "endTime": "08:45",
+      "isBreak": false,
+      "dayOfWeek": 0,
+      "active": true
+    },
+    {
+      "id": "jp-4",
+      "periodNumber": 4,
+      "name": "Jam Ke-4",
+      "startTime": "08:45",
+      "endTime": "09:15",
+      "isBreak": false,
+      "dayOfWeek": 0,
+      "active": true
+    },
+    {
+      "id": "jp-break-1",
+      "periodNumber": 0,
+      "name": "Istirahat Pagi",
+      "startTime": "09:15",
+      "endTime": "09:35",
+      "isBreak": true,
+      "dayOfWeek": 0,
+      "active": true
+    },
+    {
+      "id": "jp-5",
+      "periodNumber": 5,
+      "name": "Jam Ke-5",
+      "startTime": "09:35",
+      "endTime": "10:05",
+      "isBreak": false,
+      "dayOfWeek": 0,
+      "active": true
+    },
+    {
+      "id": "jp-6",
+      "periodNumber": 6,
+      "name": "Jam Ke-6",
+      "startTime": "10:05",
+      "endTime": "10:35",
+      "isBreak": false,
+      "dayOfWeek": 0,
+      "active": true
+    },
+    {
+      "id": "jp-7",
+      "periodNumber": 7,
+      "name": "Jam Ke-7",
+      "startTime": "10:35",
+      "endTime": "11:05",
+      "isBreak": false,
+      "dayOfWeek": 0,
+      "active": true
+    },
+    {
+      "id": "jp-8",
+      "periodNumber": 8,
+      "name": "Jam Ke-8",
+      "startTime": "11:05",
+      "endTime": "11:35",
+      "isBreak": false,
+      "dayOfWeek": 0,
+      "active": true
+    },
+    {
+      "id": "jp-break-2",
+      "periodNumber": 0,
+      "name": "Istirahat Siang & Sholat Dzuhur",
+      "startTime": "11:35",
+      "endTime": "12:15",
+      "isBreak": true,
+      "dayOfWeek": 0,
+      "active": true
+    },
+    {
+      "id": "jp-9",
+      "periodNumber": 9,
+      "name": "Jam Ke-9",
+      "startTime": "12:15",
+      "endTime": "12:45",
+      "isBreak": false,
+      "dayOfWeek": 0,
+      "active": true
+    },
+    {
+      "id": "jp-10",
+      "periodNumber": 10,
+      "name": "Jam Ke-10",
+      "startTime": "12:45",
+      "endTime": "13:15",
+      "isBreak": false,
+      "dayOfWeek": 0,
+      "active": true
+    }
+  ],
+  "roleAccess": [
+    {
+      "tabId": "dashboard",
+      "name": "Dashboard & Statistik",
+      "category": "Umum",
+      "allowedRoles": [
+        "SUPER_ADMIN",
+        "GURU_BK",
+        "GURU",
+        "WALI_KELAS",
+        "BENDAHARA",
+        "TU",
+        "SISWA"
+      ]
+    },
+    {
+      "tabId": "teachers",
+      "name": "Master Data Guru & Pegawai",
+      "category": "Master Data",
+      "allowedRoles": [
+        "SUPER_ADMIN",
+        "TU"
+      ]
+    },
+    {
+      "tabId": "students",
+      "name": "Master Data Siswa & Wali",
+      "category": "Master Data",
+      "allowedRoles": [
+        "SUPER_ADMIN",
+        "GURU_BK",
+        "WALI_KELAS",
+        "TU"
+      ]
+    },
+    {
+      "tabId": "classes",
+      "name": "Manajemen Kelas & Ruangan",
+      "category": "Master Data",
+      "allowedRoles": [
+        "SUPER_ADMIN",
+        "TU"
+      ]
+    },
+    {
+      "tabId": "subjects",
+      "name": "Mata Pelajaran & Jam Pelajaran (JP)",
+      "category": "Master Data",
+      "allowedRoles": [
+        "SUPER_ADMIN",
+        "TU",
+        "GURU",
+        "WALI_KELAS"
+      ]
+    },
+    {
+      "tabId": "schedules",
+      "name": "Jadwal Mengajar & Piket",
+      "category": "KBM & Jadwal",
+      "allowedRoles": [
+        "SUPER_ADMIN",
+        "GURU_BK",
+        "GURU",
+        "WALI_KELAS",
+        "TU",
+        "SISWA"
+      ]
+    },
+    {
+      "tabId": "scan-kiosk",
+      "name": "Mesin Scan Presensi (Kiosk)",
+      "category": "Presensi",
+      "allowedRoles": [
+        "SUPER_ADMIN",
+        "TU",
+        "GURU"
+      ]
+    },
+    {
+      "tabId": "attendance-student",
+      "name": "Presensi Kelas Siswa",
+      "category": "Presensi",
+      "allowedRoles": [
+        "SUPER_ADMIN",
+        "GURU_BK",
+        "GURU",
+        "WALI_KELAS",
+        "TU"
+      ]
+    },
+    {
+      "tabId": "attendance-teacher",
+      "name": "Presensi Harian Guru & Staf",
+      "category": "Presensi",
+      "allowedRoles": [
+        "SUPER_ADMIN",
+        "TU",
+        "GURU"
+      ]
+    },
+    {
+      "tabId": "attendance-dhuha",
+      "name": "Presensi Sholat Dhuha",
+      "category": "Presensi",
+      "allowedRoles": [
+        "SUPER_ADMIN",
+        "GURU_BK",
+        "GURU",
+        "WALI_KELAS",
+        "TU"
+      ]
+    },
+    {
+      "tabId": "id-cards",
+      "name": "Cetak Kartu Siswa & Guru (QR/NFC)",
+      "category": "Administrasi",
+      "allowedRoles": [
+        "SUPER_ADMIN",
+        "TU"
+      ]
+    },
+    {
+      "tabId": "reports",
+      "name": "Laporan Rekap & Statistik",
+      "category": "Laporan",
+      "allowedRoles": [
+        "SUPER_ADMIN",
+        "GURU_BK",
+        "WALI_KELAS",
+        "BENDAHARA",
+        "TU"
+      ]
+    },
+    {
+      "tabId": "mod-keuangan",
+      "name": "Modul Keuangan & SPP",
+      "category": "Modul Ekstensi",
+      "allowedRoles": [
+        "SUPER_ADMIN",
+        "BENDAHARA",
+        "TU"
+      ]
+    },
+    {
+      "tabId": "mod-kesiswaan",
+      "name": "Modul BK & Kesiswaan",
+      "category": "Modul Ekstensi",
+      "allowedRoles": [
+        "SUPER_ADMIN",
+        "GURU_BK",
+        "WALI_KELAS"
+      ]
+    },
+    {
+      "tabId": "database",
+      "name": "Kelola Database JSON & Backup",
+      "category": "Sistem",
+      "allowedRoles": [
+        "SUPER_ADMIN"
+      ]
+    },
+    {
+      "tabId": "sync",
+      "name": "Pusat Sinkronisasi Offline",
+      "category": "Sistem",
+      "allowedRoles": [
+        "SUPER_ADMIN",
+        "TU"
+      ]
+    },
+    {
+      "tabId": "settings",
+      "name": "Pengaturan Akun & Hak Akses Role",
+      "category": "Sistem",
+      "allowedRoles": [
+        "SUPER_ADMIN"
+      ]
     }
   ]
 }

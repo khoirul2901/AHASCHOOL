@@ -50,6 +50,13 @@ export const TypeBadge: React.FC<{ type: AttendanceType | string }> = ({ type })
       </span>
     );
   }
+  if (type === 'MANAGEMENT') {
+    return (
+      <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-amber-100 text-amber-800 dark:bg-amber-950/60 dark:text-amber-300">
+        MANAJEMEN
+      </span>
+    );
+  }
   return (
     <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-sky-100 text-sky-800 dark:bg-sky-950/60 dark:text-sky-300">
       MENGAJAR

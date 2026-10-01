@@ -18,8 +18,12 @@ import {
   Briefcase,
   Layers,
   ArrowRight,
+  Radio,
+  Smartphone,
+  Cpu,
 } from 'lucide-react';
 import { Html5Qrcode, Html5QrcodeSupportedFormats } from 'html5-qrcode';
+import { isWebNfcSupported, nfcManager } from '../../utils/nfcHelper.js';
 import {
   playSuccessBeep,
   playDuplicateBeep,
@@ -47,7 +51,7 @@ export const AttendanceScannerModal: React.FC<AttendanceScannerModalProps> = ({
   currentSession,
   onScanSuccess,
 }) => {
-  const [activeTab, setActiveTab] = useState<'CAMERA' | 'HARDWARE'>('CAMERA');
+  const [activeTab, setActiveTab] = useState<'NFC' | 'CAMERA' | 'HARDWARE' | 'MANUAL'>('NFC');
   const [soundEnabled, setSoundEnabled] = useState(true);
   const [voiceEnabled, setVoiceEnabled] = useState(true);
 
@@ -70,6 +74,30 @@ export const AttendanceScannerModal: React.FC<AttendanceScannerModalProps> = ({
   const lastKeyTimeRef = useRef<number>(0);
   const isCooldownRef = useRef<boolean>(false);
 
+  // Web NFC Scanner Initializer
+  useEffect(() => {
+    if (!isOpen || activeTab !== 'NFC') {
+      nfcManager.stopScan();
+      return;
+    }
+
+    if (isWebNfcSupported()) {
+      nfcManager.startScan(
+        (res) => {
+          const uid = res.serialNumber || res.records?.[0]?.data;
+          if (uid) {
+            handleProcessCode(uid, 'NFC');
+          }
+        },
+        (err) => console.warn('Modal NFC warn:', err)
+      );
+    }
+
+    return () => {
+      nfcManager.stopScan();
+    };
+  }, [isOpen, activeTab]);
+
   // Auto-clear result banner after 4 seconds
   useEffect(() => {
     if (!lastResult) return;
@@ -82,7 +110,7 @@ export const AttendanceScannerModal: React.FC<AttendanceScannerModalProps> = ({
   // Process a scanned code
   const handleProcessCode = async (
     scannedCode: string,
-    method: 'CAMERA' | 'HARDWARE_SCANNER'
+    method: 'MANUAL' | 'CAMERA' | 'HARDWARE_SCANNER' | 'NFC'
   ) => {
     const code = scannedCode.trim();
     if (!code || isProcessing || isCooldownRef.current) return;
@@ -368,29 +396,51 @@ export const AttendanceScannerModal: React.FC<AttendanceScannerModalProps> = ({
           </div>
         </div>
 
-        {/* Tab Controls: Camera vs Hardware Scanner */}
-        <div className="grid grid-cols-2 border-b border-slate-100 bg-slate-100/50 p-1.5 dark:border-slate-800 dark:bg-slate-800/40">
+        {/* Tab Controls: NFC, Camera, Hardware, Manual */}
+        <div className="grid grid-cols-4 border-b border-slate-100 bg-slate-100/50 p-1.5 dark:border-slate-800 dark:bg-slate-800/40 text-xs font-semibold">
+          <button
+            onClick={() => setActiveTab('NFC')}
+            className={`flex items-center justify-center gap-1.5 rounded-xl py-2 transition-all ${
+              activeTab === 'NFC'
+                ? 'bg-indigo-600 text-white shadow-xs font-bold'
+                : 'text-slate-600 hover:text-indigo-600 dark:text-slate-400'
+            }`}
+          >
+            <Radio className="h-3.5 w-3.5" />
+            <span>Sensor NFC</span>
+          </button>
           <button
             onClick={() => setActiveTab('CAMERA')}
-            className={`flex items-center justify-center gap-2 rounded-xl py-2.5 text-sm font-semibold transition-all ${
+            className={`flex items-center justify-center gap-1.5 rounded-xl py-2 transition-all ${
               activeTab === 'CAMERA'
-                ? 'bg-white text-blue-700 shadow-xs dark:bg-slate-800 dark:text-blue-400'
+                ? 'bg-white text-blue-700 shadow-xs dark:bg-slate-800 dark:text-blue-400 font-bold'
                 : 'text-slate-600 hover:text-slate-900 dark:text-slate-400'
             }`}
           >
-            <Camera className="h-4 w-4" />
-            Scan Kamera (Webcam / HP)
+            <Camera className="h-3.5 w-3.5" />
+            <span>Kamera</span>
           </button>
           <button
             onClick={() => setActiveTab('HARDWARE')}
-            className={`flex items-center justify-center gap-2 rounded-xl py-2.5 text-sm font-semibold transition-all ${
+            className={`flex items-center justify-center gap-1.5 rounded-xl py-2 transition-all ${
               activeTab === 'HARDWARE'
-                ? 'bg-white text-blue-700 shadow-xs dark:bg-slate-800 dark:text-blue-400'
+                ? 'bg-white text-blue-700 shadow-xs dark:bg-slate-800 dark:text-blue-400 font-bold'
                 : 'text-slate-600 hover:text-slate-900 dark:text-slate-400'
             }`}
           >
-            <Barcode className="h-4 w-4" />
-            Hard Scanner (USB / RFID)
+            <Barcode className="h-3.5 w-3.5" />
+            <span>Hard Scan</span>
+          </button>
+          <button
+            onClick={() => setActiveTab('MANUAL')}
+            className={`flex items-center justify-center gap-1.5 rounded-xl py-2 transition-all ${
+              activeTab === 'MANUAL'
+                ? 'bg-white text-blue-700 shadow-xs dark:bg-slate-800 dark:text-blue-400 font-bold'
+                : 'text-slate-600 hover:text-slate-900 dark:text-slate-400'
+            }`}
+          >
+            <Cpu className="h-3.5 w-3.5" />
+            <span>Manual</span>
           </button>
         </div>
 
@@ -465,6 +515,35 @@ export const AttendanceScannerModal: React.FC<AttendanceScannerModalProps> = ({
             <div className="flex items-center gap-3 rounded-xl border border-red-200 bg-red-50 p-3.5 text-sm text-red-700 dark:border-red-900/50 dark:bg-red-950/40 dark:text-red-300">
               <AlertTriangle className="h-5 w-5 shrink-0" />
               <p className="flex-1 text-xs">{errorMessage}</p>
+            </div>
+          )}
+
+          {/* TAB 0: Sensor NFC */}
+          {activeTab === 'NFC' && (
+            <div className="rounded-2xl border-2 border-indigo-200 bg-indigo-50/50 p-6 text-center dark:border-indigo-900/60 dark:bg-indigo-950/20">
+              <div className="relative inline-flex items-center justify-center my-3">
+                <span className="absolute h-20 w-20 rounded-full bg-indigo-500/20 animate-ping" />
+                <span className="absolute h-14 w-14 rounded-full bg-indigo-500/30 animate-pulse" />
+                <div className="relative flex h-14 w-14 items-center justify-center rounded-2xl bg-indigo-600 text-white shadow-lg shadow-indigo-600/30">
+                  <Smartphone className="h-7 w-7" />
+                </div>
+              </div>
+
+              <h4 className="mt-2 text-sm font-bold text-slate-900 dark:text-white flex items-center justify-center gap-2">
+                Sensor NFC Siap Memindai
+                {isWebNfcSupported() ? (
+                  <span className="rounded-full bg-emerald-100 px-2 py-0.5 text-[10px] font-black text-emerald-800 dark:bg-emerald-950 dark:text-emerald-300">
+                    WEB NFC
+                  </span>
+                ) : (
+                  <span className="rounded-full bg-amber-100 px-2 py-0.5 text-[10px] font-black text-amber-800 dark:bg-amber-950 dark:text-amber-300">
+                    USB NFC
+                  </span>
+                )}
+              </h4>
+              <p className="mt-1 text-xs text-slate-500 max-w-sm mx-auto">
+                Dekatkan kartu fisik NFC (kartu pelajar / e-KTP / kartu guru) ke sensor NFC perangkat atau USB reader.
+              </p>
             </div>
           )}
 

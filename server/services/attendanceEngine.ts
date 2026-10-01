@@ -174,20 +174,80 @@ export class AttendanceEngine {
   }
 
   /**
+   * Generates Management Attendance records for a given date.
+   */
+  public static generateManagementAttendance(
+    dateString: string,
+    source: AttendanceSource = 'SYSTEM'
+  ): TeacherAttendance[] {
+    const store = dbManager.getStore();
+    const dateObj = new Date(dateString);
+    let dayOfWeek = dateObj.getDay();
+    if (dayOfWeek === 0) dayOfWeek = 7;
+
+    const managements = (store.managementSchedules || []).filter(
+      (m) =>
+        m.active &&
+        !m.deletedAt &&
+        (!m.dayOfWeek || m.dayOfWeek === 0 || m.dayOfWeek === dayOfWeek)
+    );
+
+    const generated: TeacherAttendance[] = [];
+
+    for (const mgmt of managements) {
+      const existing = store.teacherAttendance.find(
+        (att) =>
+          att.teacherId === mgmt.teacherId &&
+          att.attendanceDate === dateString &&
+          att.attendanceType === 'MANAGEMENT' &&
+          att.scheduleId === mgmt.id &&
+          !att.deletedAt
+      );
+
+      if (!existing) {
+        const mode = store.schoolSetting.teacherAttendanceMode;
+        const newRecord: TeacherAttendance = {
+          id: uuidv4(),
+          teacherId: mgmt.teacherId,
+          attendanceType: 'MANAGEMENT',
+          scheduleId: mgmt.id,
+          attendanceDate: dateString,
+          scheduledStart: mgmt.startTime || '07:00',
+          scheduledEnd: mgmt.endTime || '15:00',
+          actualTime: mode === 'AUTO_HADIR' ? mgmt.startTime : undefined,
+          status: 'HADIR',
+          source,
+          note: `Tugas Manajemen: ${mgmt.roleTitle} (${mgmt.roomOrDesk || 'Kantor'})`,
+          version: 1,
+        };
+
+        store.teacherAttendance.push(newRecord);
+        generated.push(newRecord);
+      } else {
+        generated.push(existing);
+      }
+    }
+
+    dbManager.saveSync();
+    return generated;
+  }
+
+  /**
    * Generates all attendance for the day:
    * 1. Teaching Attendance
    * 2. Picket Attendance
-   * Result: Guarantees Budi with Picket & Teaching gets TWO distinct records (1 PICKET, 1 TEACHING),
-   * and repeating the call preserves exactly 1 PICKET and 1 TEACHING.
+   * 3. Management Attendance
    */
   public static generateDailyAttendance(dateString?: string): {
     teachingCount: number;
     picketCount: number;
+    managementCount: number;
     totalRecordsForDate: number;
   } {
     const date = dateString || new Date().toISOString().split('T')[0];
     const teaching = this.generateTeachingAttendance(date);
     const picket = this.generatePicketAttendance(date);
+    const management = this.generateManagementAttendance(date);
 
     const store = dbManager.getStore();
     const totalRecordsForDate = store.teacherAttendance.filter(
@@ -197,12 +257,13 @@ export class AttendanceEngine {
     AuditService.log({
       action: 'ATTENDANCE_GENERATE',
       entity: 'teacher_attendance',
-      description: `Generate absensi otomatis untuk tanggal ${date}: ${teaching.length} mengajar, ${picket.length} piket`,
+      description: `Generate absensi otomatis untuk tanggal ${date}: ${teaching.length} mengajar, ${picket.length} piket, ${management.length} manajemen`,
     });
 
     return {
       teachingCount: teaching.length,
       picketCount: picket.length,
+      managementCount: management.length,
       totalRecordsForDate,
     };
   }

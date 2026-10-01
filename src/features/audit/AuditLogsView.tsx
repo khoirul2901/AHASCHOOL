@@ -16,7 +16,9 @@ export const AuditLogsView: React.FC<AuditLogsViewProps> = ({ currentSession }) 
       setLoading(true);
       const res = await fetch('/api/audit-logs?limit=150');
       if (res.ok) {
-        setLogs(await res.json());
+        const data = await res.json();
+        const rawList = Array.isArray(data) ? data : (data?.items || []);
+        setLogs(rawList);
       }
     } catch (err) {
       console.error(err);
@@ -29,7 +31,7 @@ export const AuditLogsView: React.FC<AuditLogsViewProps> = ({ currentSession }) 
     loadData();
   }, []);
 
-  const filteredLogs = logs.filter((l) => {
+  const filteredLogs = (Array.isArray(logs) ? logs : []).filter((l) => {
     const q = search.toLowerCase();
     return (
       l.action?.toLowerCase().includes(q) ||

@@ -43,7 +43,7 @@ export class AuthService {
     const userRoleMappings = store.userRoles.filter((ur) => ur.userId === userId);
     const roleIds = userRoleMappings.map((ur) => ur.roleId);
     const roles = store.roles
-      .filter((r) => roleIds.includes(r.id))
+      .filter((r) => roleIds.includes(r.id) || roleIds.includes(r.code))
       .map((r) => r.code as RoleCode);
 
     // Get permissions from all roles
@@ -61,10 +61,18 @@ export class AuthService {
       username: user.username,
       fullName: user.fullName,
       email: user.email || undefined,
-      roles,
+      roles: roles.length > 0 ? roles : ['GURU'],
       permissions,
       teacherId: teacher ? teacher.id : undefined,
       schoolId: user.schoolId,
+      user: {
+        id: user.id,
+        username: user.username,
+        name: user.fullName,
+        role: roles[0] || 'GURU',
+        isActive: user.active,
+        email: user.email,
+      },
     };
   }
 

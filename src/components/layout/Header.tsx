@@ -129,39 +129,22 @@ export const Header: React.FC<HeaderProps> = ({
         {/* PWA Install */}
         <PWAInstallButton />
 
-        {/* Quick User Switcher for testing/demo */}
-        <div className="hidden xl:flex items-center gap-1 rounded-lg bg-slate-100 p-1 dark:bg-slate-800 text-xs">
-          <span className="px-1.5 font-medium text-slate-500 dark:text-slate-400">Switch:</span>
-          <button
-            onClick={() => onQuickSwitchUser('admin')}
-            className={`px-2 py-0.5 rounded font-medium transition ${
-              (currentSession?.username || currentSession?.user?.username) === 'admin'
-                ? 'bg-white dark:bg-slate-700 text-blue-600 dark:text-blue-400 shadow-xs font-semibold'
-                : 'text-slate-600 dark:text-slate-400 hover:text-slate-900'
-            }`}
+        {/* Quick User Switcher for 7 Official Roles */}
+        <div className="hidden lg:flex items-center gap-1.5 rounded-xl bg-slate-100 p-1 dark:bg-slate-800 text-xs">
+          <span className="pl-1.5 font-bold text-slate-500 dark:text-slate-400 text-[11px]">Role:</span>
+          <select
+            value={currentSession?.username || currentSession?.user?.username || 'admin'}
+            onChange={(e) => onQuickSwitchUser(e.target.value)}
+            className="rounded-lg border-0 bg-white dark:bg-slate-700 py-1 pl-2 pr-6 text-xs font-bold text-blue-600 dark:text-blue-400 shadow-xs focus:ring-1 focus:ring-blue-500 cursor-pointer"
           >
-            Admin
-          </button>
-          <button
-            onClick={() => onQuickSwitchUser('budi')}
-            className={`px-2 py-0.5 rounded font-medium transition ${
-              (currentSession?.username || currentSession?.user?.username) === 'budi'
-                ? 'bg-white dark:bg-slate-700 text-blue-600 dark:text-blue-400 shadow-xs font-semibold'
-                : 'text-slate-600 dark:text-slate-400 hover:text-slate-900'
-            }`}
-          >
-            Guru Budi
-          </button>
-          <button
-            onClick={() => onQuickSwitchUser('siti')}
-            className={`px-2 py-0.5 rounded font-medium transition ${
-              (currentSession?.username || currentSession?.user?.username) === 'siti'
-                ? 'bg-white dark:bg-slate-700 text-blue-600 dark:text-blue-400 shadow-xs font-semibold'
-                : 'text-slate-600 dark:text-slate-400 hover:text-slate-900'
-            }`}
-          >
-            Guru Siti
-          </button>
+            <option value="admin">1. Admin Super</option>
+            <option value="gurubk">2. Guru BK</option>
+            <option value="budi">3. Guru</option>
+            <option value="walikelas">4. Wali Kelas</option>
+            <option value="bendahara">5. Bendahara</option>
+            <option value="tu">6. TU (Tata Usaha)</option>
+            <option value="siswa">7. Siswa</option>
+          </select>
         </div>
 
         {/* User Profile Pill */}

@@ -334,6 +334,7 @@ export const StudentAttendanceView: React.FC<StudentAttendanceViewProps> = ({
                   <th className="px-4 py-3 font-semibold">NIS</th>
                   <th className="px-4 py-3 font-semibold">Nama Siswa</th>
                   <th className="px-4 py-3 font-semibold text-center">Status Kehadiran</th>
+                  <th className="px-4 py-3 font-semibold text-center">Jam Masuk / Pulang</th>
                   <th className="px-4 py-3 font-semibold">Keterangan</th>
                 </tr>
               </thead>
@@ -387,6 +388,16 @@ export const StudentAttendanceView: React.FC<StudentAttendanceViewProps> = ({
                             );
                           }
                         )}
+                      </div>
+                    </td>
+                    <td className="px-4 py-3 text-center font-mono text-[11px]">
+                      <div className="flex flex-col items-center gap-0.5">
+                        <span className="text-emerald-700 dark:text-emerald-400 font-semibold" title="Jam Masuk">
+                          {item.checkInTime || (item as any).actualTime || '-'}
+                        </span>
+                        <span className="text-indigo-600 dark:text-indigo-400 font-semibold" title="Jam Pulang">
+                          {(item as any).checkOutTime ? `Plg: ${(item as any).checkOutTime}` : '-'}
+                        </span>
                       </div>
                     </td>
                     <td className="px-4 py-3">

@@ -24,7 +24,6 @@ var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__ge
 // server.ts
 var import_express2 = __toESM(require("express"), 1);
 var import_path2 = __toESM(require("path"), 1);
-var import_vite = require("vite");
 
 // server/api.ts
 var import_express = require("express");
@@ -719,6 +718,9 @@ var DatabaseManager = class {
       if (import_fs.default.existsSync(DATA_FILE)) {
         const fileContent = import_fs.default.readFileSync(DATA_FILE, "utf-8");
         this.store = JSON.parse(fileContent);
+        if (!this.store?.dhuhaAttendance) {
+          this.store.dhuhaAttendance = [];
+        }
       } else {
         this.store = await getInitialSeedData();
         this.saveSync();
@@ -872,7 +874,7 @@ var TeacherService = class {
     if (params?.search) {
       const q = params.search.toLowerCase();
       list = list.filter(
-        (t) => t.name.toLowerCase().includes(q) || t.nip && t.nip.includes(q) || t.email && t.email.toLowerCase().includes(q)
+        (t) => t.name.toLowerCase().includes(q) || t.nip && t.nip.includes(q) || t.email && t.email.toLowerCase().includes(q) || t.cardId && t.cardId.toLowerCase().includes(q)
       );
     }
     const page = params?.page || 1;
@@ -902,6 +904,10 @@ var TeacherService = class {
       phone: data.phone || void 0,
       gender: data.gender || "L",
       address: data.address || void 0,
+      cardId: data.cardId || data.rfidTag || data.nip || "GURU-" + Math.floor(1e3 + Math.random() * 9e3),
+      nfcUid: data.nfcUid ? data.nfcUid.trim().toUpperCase() : void 0,
+      subject: data.subject || void 0,
+      employmentStatus: data.employmentStatus || "GURU_TETAP",
       active: data.active !== void 0 ? data.active : true,
       version: 1,
       createdAt: (/* @__PURE__ */ new Date()).toISOString(),
@@ -936,6 +942,7 @@ var TeacherService = class {
     const updated = {
       ...current,
       ...data,
+      nfcUid: data.nfcUid !== void 0 ? data.nfcUid ? data.nfcUid.trim().toUpperCase() : void 0 : current.nfcUid,
       version: current.version + 1,
       updatedAt: (/* @__PURE__ */ new Date()).toISOString()
     };
@@ -990,7 +997,7 @@ var StudentService = class {
     if (params?.search) {
       const q = params.search.toLowerCase();
       list = list.filter(
-        (s) => s.name.toLowerCase().includes(q) || s.nis.includes(q) || s.nisn && s.nisn.includes(q)
+        (s) => s.name.toLowerCase().includes(q) || s.nis.includes(q) || s.nisn && s.nisn.includes(q) || s.cardId && s.cardId.toLowerCase().includes(q)
       );
     }
     const page = params?.page || 1;
@@ -1041,6 +1048,8 @@ var StudentService = class {
       classId: data.classId || "cls-7a",
       parentName: data.parentName || void 0,
       parentPhone: data.parentPhone || void 0,
+      cardId: data.cardId || data.rfidTag || data.nis,
+      nfcUid: data.nfcUid ? data.nfcUid.trim().toUpperCase() : void 0,
       active: data.active !== void 0 ? data.active : true,
       version: 1,
       createdAt: (/* @__PURE__ */ new Date()).toISOString(),
@@ -1075,6 +1084,7 @@ var StudentService = class {
     const updated = {
       ...current,
       ...data,
+      nfcUid: data.nfcUid !== void 0 ? data.nfcUid ? data.nfcUid.trim().toUpperCase() : void 0 : current.nfcUid,
       version: current.version + 1,
       updatedAt: (/* @__PURE__ */ new Date()).toISOString()
     };
@@ -1149,10 +1159,13 @@ var ClassService = class {
     if (existing) {
       throw new Error(`Kelas dengan nama ${data.name} sudah ada.`);
     }
+    const rawLevel = data.level ?? data.grade ?? "7";
     const newClass = {
       id: (0, import_uuid5.v4)(),
       name: data.name || "Kelas Baru",
-      grade: data.grade || 7,
+      grade: rawLevel,
+      level: rawLevel,
+      room: data.room || void 0,
       major: data.major || "Umum",
       homeroomTeacherId: data.homeroomTeacherId || void 0,
       academicYearId: data.academicYearId || store.academicYear.id,
@@ -1167,9 +1180,29 @@ var ClassService = class {
       entity: "classes",
       entityId: newClass.id,
       newData: newClass,
-      description: `Menambahkan kelas baru: ${newClass.name}`
+      description: `Menambahkan kelas baru: ${newClass.name} (Tingkat ${rawLevel})`
     });
     return newClass;
+  }
+  static delete(id, currentUserId) {
+    const store = dbManager.getStore();
+    const index = store.classes.findIndex((c) => c.id === id && !c.deletedAt);
+    if (index === -1) {
+      throw new Error("Data kelas tidak ditemukan.");
+    }
+    const current = store.classes[index];
+    current.deletedAt = (/* @__PURE__ */ new Date()).toISOString();
+    current.version += 1;
+    dbManager.saveSync();
+    AuditService.log({
+      userId: currentUserId,
+      action: "DELETE",
+      entity: "classes",
+      entityId: current.id,
+      oldData: current,
+      description: `Menghapus kelas: ${current.name}`
+    });
+    return true;
   }
 };
 var SubjectService = class {
@@ -1849,60 +1882,129 @@ var AttendanceService = class {
     const store = dbManager.getStore();
     const cleanCode = (params.code || "").trim();
     if (!cleanCode) {
-      throw new Error("Kode barcode / QR / RFID tidak boleh kosong.");
+      throw new Error("Kode barcode / QR / RFID / NFC tidak boleh kosong.");
     }
     const today = params.date || (/* @__PURE__ */ new Date()).toISOString().split("T")[0];
     const actualTime = params.time || (/* @__PURE__ */ new Date()).toLocaleTimeString("id-ID", { hour: "2-digit", minute: "2-digit", hour12: false });
-    const methodLabel = params.method === "CAMERA" ? "Scan Kamera" : "Hard Scanner";
-    const matchedStudent = params.type !== "TEACHER" ? store.students.find(
-      (s) => !s.deletedAt && (s.nis === cleanCode || s.nisn === cleanCode || s.id.toLowerCase() === cleanCode.toLowerCase() || s.name.toLowerCase() === cleanCode.toLowerCase() || s.rfidCardId === cleanCode)
-    ) : null;
-    const matchedTeacher = params.type !== "STUDENT" && !matchedStudent ? store.teachers.find(
-      (t) => !t.deletedAt && (t.nip === cleanCode || t.id.toLowerCase() === cleanCode.toLowerCase() || t.name.toLowerCase() === cleanCode.toLowerCase() || t.rfidCardId === cleanCode || t.phone === cleanCode)
-    ) : null;
+    const methodLabel = params.method === "NFC" ? "Tap Sensor NFC" : params.method === "CAMERA" ? "Scan Kamera" : params.method === "MANUAL" ? "Input Manual" : "Hard Scanner";
+    const normalizedClean = cleanCode.replace(/[:\s\-_]/g, "").toUpperCase();
+    const matchesCode = (p, isTeacher = false) => {
+      if (!p || p.deletedAt) return false;
+      const candidates = [
+        p.id,
+        isTeacher ? p.nip : p.nis,
+        !isTeacher ? p.nisn : null,
+        p.cardId,
+        p.nfcUid,
+        p.rfidTag,
+        p.rfidCardId,
+        p.phone,
+        p.name
+      ].filter(Boolean);
+      for (const val of candidates) {
+        if (typeof val === "string") {
+          if (val.toLowerCase() === cleanCode.toLowerCase()) return true;
+          const norm = val.replace(/[:\s\-_]/g, "").toUpperCase();
+          if (norm && norm === normalizedClean) return true;
+        }
+      }
+      return false;
+    };
+    const matchedStudent = params.type !== "TEACHER" ? store.students.find((s) => matchesCode(s, false)) : null;
+    const matchedTeacher = params.type !== "STUDENT" && !matchedStudent ? store.teachers.find((t) => matchesCode(t, true)) : null;
     if (!matchedStudent && !matchedTeacher) {
-      throw new Error(`Data tidak ditemukan untuk kode barcode/RFID: "${cleanCode}"`);
+      throw new Error(`Data tidak ditemukan untuk kode barcode/RFID/NFC: "${cleanCode}"`);
     }
     if (matchedStudent) {
       const cls = store.classes.find((c) => c.id === matchedStudent.classId);
       const className = cls ? cls.name : "Kelas Belum Ditentukan";
-      const isLate = actualTime > "07:15";
-      const status = isLate ? "TERLAMBAT" : "HADIR";
+      const isCheckOutSession = actualTime >= "12:00";
+      const isLate = !isCheckOutSession && actualTime > "07:15";
+      const scanSession = isCheckOutSession ? "PULANG" : isLate ? "TERLAMBAT" : "MASUK";
+      let status = isLate ? "TERLAMBAT" : "HADIR";
       let existing = store.studentAttendance.find(
         (a) => a.studentId === matchedStudent.id && a.attendanceDate === today && (!params.scheduleId || a.scheduleId === params.scheduleId) && !a.deletedAt
       );
       let isAlreadyRecorded = false;
       let recordedStatus = status;
-      if (existing) {
-        if (existing.actualTime && (existing.status === "HADIR" || existing.status === "TERLAMBAT")) {
-          isAlreadyRecorded = true;
-          recordedStatus = existing.status;
+      let message = "";
+      if (isCheckOutSession) {
+        if (existing) {
+          if (existing.checkOutTime) {
+            isAlreadyRecorded = true;
+            recordedStatus = existing.status;
+            message = `Scan Pulang Sudah Tercatat: ${matchedStudent.name} sudah tap pulang sebelumnya pada pukul ${existing.checkOutTime}.`;
+          } else {
+            existing.checkOutTime = actualTime;
+            existing.note = existing.note ? `${existing.note} | Pulang: ${actualTime}` : `${methodLabel} Pulang [${actualTime}]`;
+            existing.updatedAt = (/* @__PURE__ */ new Date()).toISOString();
+            existing.version += 1;
+            recordedStatus = existing.status;
+            message = `Scan Pulang Berhasil! Terima kasih ${matchedStudent.name}, tercatat pulang pada pukul ${actualTime}. Selamat beristirahat!`;
+          }
         } else {
-          existing.status = status;
-          existing.actualTime = actualTime;
-          existing.note = `${methodLabel} [${actualTime}]`;
-          existing.updatedAt = (/* @__PURE__ */ new Date()).toISOString();
-          existing.version += 1;
+          const schedule = params.scheduleId ? store.teachingSchedules.find((s) => s.id === params.scheduleId) : store.teachingSchedules.find((s) => s.classId === matchedStudent.classId);
+          existing = {
+            id: (0, import_uuid9.v4)(),
+            studentId: matchedStudent.id,
+            classId: matchedStudent.classId,
+            teacherId: schedule ? schedule.teacherId : "system",
+            subjectId: schedule ? schedule.subjectId : void 0,
+            scheduleId: params.scheduleId || (schedule ? schedule.id : void 0),
+            attendanceDate: today,
+            status: "HADIR",
+            actualTime,
+            checkInTime: "-",
+            checkOutTime: actualTime,
+            note: `${methodLabel} Pulang Langsung [${actualTime}]`,
+            version: 1,
+            originDeviceId: "scanner",
+            createdAt: (/* @__PURE__ */ new Date()).toISOString(),
+            updatedAt: (/* @__PURE__ */ new Date()).toISOString()
+          };
+          store.studentAttendance.push(existing);
+          recordedStatus = "HADIR";
+          message = `Scan Pulang Berhasil! Siswa ${matchedStudent.name} tercatat pulang pada pukul ${actualTime}.`;
         }
       } else {
-        const schedule = params.scheduleId ? store.teachingSchedules.find((s) => s.id === params.scheduleId) : store.teachingSchedules.find((s) => s.classId === matchedStudent.classId);
-        existing = {
-          id: (0, import_uuid9.v4)(),
-          studentId: matchedStudent.id,
-          classId: matchedStudent.classId,
-          teacherId: schedule ? schedule.teacherId : "system",
-          subjectId: schedule ? schedule.subjectId : void 0,
-          scheduleId: params.scheduleId || (schedule ? schedule.id : void 0),
-          attendanceDate: today,
-          status,
-          actualTime,
-          note: `${methodLabel} [${actualTime}]`,
-          version: 1,
-          originDeviceId: "scanner",
-          createdAt: (/* @__PURE__ */ new Date()).toISOString(),
-          updatedAt: (/* @__PURE__ */ new Date()).toISOString()
-        };
-        store.studentAttendance.push(existing);
+        if (existing) {
+          if (existing.checkInTime && existing.checkInTime !== "-" || existing.actualTime && (existing.status === "HADIR" || existing.status === "TERLAMBAT")) {
+            isAlreadyRecorded = true;
+            recordedStatus = existing.status;
+            message = `Presensi masuk sudah tercatat sebelumnya pada pukul ${existing.checkInTime || existing.actualTime || actualTime} (${existing.status})`;
+          } else {
+            existing.status = status;
+            existing.actualTime = actualTime;
+            existing.checkInTime = actualTime;
+            existing.note = `${methodLabel} [${actualTime}]`;
+            existing.updatedAt = (/* @__PURE__ */ new Date()).toISOString();
+            existing.version += 1;
+            recordedStatus = status;
+            message = isLate ? `Presensi Berhasil: Terlambat Masuk (Pukul ${actualTime})` : `Presensi Berhasil: Hadir Tepat Waktu (Pukul ${actualTime})`;
+          }
+        } else {
+          const schedule = params.scheduleId ? store.teachingSchedules.find((s) => s.id === params.scheduleId) : store.teachingSchedules.find((s) => s.classId === matchedStudent.classId);
+          existing = {
+            id: (0, import_uuid9.v4)(),
+            studentId: matchedStudent.id,
+            classId: matchedStudent.classId,
+            teacherId: schedule ? schedule.teacherId : "system",
+            subjectId: schedule ? schedule.subjectId : void 0,
+            scheduleId: params.scheduleId || (schedule ? schedule.id : void 0),
+            attendanceDate: today,
+            status,
+            actualTime,
+            checkInTime: actualTime,
+            note: `${methodLabel} [${actualTime}]`,
+            version: 1,
+            originDeviceId: "scanner",
+            createdAt: (/* @__PURE__ */ new Date()).toISOString(),
+            updatedAt: (/* @__PURE__ */ new Date()).toISOString()
+          };
+          store.studentAttendance.push(existing);
+          recordedStatus = status;
+          message = isLate ? `Presensi Berhasil: Terlambat Masuk (Pukul ${actualTime})` : `Presensi Berhasil: Hadir Tepat Waktu (Pukul ${actualTime})`;
+        }
       }
       dbManager.saveSync();
       AuditService.log({
@@ -1910,7 +2012,7 @@ var AttendanceService = class {
         entity: "student_attendance",
         entityId: existing.id,
         userId: params.currentUserId || "scanner",
-        description: `Absensi scan ${methodLabel}: Siswa ${matchedStudent.name} (${matchedStudent.nis}) status ${recordedStatus} jam ${actualTime}`
+        description: `Absensi scan ${methodLabel} [${scanSession}]: Siswa ${matchedStudent.name} (${matchedStudent.nis}) status ${recordedStatus} jam ${actualTime}`
       });
       return {
         success: true,
@@ -1925,46 +2027,92 @@ var AttendanceService = class {
         attendance: existing,
         status: recordedStatus,
         time: actualTime,
-        isLate: recordedStatus === "TERLAMBAT",
+        isLate: scanSession === "TERLAMBAT",
         isAlreadyRecorded,
-        message: isAlreadyRecorded ? `Presensi sudah tercatat sebelumnya pada pukul ${existing.actualTime || actualTime}` : isLate ? `Presensi Berhasil: Terlambat masuk (Pukul ${actualTime})` : `Presensi Berhasil: Hadir Tepat Waktu (Pukul ${actualTime})`
+        scanSession,
+        checkOutTime: existing.checkOutTime,
+        message
       };
     }
     if (matchedTeacher) {
-      const isLate = actualTime > "07:15";
+      const isCheckOutSession = actualTime >= "12:30";
+      const isLate = !isCheckOutSession && actualTime > "07:15";
+      const scanSession = isCheckOutSession ? "PULANG" : isLate ? "TERLAMBAT" : "MASUK";
       const status = isLate ? "TERLAMBAT" : "HADIR";
       let existing = store.teacherAttendance.find(
         (a) => a.teacherId === matchedTeacher.id && a.attendanceDate === today && !a.deletedAt
       );
       let isAlreadyRecorded = false;
       let recordedStatus = status;
-      if (existing) {
-        if (existing.actualTime && (existing.status === "HADIR" || existing.status === "TERLAMBAT")) {
-          isAlreadyRecorded = true;
-          recordedStatus = existing.status;
+      let message = "";
+      if (isCheckOutSession) {
+        if (existing) {
+          if (existing.checkOutTime) {
+            isAlreadyRecorded = true;
+            recordedStatus = existing.status;
+            message = `Scan Pulang Sudah Tercatat: Guru ${matchedTeacher.name} sudah tap pulang pada pukul ${existing.checkOutTime}.`;
+          } else {
+            existing.checkOutTime = actualTime;
+            existing.updatedAt = (/* @__PURE__ */ new Date()).toISOString();
+            existing.version += 1;
+            recordedStatus = existing.status;
+            message = `Check-out Pulang Berhasil! Terima kasih ${matchedTeacher.name}, tercatat pulang pukul ${actualTime}.`;
+          }
         } else {
-          existing.status = status;
-          existing.actualTime = actualTime;
-          existing.source = "CHECK_IN";
-          existing.updatedAt = (/* @__PURE__ */ new Date()).toISOString();
-          existing.version += 1;
+          existing = {
+            id: (0, import_uuid9.v4)(),
+            teacherId: matchedTeacher.id,
+            attendanceDate: today,
+            attendanceType: "TEACHING",
+            scheduledStart: "07:00",
+            scheduledEnd: "15:00",
+            actualTime,
+            checkOutTime: actualTime,
+            status: "HADIR",
+            source: "CHECK_IN",
+            note: `${methodLabel} Pulang Langsung [${actualTime}]`,
+            version: 1,
+            createdAt: (/* @__PURE__ */ new Date()).toISOString(),
+            updatedAt: (/* @__PURE__ */ new Date()).toISOString()
+          };
+          store.teacherAttendance.push(existing);
+          recordedStatus = "HADIR";
+          message = `Check-out Pulang Berhasil! Guru ${matchedTeacher.name} tercatat pulang pukul ${actualTime}.`;
         }
       } else {
-        existing = {
-          id: (0, import_uuid9.v4)(),
-          teacherId: matchedTeacher.id,
-          attendanceDate: today,
-          attendanceType: "TEACHING",
-          scheduledStart: "07:00",
-          scheduledEnd: "15:00",
-          actualTime,
-          status,
-          source: "CHECK_IN",
-          version: 1,
-          createdAt: (/* @__PURE__ */ new Date()).toISOString(),
-          updatedAt: (/* @__PURE__ */ new Date()).toISOString()
-        };
-        store.teacherAttendance.push(existing);
+        if (existing) {
+          if (existing.actualTime && (existing.status === "HADIR" || existing.status === "TERLAMBAT")) {
+            isAlreadyRecorded = true;
+            recordedStatus = existing.status;
+            message = `Presensi guru sudah tercatat sebelumnya pada pukul ${existing.actualTime}`;
+          } else {
+            existing.status = status;
+            existing.actualTime = actualTime;
+            existing.source = "CHECK_IN";
+            existing.updatedAt = (/* @__PURE__ */ new Date()).toISOString();
+            existing.version += 1;
+            recordedStatus = status;
+            message = isLate ? `Presensi Guru Berhasil: Terlambat Masuk (Pukul ${actualTime})` : `Presensi Guru Berhasil: Hadir Tepat Waktu (Pukul ${actualTime})`;
+          }
+        } else {
+          existing = {
+            id: (0, import_uuid9.v4)(),
+            teacherId: matchedTeacher.id,
+            attendanceDate: today,
+            attendanceType: "TEACHING",
+            scheduledStart: "07:00",
+            scheduledEnd: "15:00",
+            actualTime,
+            status,
+            source: "CHECK_IN",
+            version: 1,
+            createdAt: (/* @__PURE__ */ new Date()).toISOString(),
+            updatedAt: (/* @__PURE__ */ new Date()).toISOString()
+          };
+          store.teacherAttendance.push(existing);
+          recordedStatus = status;
+          message = isLate ? `Presensi Guru Berhasil: Terlambat Masuk (Pukul ${actualTime})` : `Presensi Guru Berhasil: Hadir Tepat Waktu (Pukul ${actualTime})`;
+        }
       }
       dbManager.saveSync();
       AuditService.log({
@@ -1972,7 +2120,7 @@ var AttendanceService = class {
         entity: "teacher_attendance",
         entityId: existing.id,
         userId: params.currentUserId || "scanner",
-        description: `Presensi scan guru ${methodLabel}: ${matchedTeacher.name} status ${recordedStatus} jam ${actualTime}`
+        description: `Presensi scan guru ${methodLabel} [${scanSession}]: ${matchedTeacher.name} status ${recordedStatus} jam ${actualTime}`
       });
       return {
         success: true,
@@ -1987,12 +2135,285 @@ var AttendanceService = class {
         attendance: existing,
         status: recordedStatus,
         time: actualTime,
-        isLate: recordedStatus === "TERLAMBAT",
+        isLate: scanSession === "TERLAMBAT",
         isAlreadyRecorded,
-        message: isAlreadyRecorded ? `Check-in guru sudah tercatat sebelumnya pada pukul ${existing.actualTime || actualTime}` : isLate ? `Check-in Guru Berhasil: Terlambat (Pukul ${actualTime})` : `Check-in Guru Berhasil: Tepat Waktu (Pukul ${actualTime})`
+        scanSession,
+        checkOutTime: existing.checkOutTime,
+        message
       };
     }
     throw new Error("Gagal memproses data absensi.");
+  }
+};
+
+// server/services/dhuhaService.ts
+var import_uuid10 = require("uuid");
+var DhuhaService = class {
+  static getAll(params) {
+    const store = dbManager.getStore();
+    if (!store.dhuhaAttendance) {
+      store.dhuhaAttendance = [];
+    }
+    const targetDate = params.date || (/* @__PURE__ */ new Date()).toISOString().split("T")[0];
+    const type = params.targetType || "STUDENT";
+    let resultList = [];
+    if (type === "STUDENT") {
+      let students = store.students.filter((s) => !s.deletedAt && s.active);
+      if (params.classId) {
+        students = students.filter((s) => s.classId === params.classId);
+      }
+      if (params.search) {
+        const q = params.search.toLowerCase();
+        students = students.filter(
+          (s) => s.name.toLowerCase().includes(q) || s.nis.includes(q) || s.nisn && s.nisn.includes(q)
+        );
+      }
+      resultList = students.map((s) => {
+        const cls = store.classes.find((c) => c.id === s.classId);
+        const className = cls ? cls.name : "Kelas -";
+        const record = store.dhuhaAttendance.find(
+          (d) => d.personId === s.id && d.date === targetDate && d.targetType === "STUDENT"
+        );
+        return {
+          personId: s.id,
+          targetType: "STUDENT",
+          name: s.name,
+          identifier: s.nis,
+          nisn: s.nisn,
+          classOrSubject: className,
+          classId: s.classId,
+          gender: s.gender || "L",
+          date: targetDate,
+          attendanceId: record ? record.id : void 0,
+          status: record ? record.status : "TIDAK_HADIR",
+          time: record ? record.time : "-",
+          note: record ? record.note : "-"
+        };
+      });
+    } else {
+      let teachers = store.teachers.filter((t) => !t.deletedAt && t.active);
+      if (params.search) {
+        const q = params.search.toLowerCase();
+        teachers = teachers.filter(
+          (t) => t.name.toLowerCase().includes(q) || t.nip && t.nip.includes(q)
+        );
+      }
+      resultList = teachers.map((t) => {
+        const record = store.dhuhaAttendance.find(
+          (d) => d.personId === t.id && d.date === targetDate && d.targetType === "TEACHER"
+        );
+        return {
+          personId: t.id,
+          targetType: "TEACHER",
+          name: t.name,
+          identifier: t.nip || "-",
+          classOrSubject: t.subject || "Dewan Guru",
+          gender: t.gender || "L",
+          date: targetDate,
+          attendanceId: record ? record.id : void 0,
+          status: record ? record.status : "TIDAK_HADIR",
+          time: record ? record.time : "-",
+          note: record ? record.note : "-"
+        };
+      });
+    }
+    const totalPersons = resultList.length;
+    const totalHadir = resultList.filter((r) => r.status === "HADIR").length;
+    const totalBerhalangan = resultList.filter((r) => r.status === "BERHALANGAN").length;
+    const totalBelum = totalPersons - totalHadir - totalBerhalangan;
+    const participationRate = totalPersons > 0 ? Math.round(totalHadir / totalPersons * 100) : 0;
+    return {
+      date: targetDate,
+      targetType: type,
+      items: resultList,
+      stats: {
+        total: totalPersons,
+        hadir: totalHadir,
+        berhalangan: totalBerhalangan,
+        belum: totalBelum,
+        rate: participationRate
+      }
+    };
+  }
+  static processScan(params) {
+    const store = dbManager.getStore();
+    if (!store.dhuhaAttendance) {
+      store.dhuhaAttendance = [];
+    }
+    const cleanCode = (params.code || "").trim();
+    if (!cleanCode) {
+      throw new Error("Kode kartu barcode/QR/RFID/NFC tidak boleh kosong.");
+    }
+    const today = params.date || (/* @__PURE__ */ new Date()).toISOString().split("T")[0];
+    const actualTime = params.time || (/* @__PURE__ */ new Date()).toLocaleTimeString("id-ID", { hour: "2-digit", minute: "2-digit", second: "2-digit", hour12: false });
+    const methodLabel = params.method === "NFC" ? "Tap Sensor NFC" : params.method === "CAMERA" ? "Scan Kamera" : params.method === "MANUAL" ? "Input Manual" : "Hard Scanner";
+    const normalizedClean = cleanCode.replace(/[:\s\-_]/g, "").toUpperCase();
+    const matchesCode = (p, isTeacher = false) => {
+      if (!p || p.deletedAt) return false;
+      const candidates = [
+        p.id,
+        isTeacher ? p.nip : p.nis,
+        !isTeacher ? p.nisn : null,
+        p.cardId,
+        p.nfcUid,
+        p.rfidTag,
+        p.rfidCardId,
+        p.phone,
+        p.name
+      ].filter(Boolean);
+      for (const val of candidates) {
+        if (typeof val === "string") {
+          if (val.toLowerCase() === cleanCode.toLowerCase()) return true;
+          const norm = val.replace(/[:\s\-_]/g, "").toUpperCase();
+          if (norm && norm === normalizedClean) return true;
+        }
+      }
+      return false;
+    };
+    const matchedStudent = store.students.find((s) => matchesCode(s, false));
+    const matchedTeacher = !matchedStudent ? store.teachers.find((t) => matchesCode(t, true)) : null;
+    if (!matchedStudent && !matchedTeacher) {
+      throw new Error(`Data tidak ditemukan untuk kode barcode/RFID/NFC: "${cleanCode}"`);
+    }
+    const targetType = matchedStudent ? "STUDENT" : "TEACHER";
+    const personId = matchedStudent ? matchedStudent.id : matchedTeacher.id;
+    const personName = matchedStudent ? matchedStudent.name : matchedTeacher.name;
+    const identifier = matchedStudent ? matchedStudent.nis : matchedTeacher.nip || "-";
+    const gender = matchedStudent ? matchedStudent.gender : matchedTeacher.gender;
+    let classOrSubject = "Umum";
+    if (matchedStudent) {
+      const cls = store.classes.find((c) => c.id === matchedStudent.classId);
+      classOrSubject = cls ? `Kelas ${cls.name}` : "Siswa";
+    } else if (matchedTeacher) {
+      classOrSubject = matchedTeacher.subject || "Tenaga Pendidik";
+    }
+    let existing = store.dhuhaAttendance.find(
+      (d) => d.personId === personId && d.date === today && d.targetType === targetType
+    );
+    let isAlreadyRecorded = false;
+    if (existing) {
+      if (existing.status === "HADIR") {
+        isAlreadyRecorded = true;
+      } else {
+        existing.status = "HADIR";
+        existing.time = actualTime;
+        existing.note = `${methodLabel} [${actualTime}]`;
+        existing.updatedAt = (/* @__PURE__ */ new Date()).toISOString();
+        existing.version += 1;
+      }
+    } else {
+      existing = {
+        id: (0, import_uuid10.v4)(),
+        targetType,
+        personId,
+        name: personName,
+        identifier,
+        classOrSubject,
+        gender,
+        date: today,
+        time: actualTime,
+        status: "HADIR",
+        note: `${methodLabel} [${actualTime}]`,
+        version: 1,
+        createdAt: (/* @__PURE__ */ new Date()).toISOString(),
+        updatedAt: (/* @__PURE__ */ new Date()).toISOString()
+      };
+      store.dhuhaAttendance.push(existing);
+    }
+    dbManager.saveSync();
+    AuditService.log({
+      action: "DHUHA_ATTENDANCE_SCAN",
+      entity: "dhuha_attendance",
+      entityId: existing.id,
+      userId: params.currentUserId || "scanner",
+      description: `Presensi Sholat Dhuha ${methodLabel}: ${personName} (${classOrSubject}) status HADIR jam ${actualTime}`
+    });
+    return {
+      success: true,
+      targetType,
+      person: {
+        id: personId,
+        name: personName,
+        identifier,
+        classOrSubject,
+        gender
+      },
+      record: existing,
+      isAlreadyRecorded,
+      message: isAlreadyRecorded ? `Sholat Dhuha ${personName} sudah tercatat sebelumnya pada pukul ${existing.time}.` : `Alhamdulillah! Presensi Sholat Dhuha Berhasil: ${personName} (${classOrSubject}) tercatat pukul ${actualTime}.`
+    };
+  }
+  static updateStatus(data, currentUserId) {
+    const store = dbManager.getStore();
+    if (!store.dhuhaAttendance) {
+      store.dhuhaAttendance = [];
+    }
+    let personName = "";
+    let identifier = "";
+    let classOrSubject = "";
+    let gender = "L";
+    if (data.targetType === "STUDENT") {
+      const s = store.students.find((stu) => stu.id === data.personId);
+      if (!s) throw new Error("Data siswa tidak ditemukan.");
+      personName = s.name;
+      identifier = s.nis;
+      gender = s.gender || "L";
+      const cls = store.classes.find((c) => c.id === s.classId);
+      classOrSubject = cls ? `Kelas ${cls.name}` : "-";
+    } else {
+      const t = store.teachers.find((tch) => tch.id === data.personId);
+      if (!t) throw new Error("Data guru tidak ditemukan.");
+      personName = t.name;
+      identifier = t.nip || "-";
+      gender = t.gender || "L";
+      classOrSubject = t.subject || "Guru";
+    }
+    const currentTime = (/* @__PURE__ */ new Date()).toLocaleTimeString("id-ID", {
+      hour: "2-digit",
+      minute: "2-digit",
+      hour12: false
+    });
+    let existing = store.dhuhaAttendance.find(
+      (d) => d.personId === data.personId && d.date === data.date && d.targetType === data.targetType
+    );
+    if (existing) {
+      existing.status = data.status;
+      if (data.status === "HADIR" && (!existing.time || existing.time === "-")) {
+        existing.time = currentTime;
+      }
+      if (data.note !== void 0) {
+        existing.note = data.note;
+      }
+      existing.updatedAt = (/* @__PURE__ */ new Date()).toISOString();
+      existing.version += 1;
+    } else {
+      existing = {
+        id: (0, import_uuid10.v4)(),
+        targetType: data.targetType,
+        personId: data.personId,
+        name: personName,
+        identifier,
+        classOrSubject,
+        gender,
+        date: data.date,
+        time: data.status === "HADIR" ? currentTime : "-",
+        status: data.status,
+        note: data.note || (data.status === "BERHALANGAN" ? "Halangan Syar'i (Haid)" : "Input Manual"),
+        version: 1,
+        createdAt: (/* @__PURE__ */ new Date()).toISOString(),
+        updatedAt: (/* @__PURE__ */ new Date()).toISOString()
+      };
+      store.dhuhaAttendance.push(existing);
+    }
+    dbManager.saveSync();
+    AuditService.log({
+      action: "DHUHA_STATUS_UPDATE",
+      entity: "dhuha_attendance",
+      entityId: existing.id,
+      userId: currentUserId || "admin",
+      description: `Update status Sholat Dhuha ${personName} -> ${data.status} (${existing.note})`
+    });
+    return existing;
   }
 };
 
@@ -2074,7 +2495,7 @@ var ReportService = class {
 };
 
 // server/services/syncService.ts
-var import_uuid10 = require("uuid");
+var import_uuid11 = require("uuid");
 var SyncService = class {
   static push(deviceId, changes) {
     const store = dbManager.getStore();
@@ -2083,7 +2504,7 @@ var SyncService = class {
     let device = store.syncDevices.find((d) => d.deviceId === deviceId);
     if (!device) {
       device = {
-        id: (0, import_uuid10.v4)(),
+        id: (0, import_uuid11.v4)(),
         deviceId,
         deviceName: `Perangkat ${deviceId.slice(0, 8)}`,
         deviceType: "CLIENT_APP",
@@ -2105,7 +2526,7 @@ var SyncService = class {
           if (existing) {
             if (existing.version > version) {
               const conflict = {
-                id: (0, import_uuid10.v4)(),
+                id: (0, import_uuid11.v4)(),
                 entity,
                 entityId: existing.id,
                 localData: payload,
@@ -2127,7 +2548,7 @@ var SyncService = class {
           } else {
             store.teacherAttendance.push({
               ...payload,
-              id: entityId || (0, import_uuid10.v4)(),
+              id: entityId || (0, import_uuid11.v4)(),
               version: 1,
               createdAt: (/* @__PURE__ */ new Date()).toISOString(),
               updatedAt: (/* @__PURE__ */ new Date()).toISOString()
@@ -2143,7 +2564,7 @@ var SyncService = class {
           if (existing) {
             if (existing.version > version) {
               const conflict = {
-                id: (0, import_uuid10.v4)(),
+                id: (0, import_uuid11.v4)(),
                 entity,
                 entityId: existing.id,
                 localData: payload,
@@ -2165,7 +2586,7 @@ var SyncService = class {
           } else {
             store.studentAttendance.push({
               ...payload,
-              id: entityId || (0, import_uuid10.v4)(),
+              id: entityId || (0, import_uuid11.v4)(),
               version: 1,
               createdAt: (/* @__PURE__ */ new Date()).toISOString(),
               updatedAt: (/* @__PURE__ */ new Date()).toISOString()
@@ -2339,6 +2760,32 @@ apiRouter.delete("/teachers/:id", (req, res) => {
     res.status(400).json({ error: err.message });
   }
 });
+apiRouter.post("/teachers/import", (req, res) => {
+  try {
+    const userId = req.headers["x-user-id"];
+    const { items } = req.body;
+    if (!Array.isArray(items) || items.length === 0) {
+      return res.status(400).json({ error: "Data import tidak valid atau kosong." });
+    }
+    const created = [];
+    const errors = [];
+    items.forEach((item, index) => {
+      try {
+        const teacher = TeacherService.create(item, userId);
+        created.push(teacher);
+      } catch (err) {
+        errors.push(`Baris ${index + 1}: ${err.message}`);
+      }
+    });
+    res.json({
+      success: true,
+      importedCount: created.length,
+      errors
+    });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
 apiRouter.get("/students", (req, res) => {
   try {
     const classId = req.query.classId;
@@ -2417,6 +2864,15 @@ apiRouter.post("/classes", (req, res) => {
     const userId = req.headers["x-user-id"];
     const cls = ClassService.create(req.body, userId);
     res.status(201).json({ success: true, class: cls });
+  } catch (err) {
+    res.status(400).json({ error: err.message });
+  }
+});
+apiRouter.delete("/classes/:id", (req, res) => {
+  try {
+    const userId = req.headers["x-user-id"];
+    ClassService.delete(req.params.id, userId);
+    res.json({ success: true });
   } catch (err) {
     res.status(400).json({ error: err.message });
   }
@@ -2591,6 +3047,41 @@ apiRouter.post("/attendance/scan", (req, res) => {
       currentUserId: userId
     });
     res.json(result);
+  } catch (err) {
+    res.status(400).json({ error: err.message });
+  }
+});
+apiRouter.get("/attendance/dhuha", (req, res) => {
+  try {
+    const { date, targetType, classId, search } = req.query;
+    const result = DhuhaService.getAll({ date, targetType, classId, search });
+    res.json(result);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+apiRouter.post("/attendance/dhuha/scan", (req, res) => {
+  try {
+    const userId = req.headers["x-user-id"] || "scanner";
+    const { code, method, date, time } = req.body;
+    if (!code) {
+      return res.status(400).json({ error: "Kode barcode atau QR code wajib diisi." });
+    }
+    const result = DhuhaService.processScan({ code, method, date, time, currentUserId: userId });
+    res.json(result);
+  } catch (err) {
+    res.status(400).json({ error: err.message });
+  }
+});
+apiRouter.post("/attendance/dhuha/status", (req, res) => {
+  try {
+    const userId = req.headers["x-user-id"] || "admin";
+    const { personId, targetType, date, status, note } = req.body;
+    if (!personId || !status || !date) {
+      return res.status(400).json({ error: "Parameter tidak lengkap." });
+    }
+    const record = DhuhaService.updateStatus({ personId, targetType, date, status, note }, userId);
+    res.json({ success: true, record });
   } catch (err) {
     res.status(400).json({ error: err.message });
   }
@@ -2834,17 +3325,29 @@ async function startServer() {
     }
   }, 5 * 60 * 1e3);
   app.use("/api", apiRouter);
+  let isViteActive = false;
   if (process.env.NODE_ENV !== "production") {
-    const vite = await (0, import_vite.createServer)({
-      server: { middlewareMode: true, hmr: false },
-      appType: "spa"
-    });
-    app.use(vite.middlewares);
-  } else {
-    const distPath = import_path2.default.join(process.cwd(), "dist");
-    app.use(import_express2.default.static(distPath));
+    try {
+      const viteModule = await import("vite");
+      const vite = await viteModule.createServer({
+        server: { middlewareMode: true, hmr: false },
+        appType: "spa"
+      });
+      app.use(vite.middlewares);
+      isViteActive = true;
+    } catch (err) {
+      console.warn("Vite development middleware could not be loaded (likely blocked by Windows security policy). Serving static dist build instead.");
+    }
+  }
+  if (!isViteActive) {
+    const fs2 = await import("fs");
+    let staticPath = import_path2.default.join(process.cwd(), "dist");
+    if (!fs2.existsSync(staticPath)) {
+      staticPath = import_path2.default.join(process.cwd(), "docs");
+    }
+    app.use(import_express2.default.static(staticPath));
     app.get("*", (_req, res) => {
-      res.sendFile(import_path2.default.join(distPath, "index.html"));
+      res.sendFile(import_path2.default.join(staticPath, "index.html"));
     });
   }
   app.listen(PORT, "0.0.0.0", () => {

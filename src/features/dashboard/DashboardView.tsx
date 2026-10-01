@@ -55,37 +55,33 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
         setStats({
           totalStudents: 384,
           totalTeachers: 28,
-          totalClasses: 12,
           teachersPresent: 26,
           teachersLate: 2,
           teachersPicket: 4,
-          studentAttendanceRate: 96.8,
           studentsPresent: 372,
+          studentsLate: 4,
+          studentsExcused: 4,
           studentsSick: 5,
-          studentsPermit: 4,
           studentsAlpha: 3,
-          classesCompleted: 8,
-          classesInProgress: 4,
-          totalClassesScheduled: 12,
-          weeklyTrends: [
-            { day: 'Sen', hadir: 375, izin: 4, sakit: 3, alpha: 2 },
-            { day: 'Sel', hadir: 378, izin: 3, sakit: 2, alpha: 1 },
-            { day: 'Rab', hadir: 370, izin: 6, sakit: 5, alpha: 3 },
-            { day: 'Kam', hadir: 374, izin: 4, sakit: 4, alpha: 2 },
-            { day: 'Jum', hadir: 380, izin: 2, sakit: 2, alpha: 0 },
+          attendanceRate: 96.8,
+          dailyStudentTrend: [
+            { date: 'Sen', present: 375, absent: 9, rate: 97.6 },
+            { date: 'Sel', present: 378, absent: 6, rate: 98.4 },
+            { date: 'Rab', present: 370, absent: 14, rate: 96.3 },
+            { date: 'Kam', present: 374, absent: 10, rate: 97.3 },
+            { date: 'Jum', present: 380, absent: 4, rate: 98.9 },
           ],
-          classAttendanceList: [
-            { classId: 'cls-7a', className: 'Kelas 7-A', rate: 98.2, total: 32, present: 31 },
-            { classId: 'cls-7b', className: 'Kelas 7-B', rate: 96.5, total: 32, present: 30 },
-            { classId: 'cls-8a', className: 'Kelas 8-A', rate: 94.0, total: 32, present: 29 },
-            { classId: 'cls-8b', className: 'Kelas 8-B', rate: 97.1, total: 32, present: 31 },
-            { classId: 'cls-9a', className: 'Kelas 9-A', rate: 95.8, total: 32, present: 30 },
+          classRecap: [
+            { className: 'Kelas 7-A', rate: 98.2, total: 32, present: 31 },
+            { className: 'Kelas 7-B', rate: 96.5, total: 32, present: 30 },
+            { className: 'Kelas 8-A', rate: 94.0, total: 32, present: 29 },
+            { className: 'Kelas 8-B', rate: 97.1, total: 32, present: 31 },
+            { className: 'Kelas 9-A', rate: 95.8, total: 32, present: 30 },
           ],
-          recentActivities: [
-            { id: 'act-1', text: 'Scan RFID Siswa berhasil - M. Ridwan (7-A)', time: '06:55' },
-            { id: 'act-2', text: 'Check-in Guru Piket - Drs. H. Mulyono', time: '06:45' },
-            { id: 'act-3', text: 'Absensi Jam ke-1 Kelas 8-B diselesaikan', time: '07:35' },
-            { id: 'act-4', text: 'Sinkronisasi offline 12 kartu presensi sukses', time: '07:40' },
+          picketToday: [
+            { teacherName: 'Drs. H. Mulyono, M.Pd.', location: 'Pintu Gerbang Utama & Lobi', time: '06:30 - 08:00', status: 'HADIR' },
+            { teacherName: 'Dra. Hj. Siti Aminah, M.Si.', location: 'Koridor Kelas 7 & 8', time: '06:30 - 08:00', status: 'HADIR' },
+            { teacherName: 'Ahmad Fauzi, S.Pd., Gr.', location: 'Lobi Depan & Lapangan', time: '06:30 - 08:00', status: 'ALPHA' },
           ],
         });
 
@@ -94,26 +90,28 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
             {
               id: 'att-tch-1',
               teacherId: teacherId || 'tch-01',
-              date: new Date().toISOString().split('T')[0],
+              attendanceDate: new Date().toISOString().split('T')[0],
               attendanceType: 'TEACHING',
               status: 'HADIR',
               scheduledStart: '07:30',
               scheduledEnd: '09:00',
               actualTime: '07:20',
-              source: 'RFID_GATE',
+              source: 'CHECK_IN',
               scheduleDetail: 'Kelas VII-A (Matematika)',
+              version: 1,
             },
             {
               id: 'att-tch-2',
               teacherId: teacherId || 'tch-01',
-              date: new Date().toISOString().split('T')[0],
+              attendanceDate: new Date().toISOString().split('T')[0],
               attendanceType: 'PICKET',
               status: 'HADIR',
               scheduledStart: '06:30',
               scheduledEnd: '08:00',
               actualTime: '06:25',
-              source: 'RFID_GATE',
+              source: 'CHECK_IN',
               scheduleDetail: 'Piket Gerbang Utama & Lobi',
+              version: 1,
             },
           ]);
         }
@@ -479,17 +477,17 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
                 <span>Guru Piket Hari Ini</span>
               </h3>
               <span className="text-xs font-semibold text-indigo-600">
-                {stats?.picketToday.length || 0} Petugas
+                {stats?.picketToday?.length || 0} Petugas
               </span>
             </div>
 
-            {stats?.picketToday.length === 0 ? (
+            {(!stats?.picketToday || stats.picketToday.length === 0) ? (
               <div className="py-8 text-center text-xs text-slate-400">
                 Tidak ada guru yang dijadwalkan piket hari ini.
               </div>
             ) : (
               <div className="space-y-3">
-                {stats?.picketToday.map((p, idx) => (
+                {stats.picketToday.map((p, idx) => (
                   <div
                     key={idx}
                     className="flex items-center justify-between rounded-xl bg-slate-50 p-3 dark:bg-slate-800"

@@ -17,7 +17,8 @@ export const CorrectionView: React.FC<CorrectionViewProps> = ({ currentSession }
       const res = await fetch('/api/audit-logs?limit=100');
       if (res.ok) {
         const data = await res.json();
-        const correctionLogs = data.filter(
+        const rawList = Array.isArray(data) ? data : (data?.items || []);
+        const correctionLogs = rawList.filter(
           (l: any) => l.action === 'ATTENDANCE_CORRECTION'
         );
         setLogs(correctionLogs);
@@ -70,8 +71,19 @@ export const CorrectionView: React.FC<CorrectionViewProps> = ({ currentSession }
               </thead>
               <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
                 {logs.map((log) => {
-                  const oldSt = log.oldData?.status;
-                  const newSt = log.newData?.status;
+                  const parseData = (d: any) => {
+                    if (!d) return null;
+                    if (typeof d === 'object') return d;
+                    try {
+                      return JSON.parse(d);
+                    } catch {
+                      return null;
+                    }
+                  };
+                  const oldObj = parseData(log.oldData);
+                  const newObj = parseData(log.newData);
+                  const oldSt = oldObj?.status;
+                  const newSt = newObj?.status;
                   return (
                     <tr
                       key={log.id}

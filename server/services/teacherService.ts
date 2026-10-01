@@ -18,7 +18,8 @@ export class TeacherService {
         (t) =>
           t.name.toLowerCase().includes(q) ||
           (t.nip && t.nip.includes(q)) ||
-          (t.email && t.email.toLowerCase().includes(q))
+          (t.email && t.email.toLowerCase().includes(q)) ||
+          ((t as any).cardId && (t as any).cardId.toLowerCase().includes(q))
       );
     }
 
@@ -46,7 +47,7 @@ export class TeacherService {
       }
     }
 
-    const newTeacher: Teacher = {
+    const newTeacher: Teacher & { cardId?: string; subject?: string; employmentStatus?: string; positionStatus?: string } = {
       id: uuidv4(),
       nip: data.nip || undefined,
       name: data.name || 'Guru Baru',
@@ -54,6 +55,11 @@ export class TeacherService {
       phone: data.phone || undefined,
       gender: data.gender || 'L',
       address: data.address || undefined,
+      cardId: (data as any).cardId || (data as any).rfidTag || data.nip || ('GURU-' + Math.floor(1000 + Math.random() * 9000)),
+      nfcUid: data.nfcUid ? data.nfcUid.trim().toUpperCase() : undefined,
+      subject: (data as any).subject || undefined,
+      employmentStatus: (data as any).employmentStatus || 'GURU_TETAP',
+      positionStatus: (data as any).positionStatus || 'Guru Mata Pelajaran',
       active: data.active !== undefined ? data.active : true,
       version: 1,
       createdAt: new Date().toISOString(),
@@ -95,6 +101,12 @@ export class TeacherService {
     const updated: Teacher = {
       ...current,
       ...data,
+      nfcUid:
+        data.nfcUid !== undefined
+          ? data.nfcUid
+            ? data.nfcUid.trim().toUpperCase()
+            : undefined
+          : current.nfcUid,
       version: current.version + 1,
       updatedAt: new Date().toISOString(),
     };

@@ -1,6 +1,5 @@
 import express from 'express';
 import path from 'path';
-import { createServer as createViteServer } from 'vite';
 import { apiRouter } from './server/api.js';
 import { dbManager } from './server/db/database.js';
 import { AttendanceEngine } from './server/services/attendanceEngine.js';
@@ -36,18 +35,31 @@ async function startServer() {
   // Mount API routes FIRST
   app.use('/api', apiRouter);
 
-  // Vite middleware for development
+  // Vite middleware for development (with graceful fallback to dist static files)
+  let isViteActive = false;
   if (process.env.NODE_ENV !== 'production') {
-    const vite = await createViteServer({
-      server: { middlewareMode: true, hmr: false },
-      appType: 'spa',
-    });
-    app.use(vite.middlewares);
-  } else {
-    const distPath = path.join(process.cwd(), 'dist');
-    app.use(express.static(distPath));
+    try {
+      const viteModule = await import('vite');
+      const vite = await viteModule.createServer({
+        server: { middlewareMode: true, hmr: false },
+        appType: 'spa',
+      });
+      app.use(vite.middlewares);
+      isViteActive = true;
+    } catch (err: any) {
+      console.warn('Vite development middleware could not be loaded (likely blocked by Windows security policy). Serving static dist build instead.');
+    }
+  }
+
+  if (!isViteActive) {
+    const fs = await import('fs');
+    let staticPath = path.join(process.cwd(), 'dist');
+    if (!fs.existsSync(staticPath)) {
+      staticPath = path.join(process.cwd(), 'docs');
+    }
+    app.use(express.static(staticPath));
     app.get('*', (_req, res) => {
-      res.sendFile(path.join(distPath, 'index.html'));
+      res.sendFile(path.join(staticPath, 'index.html'));
     });
   }
 

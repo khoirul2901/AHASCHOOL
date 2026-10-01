@@ -325,27 +325,33 @@ export const LoginPage: React.FC<LoginPageProps> = ({
           </form>
 
           {/* Quick Demo Credentials Assistant */}
-          <div className="mt-8 pt-6 border-t border-slate-700/60">
-            <div className="text-[11px] font-semibold uppercase tracking-wider text-slate-400 mb-2.5 text-center">
-              Pilihan Akun Demo Cepat
+          <div className="mt-6 pt-5 border-t border-slate-700/60">
+            <div className="text-[11px] font-semibold uppercase tracking-wider text-slate-400 mb-2.5 text-center flex items-center justify-center gap-1.5">
+              <ShieldCheck className="w-3.5 h-3.5 text-blue-400" />
+              <span>Login Cepat Berdasarkan 7 Role Akses:</span>
             </div>
-            <div className="grid grid-cols-2 gap-2 text-xs">
-              <button
-                type="button"
-                onClick={() => fillQuickAccount('admin', 'admin123')}
-                className="p-2.5 rounded-lg border border-slate-700 bg-slate-900/50 hover:bg-slate-700/50 text-left transition flex flex-col justify-between"
-              >
-                <div className="font-semibold text-blue-400">Akun Admin</div>
-                <div className="text-[10px] text-slate-400 mt-0.5">admin / admin123</div>
-              </button>
-              <button
-                type="button"
-                onClick={() => fillQuickAccount('budi', 'guru123')}
-                className="p-2.5 rounded-lg border border-slate-700 bg-slate-900/50 hover:bg-slate-700/50 text-left transition flex flex-col justify-between"
-              >
-                <div className="font-semibold text-emerald-400">Akun Guru Piket</div>
-                <div className="text-[10px] text-slate-400 mt-0.5">budi / guru123</div>
-              </button>
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-1.5 text-xs">
+              {[
+                { u: 'admin', p: 'admin123', role: 'Admin Super', color: 'text-rose-400' },
+                { u: 'gurubk', p: 'bk123', role: 'Guru BK', color: 'text-emerald-400' },
+                { u: 'budi', p: 'guru123', role: 'Guru', color: 'text-blue-400' },
+                { u: 'walikelas', p: 'wali123', role: 'Wali Kelas', color: 'text-teal-400' },
+                { u: 'bendahara', p: 'bendahara123', role: 'Bendahara', color: 'text-amber-400' },
+                { u: 'tu', p: 'tu123', role: 'TU', color: 'text-indigo-400' },
+                { u: 'siswa', p: 'siswa123', role: 'Siswa', color: 'text-cyan-400' },
+              ].map((item) => (
+                <button
+                  key={item.u}
+                  type="button"
+                  onClick={() => fillQuickAccount(item.u, item.p)}
+                  className="p-2 rounded-lg border border-slate-700 bg-slate-900/60 hover:bg-slate-800 text-left transition flex flex-col justify-between"
+                >
+                  <div className={`font-bold text-[11px] ${item.color}`}>{item.role}</div>
+                  <div className="text-[10px] font-mono text-slate-400 truncate mt-0.5">
+                    {item.u} / {item.p}
+                  </div>
+                </button>
+              ))}
             </div>
           </div>
         </div>

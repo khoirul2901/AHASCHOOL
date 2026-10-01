@@ -162,10 +162,10 @@ export const TeacherAttendanceView: React.FC<TeacherAttendanceViewProps> = ({
           <div>
             <h2 className="text-xl font-bold text-slate-900 dark:text-white flex items-center gap-2">
               <UserCheck className="w-5 h-5 text-blue-600" />
-              <span>Daftar Presensi Guru (Mengajar & Piket)</span>
+              <span>Daftar Presensi Guru (Mengajar, Piket & Manajemen)</span>
             </h2>
             <p className="text-xs text-slate-500 mt-0.5">
-              Guru dengan tugas piket dan mengajar di hari yang sama tercatat dalam 2 record terpisah secara akurat.
+              Mekanisme 1x Tap: Guru dengan jadwal jam pertama, tugas piket, atau manajemen sekolah otomatis terisi sinkron dalam sekali tap kartu/check-in.
             </p>
           </div>
 
@@ -221,9 +221,10 @@ export const TeacherAttendanceView: React.FC<TeacherAttendanceViewProps> = ({
               onChange={(e) => setFilterType(e.target.value)}
               className="w-full rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-xs font-semibold text-slate-800 focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-500 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-200"
             >
-              <option value="">Semua Jenis (Mengajar & Piket)</option>
+              <option value="">Semua Jenis (Mengajar, Piket & Manajemen)</option>
               <option value="TEACHING">Mengajar di Kelas</option>
               <option value="PICKET">Tugas Piket</option>
+              <option value="MANAGEMENT">Tugas Manajemen</option>
             </select>
           </div>
 

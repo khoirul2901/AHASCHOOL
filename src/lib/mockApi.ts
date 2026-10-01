@@ -10,8 +10,7 @@ export function initMockApiIfNeeded() {
 
   const isStatic =
     window.location.hostname.includes('github.io') ||
-    window.location.protocol === 'file:' ||
-    window.location.hostname === 'localhost' && window.location.port !== '3000' && window.location.port !== '';
+    window.location.protocol === 'file:';
 
   if (!isStatic) {
     return;
@@ -199,18 +198,135 @@ function handleMockApiRequest(urlString: string, init?: RequestInit): Promise<Re
   }
 
   // 4. Classes
+  if (path.includes('/api/classes') && init?.method === 'DELETE') {
+    const id = path.split('/').pop();
+    const current = JSON.parse(localStorage.getItem('siakad_mock_classes') || '[]');
+    const updated = current.filter((c: any) => c.id !== id);
+    localStorage.setItem('siakad_mock_classes', JSON.stringify(updated));
+    return Promise.resolve(createJsonResponse({ success: true }));
+  }
+
+  if (path.includes('/api/classes') && init?.method === 'POST') {
+    let body: any = {};
+    try { body = JSON.parse((init?.body as string) || '{}'); } catch (e) {}
+    const current = JSON.parse(localStorage.getItem('siakad_mock_classes') || '[]');
+    const newClass = {
+      id: 'cls-' + Date.now(),
+      name: body.name || 'Kelas Baru',
+      level: body.level || body.grade || '7',
+      grade: body.level || body.grade || '7',
+      major: body.major || 'Umum',
+      room: body.room || 'R. 101',
+      homeroomTeacherId: body.homeroomTeacherId,
+      studentCount: 0,
+      active: true,
+    };
+    const updated = [...current, newClass];
+    localStorage.setItem('siakad_mock_classes', JSON.stringify(updated));
+    return Promise.resolve(createJsonResponse(newClass));
+  }
+
   if (path.includes('/api/classes')) {
     const data = JSON.parse(localStorage.getItem('siakad_mock_classes') || '[]');
     return Promise.resolve(createJsonResponse(data));
   }
 
   // 5. Teachers
+  if (path.includes('/api/teachers/import')) {
+    let body: any = {};
+    try { body = JSON.parse((init?.body as string) || '{}'); } catch (e) {}
+    const items = body.items || [];
+    const current = JSON.parse(localStorage.getItem('siakad_mock_teachers') || '[]');
+    const newItems = items.map((it: any, idx: number) => ({
+      id: 'tch-' + Date.now() + '-' + idx,
+      nip: it.nip,
+      name: it.name,
+      gender: it.gender || 'L',
+      subject: it.subject || 'Guru Pengampu',
+      phone: it.phone,
+      email: it.email,
+      employmentStatus: it.employmentStatus || 'GURU_TETAP',
+      cardId: it.cardId || it.nip || ('GURU-' + (current.length + idx + 1)),
+      active: true,
+    }));
+    const updated = [...current, ...newItems];
+    localStorage.setItem('siakad_mock_teachers', JSON.stringify(updated));
+    return Promise.resolve(createJsonResponse({ success: true, importedCount: newItems.length, errors: [] }));
+  }
+
+  if (path.includes('/api/teachers') && init?.method === 'POST') {
+    let body: any = {};
+    try { body = JSON.parse((init?.body as string) || '{}'); } catch (e) {}
+    const current = JSON.parse(localStorage.getItem('siakad_mock_teachers') || '[]');
+    const newTeacher = {
+      id: 'tch-' + Date.now(),
+      nip: body.nip || undefined,
+      name: body.name || 'Guru Baru',
+      gender: body.gender || 'L',
+      subject: body.subject || '',
+      phone: body.phone || '',
+      email: body.email || '',
+      employmentStatus: body.employmentStatus || 'GURU_TETAP',
+      positionStatus: body.positionStatus || 'Guru Mata Pelajaran',
+      cardId: body.cardId || body.nip || ('GURU-' + Math.floor(1000 + Math.random() * 9000)),
+      nfcUid: body.nfcUid || '',
+      active: true,
+      createdAt: new Date().toISOString(),
+    };
+    current.push(newTeacher);
+    localStorage.setItem('siakad_mock_teachers', JSON.stringify(current));
+    return Promise.resolve(createJsonResponse({ success: true, teacher: newTeacher }));
+  }
+
+  if (path.includes('/api/teachers') && init?.method === 'PUT') {
+    let body: any = {};
+    try { body = JSON.parse((init?.body as string) || '{}'); } catch (e) {}
+    const id = path.split('/').pop();
+    const current = JSON.parse(localStorage.getItem('siakad_mock_teachers') || '[]');
+    const updated = current.map((t: any) => (t.id === id ? { ...t, ...body } : t));
+    localStorage.setItem('siakad_mock_teachers', JSON.stringify(updated));
+    return Promise.resolve(createJsonResponse({ success: true }));
+  }
+
   if (path.includes('/api/teachers')) {
     const data = JSON.parse(localStorage.getItem('siakad_mock_teachers') || '[]');
     return Promise.resolve(createJsonResponse({ items: data, total: data.length }));
   }
 
   // 6. Students
+  if (path.includes('/api/students/import')) {
+    let body: any = {};
+    try { body = JSON.parse((init?.body as string) || '{}'); } catch (e) {}
+    const items = body.items || [];
+    const current = JSON.parse(localStorage.getItem('siakad_mock_students') || '[]');
+    const newItems = items.map((it: any, idx: number) => ({
+      id: 'std-' + Date.now() + '-' + idx,
+      nis: it.nis,
+      nisn: it.nisn,
+      name: it.name,
+      gender: it.gender || 'L',
+      classId: it.classId || 'cls-7a',
+      className: 'Kelas Terdaftar',
+      phone: it.phone,
+      parentName: it.parentName,
+      cardId: it.cardId || it.nis,
+      active: true,
+    }));
+    const updated = [...current, ...newItems];
+    localStorage.setItem('siakad_mock_students', JSON.stringify(updated));
+    return Promise.resolve(createJsonResponse({ success: true, importedCount: newItems.length, errors: [] }));
+  }
+
+  if (path.includes('/api/students') && init?.method === 'PUT') {
+    let body: any = {};
+    try { body = JSON.parse((init?.body as string) || '{}'); } catch (e) {}
+    const id = path.split('/').pop();
+    const current = JSON.parse(localStorage.getItem('siakad_mock_students') || '[]');
+    const updated = current.map((s: any) => (s.id === id ? { ...s, ...body } : s));
+    localStorage.setItem('siakad_mock_students', JSON.stringify(updated));
+    return Promise.resolve(createJsonResponse({ success: true }));
+  }
+
   if (path.includes('/api/students')) {
     const data = JSON.parse(localStorage.getItem('siakad_mock_students') || '[]');
     return Promise.resolve(createJsonResponse({ items: data, total: data.length }));
@@ -230,25 +346,83 @@ function handleMockApiRequest(urlString: string, init?: RequestInit): Promise<Re
 
   // 9. Schedules
   if (path.includes('/api/schedules/teaching')) {
+    if (init?.method === 'DELETE' || init?.method === 'PUT') {
+      return Promise.resolve(createJsonResponse({ success: true }));
+    }
     return Promise.resolve(
       createJsonResponse([
-        { id: 'sch-1', day: 'Senin', classId: 'cls-7a', className: 'Kelas 7-A', subjectName: 'Matematika', teacherId: 'tch-1', teacherName: 'Drs. H. Mulyono, M.Pd.', startTime: '07:30', endTime: '09:00', room: 'R-7A' },
-        { id: 'sch-2', day: 'Senin', classId: 'cls-7b', className: 'Kelas 7-B', subjectName: 'IPA Terpadu', teacherId: 'tch-2', teacherName: 'Dra. Hj. Siti Aminah, M.Si.', startTime: '09:15', endTime: '10:45', room: 'Lab IPA' },
-        { id: 'sch-3', day: 'Selasa', classId: 'cls-8a', className: 'Kelas 8-A', subjectName: 'Bahasa Indonesia', teacherId: 'tch-3', teacherName: 'Ahmad Fauzi, S.Pd., Gr.', startTime: '07:30', endTime: '09:00', room: 'R-8A' },
+        { id: 'sch-1', dayOfWeek: 1, classId: 'cls-7a', className: 'Kelas 7-A', subjectName: 'Matematika', teacherId: 'tch-1', teacherName: 'Drs. H. Mulyono, M.Pd.', startTime: '07:15', endTime: '08:45', startPeriod: 1, endPeriod: 3, periodCount: 3, room: 'R-7A' },
+        { id: 'sch-2', dayOfWeek: 1, classId: 'cls-7b', className: 'Kelas 7-B', subjectName: 'IPA Terpadu', teacherId: 'tch-2', teacherName: 'Dra. Hj. Siti Aminah, M.Si.', startTime: '09:35', endTime: '10:35', startPeriod: 5, endPeriod: 6, periodCount: 2, room: 'Lab IPA' },
+        { id: 'sch-3', dayOfWeek: 2, classId: 'cls-8a', className: 'Kelas 8-A', subjectName: 'Bahasa Indonesia', teacherId: 'tch-3', teacherName: 'Ahmad Fauzi, S.Pd., Gr.', startTime: '07:15', endTime: '08:15', startPeriod: 1, endPeriod: 2, periodCount: 2, room: 'R-8A' },
       ])
     );
   }
 
   if (path.includes('/api/schedules/picket')) {
+    if (init?.method === 'DELETE' || init?.method === 'PUT') {
+      return Promise.resolve(createJsonResponse({ success: true }));
+    }
     return Promise.resolve(
       createJsonResponse([
-        { id: 'pck-1', day: 'Senin', teacherId: 'tch-1', teacherName: 'Drs. H. Mulyono, M.Pd.', location: 'Pintu Gerbang Utama & Lobi', startTime: '06:30', endTime: '08:00' },
-        { id: 'pck-2', day: 'Selasa', teacherId: 'tch-3', teacherName: 'Ahmad Fauzi, S.Pd., Gr.', location: 'Lobi & Koridor Kelas 7-8', startTime: '06:30', endTime: '08:00' },
+        { id: 'pck-1', date: new Date().toISOString().split('T')[0], teacherId: 'tch-1', teacherName: 'Drs. H. Mulyono, M.Pd.', location: 'Pintu Gerbang Utama & Lobi', startTime: '06:30', endTime: '08:00' },
+        { id: 'pck-2', date: new Date().toISOString().split('T')[0], teacherId: 'tch-3', teacherName: 'Ahmad Fauzi, S.Pd., Gr.', location: 'Lobi & Koridor Kelas 7-8', startTime: '06:30', endTime: '08:00' },
       ])
     );
   }
 
-  // 10. Holidays
+  if (path.includes('/api/schedules/management')) {
+    if (init?.method === 'POST') {
+      let body: any = {};
+      try { body = JSON.parse((init?.body as string) || '{}'); } catch (e) {}
+      return Promise.resolve(
+        createJsonResponse({
+          success: true,
+          management: {
+            id: 'mgmt-' + Date.now(),
+            teacherId: body.teacherId || 'tch-1',
+            roleTitle: body.roleTitle || 'Waka Kurikulum',
+            dayOfWeek: body.dayOfWeek || 0,
+            startTime: body.startTime || '07:00',
+            endTime: body.endTime || '15:00',
+            roomOrDesk: body.roomOrDesk || 'Ruang Manajemen',
+            description: body.description || '',
+          },
+        })
+      );
+    }
+    return Promise.resolve(
+      createJsonResponse([
+        { id: 'mgmt-1', teacherId: 'tch-1', teacherName: 'Drs. H. Mulyono, M.Pd.', roleTitle: 'Waka Kurikulum', dayOfWeek: 0, startTime: '07:00', endTime: '15:00', roomOrDesk: 'Ruang Waka Kurikulum', description: 'Pengelolaan kurikulum dan KBM harian' },
+        { id: 'mgmt-2', teacherId: 'tch-2', teacherName: 'Dra. Hj. Siti Aminah, M.Si.', roleTitle: 'Waka Kesiswaan & Pembina OSIS', dayOfWeek: 0, startTime: '07:00', endTime: '15:00', roomOrDesk: 'Ruang Kesiswaan', description: 'Kedisiplinan siswa dan kegiatan OSIS' },
+        { id: 'mgmt-3', teacherId: 'tch-4', teacherName: 'Nurul Hidayah, S.Kom.', roleTitle: 'Kepala Laboratorium Komputer', dayOfWeek: 0, startTime: '07:00', endTime: '15:00', roomOrDesk: 'Lab Komputer', description: 'Pemeliharaan fasilitas laboratorium IT' },
+      ])
+    );
+  }
+
+  // 10. Holidays & Lesson Periods
+  if (path.includes('/api/academic/lesson-periods')) {
+    const defaultPeriods = [
+      { id: 'jp-1', periodNumber: 1, name: 'Jam Ke-1', startTime: '07:15', endTime: '07:45', isBreak: false, active: true },
+      { id: 'jp-2', periodNumber: 2, name: 'Jam Ke-2', startTime: '07:45', endTime: '08:15', isBreak: false, active: true },
+      { id: 'jp-3', periodNumber: 3, name: 'Jam Ke-3', startTime: '08:15', endTime: '08:45', isBreak: false, active: true },
+      { id: 'jp-4', periodNumber: 4, name: 'Jam Ke-4', startTime: '08:45', endTime: '09:15', isBreak: false, active: true },
+      { id: 'jp-break-1', periodNumber: 0, name: 'Istirahat Pagi', startTime: '09:15', endTime: '09:35', isBreak: true, active: true },
+      { id: 'jp-5', periodNumber: 5, name: 'Jam Ke-5', startTime: '09:35', endTime: '10:05', isBreak: false, active: true },
+      { id: 'jp-6', periodNumber: 6, name: 'Jam Ke-6', startTime: '10:05', endTime: '10:35', isBreak: false, active: true },
+      { id: 'jp-7', periodNumber: 7, name: 'Jam Ke-7', startTime: '10:35', endTime: '11:05', isBreak: false, active: true },
+      { id: 'jp-8', periodNumber: 8, name: 'Jam Ke-8', startTime: '11:05', endTime: '11:35', isBreak: false, active: true },
+      { id: 'jp-break-2', periodNumber: 0, name: 'Istirahat Siang & Sholat Dzuhur', startTime: '11:35', endTime: '12:15', isBreak: true, active: true },
+      { id: 'jp-9', periodNumber: 9, name: 'Jam Ke-9', startTime: '12:15', endTime: '12:45', isBreak: false, active: true },
+      { id: 'jp-10', periodNumber: 10, name: 'Jam Ke-10', startTime: '12:45', endTime: '13:15', isBreak: false, active: true },
+    ];
+    if (init?.method === 'POST') {
+      let body: any = {};
+      try { body = JSON.parse((init?.body as string) || '{}'); } catch (e) {}
+      return Promise.resolve(createJsonResponse({ success: true, period: { id: 'jp-' + Date.now(), ...body } }));
+    }
+    return Promise.resolve(createJsonResponse(defaultPeriods));
+  }
+
   if (path.includes('/api/academic/holidays')) {
     return Promise.resolve(
       createJsonResponse([
@@ -302,6 +476,64 @@ function handleMockApiRequest(urlString: string, init?: RequestInit): Promise<Re
         { id: 'att-std-3', studentId: 'std-3', studentName: 'Bagas Aditya Pratama', nisn: '0089123453', status: 'IZIN', notes: 'Izin lomba catur tingkat kota' },
         { id: 'att-std-4', studentId: 'std-4', studentName: 'Citra Dewi Kirana', nisn: '0089123454', status: 'HADIR', checkInTime: '07:05' },
       ])
+    );
+  }
+
+  if (path.includes('/api/attendance/dhuha/scan')) {
+    let body: any = {};
+    try { body = JSON.parse((init?.body as string) || '{}'); } catch (e) {}
+    const code = body.code || '2026001';
+    const currentTime = new Date().toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+    return Promise.resolve(
+      createJsonResponse({
+        success: true,
+        targetType: 'STUDENT',
+        person: {
+          id: 'std-1',
+          name: 'Muhammad Ridwan Al-Farabi',
+          identifier: code,
+          classOrSubject: 'Kelas 7-A',
+          gender: 'L',
+        },
+        record: {
+          id: 'dh-' + Date.now(),
+          targetType: 'STUDENT',
+          personId: 'std-1',
+          name: 'Muhammad Ridwan Al-Farabi',
+          status: 'HADIR',
+          time: currentTime,
+          note: 'Scan Berhasil',
+        },
+        isAlreadyRecorded: false,
+        message: `Alhamdulillah! Presensi Sholat Dhuha Berhasil: Muhammad Ridwan Al-Farabi (Kelas 7-A) tercatat pukul ${currentTime}.`,
+      })
+    );
+  }
+
+  if (path.includes('/api/attendance/dhuha/status')) {
+    return Promise.resolve(createJsonResponse({ success: true }));
+  }
+
+  if (path.includes('/api/attendance/dhuha')) {
+    const today = new Date().toISOString().split('T')[0];
+    return Promise.resolve(
+      createJsonResponse({
+        date: today,
+        targetType: 'STUDENT',
+        items: [
+          { personId: 'std-1', targetType: 'STUDENT', name: 'Muhammad Ridwan Al-Farabi', identifier: '2026001', classOrSubject: 'Kelas 7-A', gender: 'L', date: today, status: 'HADIR', time: '07:35:12', note: 'Scan Scanner' },
+          { personId: 'std-2', targetType: 'STUDENT', name: 'Aisyah Putri Azzahra', identifier: '2026002', classOrSubject: 'Kelas 7-A', gender: 'P', date: today, status: 'HADIR', time: '07:36:40', note: 'Scan Kamera' },
+          { personId: 'std-3', targetType: 'STUDENT', name: 'Bella Saphira', identifier: '2026003', classOrSubject: 'Kelas 7-A', gender: 'P', date: today, status: 'BERHALANGAN', time: '-', note: "Halangan Syar'i (Haid)" },
+          { personId: 'std-4', targetType: 'STUDENT', name: 'Bagas Aditya Pratama', identifier: '2026004', classOrSubject: 'Kelas 7-A', gender: 'L', date: today, status: 'TIDAK_HADIR', time: '-', note: '-' },
+        ],
+        stats: {
+          total: 4,
+          hadir: 2,
+          berhalangan: 1,
+          belum: 1,
+          rate: 50,
+        },
+      })
     );
   }
 
@@ -369,6 +601,137 @@ function handleMockApiRequest(urlString: string, init?: RequestInit): Promise<Re
         storageSizeKb: 450,
       })
     );
+  }
+
+  // 15. User Accounts & Role Access
+  if (path.includes('/api/roles/access/reset') && init?.method === 'POST') {
+    const defaultRules = [
+      { tabId: 'dashboard', name: 'Dashboard & Statistik', category: 'Umum', allowedRoles: ['SUPER_ADMIN', 'GURU_BK', 'GURU', 'WALI_KELAS', 'BENDAHARA', 'TU', 'SISWA'] },
+      { tabId: 'teachers', name: 'Master Data Guru & Pegawai', category: 'Master Data', allowedRoles: ['SUPER_ADMIN', 'TU'] },
+      { tabId: 'students', name: 'Master Data Siswa & Wali', category: 'Master Data', allowedRoles: ['SUPER_ADMIN', 'GURU_BK', 'WALI_KELAS', 'TU'] },
+      { tabId: 'classes', name: 'Manajemen Kelas & Ruangan', category: 'Master Data', allowedRoles: ['SUPER_ADMIN', 'TU'] },
+      { tabId: 'subjects', name: 'Mata Pelajaran & Jam Pelajaran (JP)', category: 'Master Data', allowedRoles: ['SUPER_ADMIN', 'TU', 'GURU', 'WALI_KELAS'] },
+      { tabId: 'schedules', name: 'Jadwal Mengajar & Piket', category: 'KBM & Jadwal', allowedRoles: ['SUPER_ADMIN', 'GURU_BK', 'GURU', 'WALI_KELAS', 'TU', 'SISWA'] },
+      { tabId: 'scan-kiosk', name: 'Mesin Scan Presensi (Kiosk)', category: 'Presensi', allowedRoles: ['SUPER_ADMIN', 'TU', 'GURU'] },
+      { tabId: 'attendance-student', name: 'Presensi Kelas Siswa', category: 'Presensi', allowedRoles: ['SUPER_ADMIN', 'GURU_BK', 'GURU', 'WALI_KELAS', 'TU'] },
+      { tabId: 'attendance-teacher', name: 'Presensi Harian Guru & Staf', category: 'Presensi', allowedRoles: ['SUPER_ADMIN', 'TU', 'GURU'] },
+      { tabId: 'attendance-dhuha', name: 'Presensi Sholat Dhuha', category: 'Presensi', allowedRoles: ['SUPER_ADMIN', 'GURU_BK', 'GURU', 'WALI_KELAS', 'TU'] },
+      { tabId: 'id-cards', name: 'Cetak Kartu Siswa & Guru (QR/NFC)', category: 'Administrasi', allowedRoles: ['SUPER_ADMIN', 'TU'] },
+      { tabId: 'reports', name: 'Laporan Rekap & Statistik', category: 'Laporan', allowedRoles: ['SUPER_ADMIN', 'GURU_BK', 'WALI_KELAS', 'BENDAHARA', 'TU'] },
+      { tabId: 'mod-keuangan', name: 'Modul Keuangan & SPP', category: 'Modul Ekstensi', allowedRoles: ['SUPER_ADMIN', 'BENDAHARA', 'TU'] },
+      { tabId: 'mod-kesiswaan', name: 'Modul BK & Kesiswaan', category: 'Modul Ekstensi', allowedRoles: ['SUPER_ADMIN', 'GURU_BK', 'WALI_KELAS'] },
+      { tabId: 'database', name: 'Kelola Database JSON & Backup', category: 'Sistem', allowedRoles: ['SUPER_ADMIN'] },
+      { tabId: 'sync', name: 'Pusat Sinkronisasi Offline', category: 'Sistem', allowedRoles: ['SUPER_ADMIN', 'TU'] },
+      { tabId: 'settings', name: 'Pengaturan Akun & Hak Akses Role', category: 'Sistem', allowedRoles: ['SUPER_ADMIN'] },
+    ];
+    localStorage.setItem('siakad_mock_role_access', JSON.stringify(defaultRules));
+    return Promise.resolve(createJsonResponse({ success: true, rules: defaultRules }));
+  }
+
+  if (path.includes('/api/roles/access') && init?.method === 'POST') {
+    let body: any = [];
+    try { body = JSON.parse((init?.body as string) || '[]'); } catch (e) {}
+    localStorage.setItem('siakad_mock_role_access', JSON.stringify(body));
+    return Promise.resolve(createJsonResponse({ success: true, rules: body }));
+  }
+
+  if (path.includes('/api/roles/access')) {
+    const saved = localStorage.getItem('siakad_mock_role_access');
+    if (saved) {
+      return Promise.resolve(createJsonResponse(JSON.parse(saved)));
+    }
+    const defaultRules = [
+      { tabId: 'dashboard', name: 'Dashboard & Statistik', category: 'Umum', allowedRoles: ['SUPER_ADMIN', 'GURU_BK', 'GURU', 'WALI_KELAS', 'BENDAHARA', 'TU', 'SISWA'] },
+      { tabId: 'teachers', name: 'Master Data Guru & Pegawai', category: 'Master Data', allowedRoles: ['SUPER_ADMIN', 'TU'] },
+      { tabId: 'students', name: 'Master Data Siswa & Wali', category: 'Master Data', allowedRoles: ['SUPER_ADMIN', 'GURU_BK', 'WALI_KELAS', 'TU'] },
+      { tabId: 'classes', name: 'Manajemen Kelas & Ruangan', category: 'Master Data', allowedRoles: ['SUPER_ADMIN', 'TU'] },
+      { tabId: 'subjects', name: 'Mata Pelajaran & Jam Pelajaran (JP)', category: 'Master Data', allowedRoles: ['SUPER_ADMIN', 'TU', 'GURU', 'WALI_KELAS'] },
+      { tabId: 'schedules', name: 'Jadwal Mengajar & Piket', category: 'KBM & Jadwal', allowedRoles: ['SUPER_ADMIN', 'GURU_BK', 'GURU', 'WALI_KELAS', 'TU', 'SISWA'] },
+      { tabId: 'scan-kiosk', name: 'Mesin Scan Presensi (Kiosk)', category: 'Presensi', allowedRoles: ['SUPER_ADMIN', 'TU', 'GURU'] },
+      { tabId: 'attendance-student', name: 'Presensi Kelas Siswa', category: 'Presensi', allowedRoles: ['SUPER_ADMIN', 'GURU_BK', 'GURU', 'WALI_KELAS', 'TU'] },
+      { tabId: 'attendance-teacher', name: 'Presensi Harian Guru & Staf', category: 'Presensi', allowedRoles: ['SUPER_ADMIN', 'TU', 'GURU'] },
+      { tabId: 'attendance-dhuha', name: 'Presensi Sholat Dhuha', category: 'Presensi', allowedRoles: ['SUPER_ADMIN', 'GURU_BK', 'GURU', 'WALI_KELAS', 'TU'] },
+      { tabId: 'id-cards', name: 'Cetak Kartu Siswa & Guru (QR/NFC)', category: 'Administrasi', allowedRoles: ['SUPER_ADMIN', 'TU'] },
+      { tabId: 'reports', name: 'Laporan Rekap & Statistik', category: 'Laporan', allowedRoles: ['SUPER_ADMIN', 'GURU_BK', 'WALI_KELAS', 'BENDAHARA', 'TU'] },
+      { tabId: 'mod-keuangan', name: 'Modul Keuangan & SPP', category: 'Modul Ekstensi', allowedRoles: ['SUPER_ADMIN', 'BENDAHARA', 'TU'] },
+      { tabId: 'mod-kesiswaan', name: 'Modul BK & Kesiswaan', category: 'Modul Ekstensi', allowedRoles: ['SUPER_ADMIN', 'GURU_BK', 'WALI_KELAS'] },
+      { tabId: 'database', name: 'Kelola Database JSON & Backup', category: 'Sistem', allowedRoles: ['SUPER_ADMIN'] },
+      { tabId: 'sync', name: 'Pusat Sinkronisasi Offline', category: 'Sistem', allowedRoles: ['SUPER_ADMIN', 'TU'] },
+      { tabId: 'settings', name: 'Pengaturan Akun & Hak Akses Role', category: 'Sistem', allowedRoles: ['SUPER_ADMIN'] },
+    ];
+    localStorage.setItem('siakad_mock_role_access', JSON.stringify(defaultRules));
+    return Promise.resolve(createJsonResponse(defaultRules));
+  }
+
+  if (path.includes('/api/roles')) {
+    return Promise.resolve(
+      createJsonResponse([
+        { code: 'SUPER_ADMIN', name: 'Admin Super', description: 'Akses penuh ke seluruh menu' },
+        { code: 'GURU_BK', name: 'Guru BK', description: 'Bimbingan Konseling & kesiswaan' },
+        { code: 'GURU', name: 'Guru', description: 'KBM dan presensi' },
+        { code: 'WALI_KELAS', name: 'Wali Kelas', description: 'Monitoring kelas binaan' },
+        { code: 'BENDAHARA', name: 'Bendahara', description: 'Keuangan & SPP' },
+        { code: 'TU', name: 'TU', description: 'Tata usaha & kesiswaan' },
+        { code: 'SISWA', name: 'Siswa', description: 'Jadwal & absensi mandiri' },
+      ])
+    );
+  }
+
+  if (path.includes('/api/users') && init?.method === 'POST') {
+    let body: any = {};
+    try { body = JSON.parse((init?.body as string) || '{}'); } catch (e) {}
+    const current = JSON.parse(localStorage.getItem('siakad_mock_users') || '[]');
+    const newUser = {
+      id: 'usr-' + Date.now(),
+      username: body.username,
+      fullName: body.fullName || body.username,
+      email: body.email,
+      roleCode: body.roleCode || 'GURU',
+      roleName: body.roleCode,
+      active: body.active !== undefined ? !!body.active : true,
+      teacherId: body.teacherId,
+      studentId: body.studentId,
+      createdAt: new Date().toISOString(),
+    };
+    current.push(newUser);
+    localStorage.setItem('siakad_mock_users', JSON.stringify(current));
+    return Promise.resolve(createJsonResponse({ success: true, user: newUser }));
+  }
+
+  if (path.includes('/api/users') && init?.method === 'PUT') {
+    let body: any = {};
+    try { body = JSON.parse((init?.body as string) || '{}'); } catch (e) {}
+    const id = path.split('/').pop();
+    const current = JSON.parse(localStorage.getItem('siakad_mock_users') || '[]');
+    const updated = current.map((u: any) => (u.id === id ? { ...u, ...body } : u));
+    localStorage.setItem('siakad_mock_users', JSON.stringify(updated));
+    return Promise.resolve(createJsonResponse({ success: true }));
+  }
+
+  if (path.includes('/api/users') && init?.method === 'DELETE') {
+    const id = path.split('/').pop();
+    const current = JSON.parse(localStorage.getItem('siakad_mock_users') || '[]');
+    const updated = current.filter((u: any) => u.id !== id);
+    localStorage.setItem('siakad_mock_users', JSON.stringify(updated));
+    return Promise.resolve(createJsonResponse({ success: true }));
+  }
+
+  if (path.includes('/api/users')) {
+    const current = localStorage.getItem('siakad_mock_users');
+    if (current) {
+      return Promise.resolve(createJsonResponse(JSON.parse(current)));
+    }
+    const defaultUsers = [
+      { id: 'usr-admin', username: 'admin', fullName: 'Administrator Sekolah (Admin Super)', email: 'admin@sekolah.sch.id', roleCode: 'SUPER_ADMIN', roleName: 'Admin Super', active: true },
+      { id: 'usr-gurubk', username: 'gurubk', fullName: 'Dra. Hj. Siti Aminah, M.Si. (Guru BK)', email: 'gurubk@sekolah.sch.id', roleCode: 'GURU_BK', roleName: 'Guru BK', active: true },
+      { id: 'usr-budi', username: 'budi', fullName: 'Budi Santoso, S.Pd. (Guru Pengajar)', email: 'budi.santoso@sekolah.sch.id', roleCode: 'GURU', roleName: 'Guru', active: true, teacherId: 'tch-01' },
+      { id: 'usr-walikelas', username: 'walikelas', fullName: 'Hendra Gunawan, S.Kom. (Wali Kelas VII-A)', email: 'walikelas@sekolah.sch.id', roleCode: 'WALI_KELAS', roleName: 'Wali Kelas', active: true },
+      { id: 'usr-bendahara', username: 'bendahara', fullName: 'Ratna Sari, S.Pd. (Bendahara Sekolah)', email: 'bendahara@sekolah.sch.id', roleCode: 'BENDAHARA', roleName: 'Bendahara', active: true },
+      { id: 'usr-tu', username: 'tu', fullName: 'Joko Purnomo, S.Pd. (Staf Tata Usaha)', email: 'tu@sekolah.sch.id', roleCode: 'TU', roleName: 'TU', active: true },
+      { id: 'usr-siswa', username: 'siswa', fullName: 'Ahmad Faiz Pratama (Siswa VII-A)', email: 'siswa@sekolah.sch.id', roleCode: 'SISWA', roleName: 'Siswa', active: true, studentId: 'std-01' },
+    ];
+    localStorage.setItem('siakad_mock_users', JSON.stringify(defaultUsers));
+    return Promise.resolve(createJsonResponse(defaultUsers));
   }
 
   // Default fallback for any other API endpoint

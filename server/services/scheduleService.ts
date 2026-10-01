@@ -1,7 +1,7 @@
 import { v4 as uuidv4 } from 'uuid';
 import { dbManager } from '../db/database.js';
 import { AuditService } from './auditService.js';
-import type { TeachingSchedule, PicketSchedule, TeacherSubstitution } from '../../src/types/index.js';
+import type { TeachingSchedule, PicketSchedule, TeacherSubstitution, ManagementSchedule } from '../../src/types/index.js';
 
 function parseTimeToMinutes(t: string): number {
   const [h, m] = t.split(':').map(Number);
@@ -127,6 +127,9 @@ export class ScheduleService {
       dayOfWeek: data.dayOfWeek,
       startTime: data.startTime,
       endTime: data.endTime,
+      startPeriod: (data as any).startPeriod,
+      endPeriod: (data as any).endPeriod,
+      periodCount: (data as any).periodCount,
       room: data.room || undefined,
       active: true,
       version: 1,
@@ -267,5 +270,224 @@ export class ScheduleService {
     });
 
     return sub;
+  }
+
+  public static getManagementSchedules(params?: { teacherId?: string; dayOfWeek?: number }) {
+    const store = dbManager.getStore();
+    if (!store.managementSchedules) store.managementSchedules = [];
+    let list = store.managementSchedules.filter((m) => m.active && !m.deletedAt);
+
+    if (params?.teacherId) {
+      list = list.filter((m) => m.teacherId === params.teacherId);
+    }
+    if (params?.dayOfWeek !== undefined) {
+      list = list.filter((m) => m.dayOfWeek === 0 || m.dayOfWeek === params.dayOfWeek);
+    }
+
+    return list.map((m) => {
+      const teacher = store.teachers.find(
+        (t) => t.id === m.teacherId || t.name === (m as any).teacherName
+      );
+      return {
+        ...m,
+        teacherName: teacher ? teacher.name : ((m as any).teacherName || 'Guru Manajemen'),
+        teacherNip: teacher?.nip || (m as any).teacherNip || '-',
+      } as ManagementSchedule;
+    });
+  }
+
+  public static createManagementSchedule(
+    data: {
+      teacherId: string;
+      roleTitle: string;
+      dayOfWeek?: number;
+      startTime?: string;
+      endTime?: string;
+      roomOrDesk?: string;
+      description?: string;
+    },
+    currentUserId?: string
+  ): ManagementSchedule {
+    const store = dbManager.getStore();
+    if (!store.managementSchedules) store.managementSchedules = [];
+
+    const teacher = store.teachers.find((t) => t.id === data.teacherId);
+    if (!teacher) {
+      throw new Error('Guru tidak ditemukan.');
+    }
+    if (!data.roleTitle || !data.roleTitle.trim()) {
+      throw new Error('Jabatan / tugas manajemen wajib diisi.');
+    }
+
+    const newMgmt: ManagementSchedule = {
+      id: uuidv4(),
+      teacherId: data.teacherId,
+      teacherName: teacher.name,
+      teacherNip: teacher.nip,
+      roleTitle: data.roleTitle.trim(),
+      dayOfWeek: data.dayOfWeek !== undefined ? Number(data.dayOfWeek) : 0,
+      startTime: data.startTime || '07:00',
+      endTime: data.endTime || '15:00',
+      roomOrDesk: data.roomOrDesk || 'Ruang Manajemen / Kantor',
+      description: data.description || '',
+      active: true,
+      version: 1,
+    };
+
+    store.managementSchedules.push(newMgmt);
+    dbManager.saveSync();
+
+    AuditService.log({
+      userId: currentUserId,
+      action: 'CREATE',
+      entity: 'management_schedules',
+      entityId: newMgmt.id,
+      newData: newMgmt,
+      description: `Menambahkan tugas manajemen: ${newMgmt.roleTitle} untuk ${teacher.name}`,
+    });
+
+    return newMgmt;
+  }
+
+  public static updateTeachingSchedule(
+    id: string,
+    data: Partial<TeachingSchedule>,
+    currentUserId?: string
+  ): TeachingSchedule {
+    const store = dbManager.getStore();
+    const schedule = store.teachingSchedules.find((s) => s.id === id);
+    if (!schedule) {
+      throw new Error('Jadwal mengajar tidak ditemukan.');
+    }
+
+    const oldData = { ...schedule };
+
+    if (data.teacherId) schedule.teacherId = data.teacherId;
+    if (data.classId) schedule.classId = data.classId;
+    if (data.subjectId) schedule.subjectId = data.subjectId;
+    if (data.dayOfWeek !== undefined) schedule.dayOfWeek = Number(data.dayOfWeek);
+    if (data.startTime) schedule.startTime = data.startTime;
+    if (data.endTime) schedule.endTime = data.endTime;
+    if (data.room !== undefined) schedule.room = data.room;
+    if ((data as any).startPeriod !== undefined) schedule.startPeriod = (data as any).startPeriod;
+    if ((data as any).endPeriod !== undefined) schedule.endPeriod = (data as any).endPeriod;
+    if ((data as any).periodCount !== undefined) schedule.periodCount = (data as any).periodCount;
+    schedule.version = (schedule.version || 1) + 1;
+
+    dbManager.saveSync();
+
+    AuditService.log({
+      userId: currentUserId,
+      action: 'UPDATE',
+      entity: 'teaching_schedules',
+      entityId: id,
+      oldData,
+      newData: schedule,
+      description: `Memperbarui jadwal mengajar: Hari ${schedule.dayOfWeek} ${schedule.startTime}-${schedule.endTime}`,
+    });
+
+    return schedule;
+  }
+
+  public static deleteTeachingSchedule(id: string, currentUserId?: string): boolean {
+    const store = dbManager.getStore();
+    const index = store.teachingSchedules.findIndex((s) => s.id === id);
+    if (index === -1) {
+      throw new Error('Jadwal mengajar tidak ditemukan.');
+    }
+
+    const [deleted] = store.teachingSchedules.splice(index, 1);
+    dbManager.saveSync();
+
+    AuditService.log({
+      userId: currentUserId,
+      action: 'DELETE',
+      entity: 'teaching_schedules',
+      entityId: id,
+      oldData: deleted,
+      description: `Menghapus jadwal mengajar: Hari ${deleted.dayOfWeek} ${deleted.startTime}-${deleted.endTime}`,
+    });
+
+    return true;
+  }
+
+  public static updatePicketSchedule(
+    id: string,
+    data: Partial<PicketSchedule>,
+    currentUserId?: string
+  ): PicketSchedule {
+    const store = dbManager.getStore();
+    const picket = store.picketSchedules.find((p) => p.id === id);
+    if (!picket) {
+      throw new Error('Jadwal piket tidak ditemukan.');
+    }
+
+    const oldData = { ...picket };
+
+    if (data.teacherId) picket.teacherId = data.teacherId;
+    if (data.date) picket.date = data.date;
+    if (data.startTime) picket.startTime = data.startTime;
+    if (data.endTime) picket.endTime = data.endTime;
+    if (data.location !== undefined) picket.location = data.location;
+    picket.version = (picket.version || 1) + 1;
+
+    dbManager.saveSync();
+
+    AuditService.log({
+      userId: currentUserId,
+      action: 'UPDATE',
+      entity: 'picket_schedules',
+      entityId: id,
+      oldData,
+      newData: picket,
+      description: `Memperbarui jadwal piket: ${picket.date} ${picket.startTime}-${picket.endTime}`,
+    });
+
+    return picket;
+  }
+
+  public static deletePicketSchedule(id: string, currentUserId?: string): boolean {
+    const store = dbManager.getStore();
+    const index = store.picketSchedules.findIndex((p) => p.id === id);
+    if (index === -1) {
+      throw new Error('Jadwal piket tidak ditemukan.');
+    }
+
+    const [deleted] = store.picketSchedules.splice(index, 1);
+    dbManager.saveSync();
+
+    AuditService.log({
+      userId: currentUserId,
+      action: 'DELETE',
+      entity: 'picket_schedules',
+      entityId: id,
+      oldData: deleted,
+      description: `Menghapus jadwal piket: ${deleted.date} ${deleted.startTime}-${deleted.endTime}`,
+    });
+
+    return true;
+  }
+
+  public static deleteManagementSchedule(id: string, currentUserId?: string): boolean {
+    const store = dbManager.getStore();
+    if (!store.managementSchedules) return false;
+    const index = store.managementSchedules.findIndex((m) => m.id === id);
+    if (index === -1) {
+      throw new Error('Jadwal manajemen tidak ditemukan.');
+    }
+
+    const [deleted] = store.managementSchedules.splice(index, 1);
+    dbManager.saveSync();
+
+    AuditService.log({
+      userId: currentUserId,
+      action: 'DELETE',
+      entity: 'management_schedules',
+      entityId: id,
+      oldData: deleted,
+      description: `Menghapus tugas manajemen: ${deleted.roleTitle} (${deleted.teacherName || id})`,
+    });
+
+    return true;
   }
 }
